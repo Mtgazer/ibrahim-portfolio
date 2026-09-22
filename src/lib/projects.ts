@@ -32,8 +32,11 @@ function mapDbProjectToEditorialProject(
       id: img.id,
       projectId: img.project_id,
       storagePath: img.storage_path,
+      publicUrl: img.public_url,
       altText: img.alt_text,
+      caption: img.caption,
       sortOrder: img.sort_order,
+      isPrimary: img.is_primary,
       createdAt: img.created_at,
     }));
 
@@ -49,6 +52,9 @@ function mapDbProjectToEditorialProject(
       microcopy: l.microcopy || undefined,
       sortOrder: l.sort_order,
     }));
+
+  const primaryImg = images.find((img) => img.isPrimary) || images[0];
+  const primaryImgSrc = primaryImg?.publicUrl || primaryImg?.storagePath;
 
   return {
     id: dbProject.id,
@@ -86,7 +92,7 @@ function mapDbProjectToEditorialProject(
     layoutVariant: fallbackProject?.layoutVariant ?? "standard",
     mediaLayout: fallbackProject?.mediaLayout ?? "banner-with-grid",
     visuals: fallbackProject?.visuals ?? {
-      main: images[0]?.storagePath,
+      main: primaryImgSrc,
     },
   };
 }
@@ -178,3 +184,77 @@ export async function getProjectIndexRange(): Promise<string> {
 
   return minYear === maxYear ? `${minYear}` : `${minYear}–${maxYear}`;
 }
+
+export type { DbProjectWithRelations };
+
+/**
+ * Admin: Retrieves all projects in the database (both published and drafts),
+ * ordered by sort_order ascending.
+ */
+export async function getAllAdminProjects(): Promise<DbProjectWithRelations[]> {
+  if (!isSupabaseConfigured()) {
+    return [];
+  }
+
+  try {
+    const supabase = await createClient();
+    if (!supabase) return [];
+
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*, project_images(*), project_links(*)")
+      .order("sort_order", { ascending: true });
+
+    if (error || !data) return [];
+    return data as DbProjectWithRelations[];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Admin: Retrieves a single project by its ID, with associated images and links.
+ */
+export async function getAdminProjectById(
+  id: string
+): Promise<DbProjectWithRelations | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
+  try {
+    const supabase = await createClient();
+    if (!supabase) return null;
+
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*, project_images(*), project_links(*)")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error || !data) return null;
+    return data as DbProjectWithRelations;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Admin: Retrieves dashboard aggregate statistics.
+ */
+export async function getAdminDashboardStats(): Promise<{
+  total: number;
+  published: number;
+  drafts: number;
+  featured: number;
+}> {
+  const allProjects = await getAllAdminProjects();
+
+  const total = allProjects.length;
+  const published = allProjects.filter((p) => p.is_published).length;
+  const drafts = allProjects.filter((p) => !p.is_published).length;
+  const featured = allProjects.filter((p) => p.is_featured).length;
+
+  return { total, published, drafts, featured };
+}
+

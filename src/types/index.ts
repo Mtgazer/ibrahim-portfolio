@@ -46,8 +46,11 @@ export interface ProjectImage {
   projectId: string;
   /** Path within the Supabase Storage bucket — not a full URL */
   storagePath: string;
+  publicUrl?: string | null;
   altText: string | null;
+  caption?: string | null;
   sortOrder: number;
+  isPrimary?: boolean;
   createdAt: string;
 }
 

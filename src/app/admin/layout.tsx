@@ -1,5 +1,6 @@
 import { getAuthenticatedUser } from "@/lib/auth";
 import SignOutButton from "@/components/admin/SignOutButton";
+import AdminNav from "@/components/admin/AdminNav";
 import Link from "next/link";
 
 export default async function AdminLayout({
@@ -28,8 +29,10 @@ export default async function AdminLayout({
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="font-mono text-xs text-[#707070]">
+          <div className="flex items-center gap-4 flex-wrap">
+            <AdminNav />
+            <div className="h-4 w-px bg-[#262626] hidden sm:block" />
+            <span className="font-mono text-xs text-[#707070] hidden md:inline">
               OP: <span className="text-[#F3F3F3]">{user.email}</span>
             </span>
             <SignOutButton />
