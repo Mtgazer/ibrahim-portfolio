@@ -8,6 +8,13 @@ interface ProjectArticleProps {
 
 export default function ProjectArticle({ project }: ProjectArticleProps) {
   const isFlipped = project.layoutVariant === "flipped";
+  const mediaLayout =
+    project.mediaLayout ||
+    (project.visuals.screens ? "screen-trio" : "banner-with-grid");
+
+  // Determine primary action link if available
+  const primaryLink =
+    project.links && project.links.length > 0 ? project.links[0] : null;
 
   return (
     <article className="w-full py-16 sm:py-24 border-b border-[#1A1A1A] last:border-b-0 overflow-hidden">
@@ -52,11 +59,13 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
             </h3>
 
             {/* Project Description */}
-            <p className="text-sm sm:text-base text-[#9E9E9E] leading-relaxed">
-              {project.description}
-            </p>
+            {project.description && (
+              <p className="text-sm sm:text-base text-[#9E9E9E] leading-relaxed">
+                {project.description}
+              </p>
+            )}
 
-            {/* Optional: Growth Note (Project 02) */}
+            {/* Optional: Growth Note (e.g. Shopping App) */}
             {project.growthNote && (
               <div className="border-l-2 border-[#E5B842] pl-4 py-1.5 space-y-1.5 bg-[#121212]/50">
                 <span className="font-mono text-[11px] text-[#E5B842] tracking-wider uppercase block font-semibold">
@@ -68,8 +77,11 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
               </div>
             )}
 
-            {/* Metadata Grid (Role, Team, Scope, Status) */}
-            {(project.role || project.statusText) && (
+            {/* Metadata Grid (Role, Team Structure, Scope, Status/Timeline) */}
+            {(project.role ||
+              project.teamStructure ||
+              project.disciplineScope ||
+              project.statusText) && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#1C1C1C] font-mono text-xs">
                 {project.role && (
                   <div>
@@ -106,8 +118,8 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
               </div>
             )}
 
-            {/* Optional: Technical UX Pillars (Project 03) */}
-            {project.pillars && (
+            {/* Optional: Technical UX Pillars (e.g. Sigma Computer) */}
+            {project.pillars && project.pillars.length > 0 && (
               <div className="space-y-4 pt-2 border-t border-[#1C1C1C]">
                 {project.pillars.map((pillar) => (
                   <div key={pillar.number} className="space-y-1">
@@ -127,8 +139,8 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
               </div>
             )}
 
-            {/* Optional: Core Component Set (Project 04) */}
-            {project.coreComponentSet && (
+            {/* Optional: Core Component Set (e.g. Book Store) */}
+            {project.coreComponentSet && project.coreComponentSet.length > 0 && (
               <div className="border border-[#222222] bg-[#121212] p-5 space-y-3">
                 <span className="font-mono text-[11px] text-[#E5B842] tracking-wider uppercase block font-semibold">
                   CORE COMPONENT SET
@@ -144,10 +156,26 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
               </div>
             )}
 
-            {/* CTA Button / Action */}
-            {project.ctaText && (
+            {/* CTA Button / Action Links (Data-Driven from project.links with fallback) */}
+            {(primaryLink || project.ctaText) && (
               <div className="pt-2 space-y-2">
-                {project.ctaMicrocopy ? (
+                {primaryLink ? (
+                  primaryLink.type === "case-study" ? (
+                    <Link
+                      href={primaryLink.url}
+                      className="inline-flex items-center gap-2 bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-semibold px-6 py-3.5 tracking-wider uppercase transition-colors"
+                    >
+                      <span>{primaryLink.label}</span>
+                    </Link>
+                  ) : (
+                    <Link
+                      href={primaryLink.url}
+                      className="inline-block border border-[#262626] hover:border-[#E5B842] bg-[#141414] hover:text-[#E5B842] px-4 py-2.5 font-mono text-xs text-[#A0A0A0] tracking-wider uppercase transition-colors"
+                    >
+                      {primaryLink.label}
+                    </Link>
+                  )
+                ) : project.ctaMicrocopy ? (
                   <Link
                     href="#contact"
                     className="inline-flex items-center gap-2 bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-semibold px-6 py-3.5 tracking-wider uppercase transition-colors"
@@ -159,9 +187,11 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                     {project.ctaText}
                   </div>
                 )}
-                {project.ctaMicrocopy && (
+
+                {/* Optional Microcopy */}
+                {(primaryLink?.microcopy || project.ctaMicrocopy) && (
                   <p className="font-mono text-[10px] text-[#666666] tracking-wider uppercase">
-                    {project.ctaMicrocopy}
+                    {primaryLink?.microcopy || project.ctaMicrocopy}
                   </p>
                 )}
               </div>
@@ -169,7 +199,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
           </div>
 
           {/* ============================================================= */}
-          {/* Visuals Column                                                */}
+          {/* Visuals Column (Generic Data-Driven Media Presentation)       */}
           {/* ============================================================= */}
           <div
             className={`space-y-4 ${
@@ -178,8 +208,8 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                 : "lg:col-span-7"
             }`}
           >
-            {/* Case 1: Extra screen carousel (Project 02 - Shopping App) */}
-            {project.visuals.screens && (
+            {/* Presentation Mode 1: Screen Trio (e.g. Shopping App) */}
+            {mediaLayout === "screen-trio" && project.visuals.screens && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 items-start">
                 {project.visuals.screens.map((screen, idx) => (
                   <div
@@ -209,195 +239,135 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
               </div>
             )}
 
-            {/* Case 2: Standard Editorial Visuals (Project 01, 03, 04) */}
-            {!project.visuals.screens && (
-              <>
-                {/* Main Hero Visual or Split Visual */}
-                {isFlipped ? (
-                  // Project 03 layout: Left phone viewport + Right 2 stacked detail boxes
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
-                    {/* Main Phone Viewport */}
-                    {project.visuals.main && (
-                      <div className="sm:col-span-7 border border-[#222222] bg-[#121212] overflow-hidden group">
-                        <div className="p-2.5 border-b border-[#1C1C1C] flex justify-between font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
-                          <span>{project.visuals.mainCaption || "[VIEWPORT]"}</span>
-                          <span className="text-[#E5B842]">MOBILE SPEC</span>
-                        </div>
-                        <div className="relative aspect-[9/14] sm:aspect-[9/16] w-full overflow-hidden">
-                          <Image
-                            src={project.visuals.main}
-                            alt={`${project.title} primary display`}
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 40vw"
-                            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Secondary Stacked Panels */}
-                    <div className="sm:col-span-5 space-y-4">
-                      {project.visuals.secondaryLeft && (
-                        <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
-                          {project.visuals.secondaryLeft.caption && (
-                            <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
-                              {project.visuals.secondaryLeft.caption}
-                            </div>
-                          )}
-                          <div className="relative aspect-[16/11] w-full overflow-hidden">
-                            <Image
-                              src={project.visuals.secondaryLeft.src}
-                              alt="Spec detail"
-                              fill
-                              sizes="(max-width: 1024px) 100vw, 25vw"
-                              className="object-cover object-center"
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {project.visuals.secondaryRight && (
-                        <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
-                          {project.visuals.secondaryRight.caption && (
-                            <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
-                              {project.visuals.secondaryRight.caption}
-                            </div>
-                          )}
-                          <div className="relative aspect-[16/11] w-full overflow-hidden">
-                            <Image
-                              src={project.visuals.secondaryRight.src}
-                              alt="Filter taxonomy"
-                              fill
-                              sizes="(max-width: 1024px) 100vw, 25vw"
-                              className="object-cover object-center"
-                            />
-                          </div>
-                        </div>
+            {/* Presentation Mode 2: Split Panel (Primary viewport + 2 stacked sub-panels) */}
+            {mediaLayout === "split-panel" && (
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                {/* Main Phone Viewport */}
+                {project.visuals.main && (
+                  <div className="sm:col-span-7 border border-[#222222] bg-[#121212] overflow-hidden group">
+                    <div className="p-2.5 border-b border-[#1C1C1C] flex justify-between font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
+                      <span>{project.visuals.mainCaption || "[VIEWPORT]"}</span>
+                      {project.visuals.mainBadge && (
+                        <span className="text-[#E5B842]">
+                          {project.visuals.mainBadge}
+                        </span>
                       )}
                     </div>
-                  </div>
-                ) : project.projectNumber === "04" ? (
-                  // Project 04 layout: Main phone on left + 2 stacked cards on right
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
-                    {project.visuals.main && (
-                      <div className="sm:col-span-7 border border-[#222222] bg-[#121212] overflow-hidden group">
-                        <div className="p-2.5 border-b border-[#1C1C1C] flex justify-between font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
-                          <span>{project.visuals.mainCaption || "[BOOK STORE]"}</span>
-                          <span className="text-[#E5B842]">FEED</span>
-                        </div>
-                        <div className="relative aspect-[9/14] sm:aspect-[9/16] w-full overflow-hidden">
-                          <Image
-                            src={project.visuals.main}
-                            alt={`${project.title} primary display`}
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 40vw"
-                            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="sm:col-span-5 space-y-4">
-                      {project.visuals.secondaryLeft && (
-                        <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
-                          {project.visuals.secondaryLeft.caption && (
-                            <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
-                              {project.visuals.secondaryLeft.caption}
-                            </div>
-                          )}
-                          <div className="relative aspect-[16/11] w-full overflow-hidden">
-                            <Image
-                              src={project.visuals.secondaryLeft.src}
-                              alt="Card variants"
-                              fill
-                              sizes="(max-width: 1024px) 100vw, 25vw"
-                              className="object-cover object-center"
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {project.visuals.secondaryRight && (
-                        <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
-                          {project.visuals.secondaryRight.caption && (
-                            <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
-                              {project.visuals.secondaryRight.caption}
-                            </div>
-                          )}
-                          <div className="relative aspect-[16/11] w-full overflow-hidden">
-                            <Image
-                              src={project.visuals.secondaryRight.src}
-                              alt="Auth states"
-                              fill
-                              sizes="(max-width: 1024px) 100vw, 25vw"
-                              className="object-cover object-center"
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  // Project 01 layout: Big wide banner top + 2 cards below
-                  <div className="space-y-4">
-                    {project.visuals.main && (
-                      <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
-                        <div className="relative aspect-[16/9] w-full overflow-hidden">
-                          <Image
-                            src={project.visuals.main}
-                            alt={`${project.title} overview`}
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 60vw"
-                            className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.01]"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Secondary Cards Below Main Banner */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {project.visuals.secondaryLeft && (
-                        <div className="border border-[#222222] bg-[#121212] overflow-hidden">
-                          <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
-                            {project.visuals.secondaryLeft.caption}
-                          </div>
-                          <div className="relative aspect-[4/3] w-full overflow-hidden">
-                            <Image
-                              src={project.visuals.secondaryLeft.src}
-                              alt="Courses Hub"
-                              fill
-                              sizes="(max-width: 640px) 100vw, 30vw"
-                              className="object-cover object-center"
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {project.visuals.secondaryRight && (
-                        <div className="border border-[#222222] bg-[#121212] overflow-hidden">
-                          <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
-                            {project.visuals.secondaryRight.caption}
-                          </div>
-                          <div className="relative aspect-[4/3] w-full overflow-hidden">
-                            <Image
-                              src={project.visuals.secondaryRight.src}
-                              alt="Design System"
-                              fill
-                              sizes="(max-width: 640px) 100vw, 30vw"
-                              className="object-cover object-center"
-                            />
-                          </div>
-                        </div>
-                      )}
+                    <div className="relative aspect-[9/14] sm:aspect-[9/16] w-full overflow-hidden">
+                      <Image
+                        src={project.visuals.main}
+                        alt={`${project.title} primary display`}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 40vw"
+                        className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                      />
                     </div>
                   </div>
                 )}
-              </>
+
+                {/* Secondary Stacked Panels */}
+                <div className="sm:col-span-5 space-y-4">
+                  {project.visuals.secondaryLeft && (
+                    <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
+                      {project.visuals.secondaryLeft.caption && (
+                        <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
+                          {project.visuals.secondaryLeft.caption}
+                        </div>
+                      )}
+                      <div className="relative aspect-[16/11] w-full overflow-hidden">
+                        <Image
+                          src={project.visuals.secondaryLeft.src}
+                          alt="Detail visual 1"
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 25vw"
+                          className="object-cover object-center"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {project.visuals.secondaryRight && (
+                    <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
+                      {project.visuals.secondaryRight.caption && (
+                        <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
+                          {project.visuals.secondaryRight.caption}
+                        </div>
+                      )}
+                      <div className="relative aspect-[16/11] w-full overflow-hidden">
+                        <Image
+                          src={project.visuals.secondaryRight.src}
+                          alt="Detail visual 2"
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 25vw"
+                          className="object-cover object-center"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Presentation Mode 3: Banner With Grid (Primary wide banner + 2 sub-grid cards) */}
+            {mediaLayout === "banner-with-grid" && (
+              <div className="space-y-4">
+                {project.visuals.main && (
+                  <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
+                    <div className="relative aspect-[16/9] w-full overflow-hidden">
+                      <Image
+                        src={project.visuals.main}
+                        alt={`${project.title} overview`}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 60vw"
+                        className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.01]"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Secondary Cards Below Main Banner */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {project.visuals.secondaryLeft && (
+                    <div className="border border-[#222222] bg-[#121212] overflow-hidden">
+                      <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
+                        {project.visuals.secondaryLeft.caption}
+                      </div>
+                      <div className="relative aspect-[4/3] w-full overflow-hidden">
+                        <Image
+                          src={project.visuals.secondaryLeft.src}
+                          alt="Detail left"
+                          fill
+                          sizes="(max-width: 640px) 100vw, 30vw"
+                          className="object-cover object-center"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {project.visuals.secondaryRight && (
+                    <div className="border border-[#222222] bg-[#121212] overflow-hidden">
+                      <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
+                        {project.visuals.secondaryRight.caption}
+                      </div>
+                      <div className="relative aspect-[4/3] w-full overflow-hidden">
+                        <Image
+                          src={project.visuals.secondaryRight.src}
+                          alt="Detail right"
+                          fill
+                          sizes="(max-width: 640px) 100vw, 30vw"
+                          className="object-cover object-center"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         </div>
 
         {/* ============================================================= */}
-        {/* Full-Width Metric Pillars Row (e.g. Project 01)               */}
+        {/* Full-Width Metric Pillars Row (Optional, Data-Driven)          */}
         {/* ============================================================= */}
-        {project.metrics && (
+        {project.metrics && project.metrics.length > 0 && (
           <div className="mt-14 pt-10 border-t border-[#1F1F1F]">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
               {project.metrics.map((metric) => (

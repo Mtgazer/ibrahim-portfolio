@@ -15,6 +15,7 @@
 
 export interface Project {
   id: string;
+  slug: string;
   title: string;
   subtitle: string | null;
   description: string | null;
@@ -54,12 +55,16 @@ export interface ProjectImage {
 // Project Link
 // ---------------------------------------------------------------------------
 
+export type ProjectLinkType = 'case-study' | 'demo' | 'github' | 'figma' | 'external';
+
 export interface ProjectLink {
   id: string;
   projectId: string;
   /** Display label, e.g. "Live Demo", "GitHub", "Case Study" */
   label: string;
   url: string;
+  type?: ProjectLinkType;
+  microcopy?: string;
   sortOrder: number;
 }
 
@@ -74,7 +79,7 @@ export interface AdminUser {
 }
 
 // ---------------------------------------------------------------------------
-// Editorial Case Study Presentation Types (Phase 2)
+// Editorial Case Study Presentation Types (Phase 2 / Phase 3)
 // ---------------------------------------------------------------------------
 
 export interface ProjectMetric {
@@ -89,6 +94,8 @@ export interface TechnicalPillar {
   title: string;
   description: string;
 }
+
+export type MediaLayout = 'banner-with-grid' | 'screen-trio' | 'split-panel';
 
 export interface EditorialProject extends Project {
   projectNumber: string;
@@ -105,7 +112,8 @@ export interface EditorialProject extends Project {
   coreComponentSet?: string[];
   ctaText?: string;
   ctaMicrocopy?: string;
-  layoutVariant?: 'default' | 'flipped';
+  layoutVariant?: 'default' | 'standard' | 'flipped';
+  mediaLayout?: MediaLayout;
   visuals: {
     main?: string;
     mainCaption?: string;
@@ -125,3 +133,4 @@ export interface EditorialProject extends Project {
     }>;
   };
 }
+

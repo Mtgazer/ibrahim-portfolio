@@ -1,4 +1,14 @@
-export default function SelectedWorkHeader() {
+interface SelectedWorkHeaderProps {
+  projectCount?: number;
+  indexRange?: string;
+}
+
+export default function SelectedWorkHeader({
+  projectCount = 4,
+  indexRange = "2023–2024"
+}: SelectedWorkHeaderProps) {
+  const formattedCount = String(projectCount).padStart(2, "0");
+
   return (
     <div
       id="selected-work"
@@ -15,7 +25,7 @@ export default function SelectedWorkHeader() {
             </h2>
           </div>
           <div className="font-mono text-xs text-[#707070] tracking-wider uppercase">
-            04 PROJECTS TOTAL <span className="text-[#333333] mx-1">/</span> INDEX RANGE 2023–2024
+            {`${formattedCount} PROJECTS TOTAL`} <span className="text-[#333333] mx-1">/</span> {`INDEX RANGE ${indexRange}`}
           </div>
         </div>
       </div>

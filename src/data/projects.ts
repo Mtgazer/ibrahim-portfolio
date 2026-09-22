@@ -3,6 +3,7 @@ import { EditorialProject } from "@/types";
 export const projectsData: EditorialProject[] = [
   {
     id: "hti-lms",
+    slug: "hti-lms",
     projectNumber: "01",
     badge: "PRIMARY FLAGSHIP CASE STUDY",
     title: "HTI LMS – Student Academic Platform",
@@ -24,8 +25,21 @@ export const projectsData: EditorialProject[] = [
     coverImageId: null,
     createdAt: "2024-01-15T00:00:00Z",
     updatedAt: "2024-06-20T00:00:00Z",
+    layoutVariant: "standard",
+    mediaLayout: "banner-with-grid",
     ctaText: "VIEW IN-DEPTH CASE STUDY →",
     ctaMicrocopy: "DETAILED RESEARCH, INFORMATION ARCHITECTURE & INTERACTIVE FLOW",
+    links: [
+      {
+        id: "hti-lms-cta",
+        projectId: "hti-lms",
+        label: "VIEW IN-DEPTH CASE STUDY →",
+        url: "#contact",
+        type: "case-study",
+        microcopy: "DETAILED RESEARCH, INFORMATION ARCHITECTURE & INTERACTIVE FLOW",
+        sortOrder: 1
+      }
+    ],
     metrics: [
       {
         label: "STUDENT INTAKE TESTING",
@@ -52,6 +66,7 @@ export const projectsData: EditorialProject[] = [
     ],
     visuals: {
       main: "/images/projects/p1-main.png",
+      mainCaption: "[HTI LMS — PRIMARY SHOWCASE]",
       secondaryLeft: {
         src: "/images/projects/p1-sec1.png",
         caption: "[HTI LMS - COURSES HUB]  GRID VIEW"
@@ -64,6 +79,7 @@ export const projectsData: EditorialProject[] = [
   },
   {
     id: "shopping-app",
+    slug: "shopping-app",
     projectNumber: "02",
     title: "Shopping App – Mobile Retail Experience",
     subtitle: "[MOBILE COMMERCE · UI EXPLORATION]",
@@ -83,10 +99,13 @@ export const projectsData: EditorialProject[] = [
     coverImageId: null,
     createdAt: "2023-07-10T00:00:00Z",
     updatedAt: "2023-08-01T00:00:00Z",
+    layoutVariant: "standard",
+    mediaLayout: "screen-trio",
     growthNote: {
       title: "REFLECTIVE GROWTH NOTE",
       text: "Created prior to transitioning to comprehensive design system tokens. This project was a foundational milestone where I refined visual rhythm, typography proportions, and spacing discipline on mobile touch targets."
     },
+    links: [],
     visuals: {
       screens: [
         {
@@ -107,6 +126,7 @@ export const projectsData: EditorialProject[] = [
   },
   {
     id: "sigma-computer",
+    slug: "sigma-computer",
     projectNumber: "03",
     title: "Sigma Computer – Hardware Discovery Concept",
     subtitle: "[CONCEPT PROJECT · HARDWARE CATALOG]",
@@ -123,6 +143,7 @@ export const projectsData: EditorialProject[] = [
     createdAt: "2024-03-05T00:00:00Z",
     updatedAt: "2024-04-10T00:00:00Z",
     layoutVariant: "flipped",
+    mediaLayout: "split-panel",
     description:
       "High-end PC components present complex spec sheets that overwhelm typical mobile shoppers. Sigma Computer restructures hardware shopping by transforming dense benchmark tables into scannable visual comparison modules with real-time compatibility validation.",
     pillars: [
@@ -146,9 +167,20 @@ export const projectsData: EditorialProject[] = [
       }
     ],
     ctaText: "FIGMA PROTOTYPE READY · MOBILE SPEC BREAKDOWN",
+    links: [
+      {
+        id: "sigma-prototype-link",
+        projectId: "sigma-computer",
+        label: "FIGMA PROTOTYPE READY · MOBILE SPEC BREAKDOWN",
+        url: "#contact",
+        type: "figma",
+        sortOrder: 1
+      }
+    ],
     visuals: {
       main: "/images/projects/p3-main.png",
       mainCaption: "[SIGMA — HARDWARE HOME]  MOBILE VIEWPORT",
+      mainBadge: "MOBILE SPEC",
       secondaryLeft: {
         src: "/images/projects/p3-spec.png",
         caption: "[SIGMA — SPEC DETAIL]  METRICS"
@@ -161,6 +193,7 @@ export const projectsData: EditorialProject[] = [
   },
   {
     id: "book-store",
+    slug: "book-store",
     projectNumber: "04",
     title: "Book Store – Reader Discovery & Marketplace",
     subtitle: "[EDITORIAL COMMERCE · COMPONENT ARCHITECTURE]",
@@ -176,6 +209,8 @@ export const projectsData: EditorialProject[] = [
     coverImageId: null,
     createdAt: "2024-05-12T00:00:00Z",
     updatedAt: "2024-06-18T00:00:00Z",
+    layoutVariant: "standard",
+    mediaLayout: "split-panel",
     description:
       "An exploration of editorial book discovery centered around atomic UI architecture. Built specifically to demonstrate systematic component variants: dynamic cover ratios, typography-led excerpt cards, audio vs. physical purchase toggles, and robust empty/error authentication states.",
     coreComponentSet: [
@@ -186,9 +221,11 @@ export const projectsData: EditorialProject[] = [
       "Rating Distribution",
       "Auth Modal Variations"
     ],
+    links: [],
     visuals: {
       main: "/images/projects/p4-main.png",
       mainCaption: "[BOOK STORE — HOME]  FEED",
+      mainBadge: "FEED",
       secondaryLeft: {
         src: "/images/projects/p4-cards.png",
         caption: "[BOOK STORE — CARD VARIANTS]"

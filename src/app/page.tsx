@@ -7,9 +7,12 @@ import ProjectArticle from "@/components/sections/ProjectArticle";
 import DailyUISection from "@/components/sections/DailyUISection";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
-import { projectsData } from "@/data/projects";
+import { getPublishedProjects, getProjectIndexRange } from "@/lib/projects";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const projects = await getPublishedProjects();
+  const indexRange = await getProjectIndexRange();
+
   return (
     <div className="min-h-screen flex flex-col bg-[#0C0C0C] text-[#F3F3F3]">
       {/* 1. Header Navigation */}
@@ -24,11 +27,14 @@ export default function HomePage() {
         <EditorialCoordinateBar />
 
         {/* 4. Selected Work Header */}
-        <SelectedWorkHeader />
+        <SelectedWorkHeader
+          projectCount={projects.length}
+          indexRange={indexRange}
+        />
 
         {/* 5. Project Case Study Presentations */}
         <section className="w-full bg-[#0C0C0C]">
-          {projectsData.map((project) => (
+          {projects.map((project) => (
             <ProjectArticle key={project.id} project={project} />
           ))}
         </section>
