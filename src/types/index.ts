@@ -72,3 +72,56 @@ export interface AdminUser {
   email: string;
   createdAt: string;
 }
+
+// ---------------------------------------------------------------------------
+// Editorial Case Study Presentation Types (Phase 2)
+// ---------------------------------------------------------------------------
+
+export interface ProjectMetric {
+  label: string;
+  value: string;
+  detail: string;
+  isGold?: boolean;
+}
+
+export interface TechnicalPillar {
+  number: string;
+  title: string;
+  description: string;
+}
+
+export interface EditorialProject extends Project {
+  projectNumber: string;
+  badge?: string;
+  teamStructure?: string;
+  disciplineScope?: string;
+  statusText?: string;
+  growthNote?: {
+    title: string;
+    text: string;
+  };
+  metrics?: ProjectMetric[];
+  pillars?: TechnicalPillar[];
+  coreComponentSet?: string[];
+  ctaText?: string;
+  ctaMicrocopy?: string;
+  layoutVariant?: 'default' | 'flipped';
+  visuals: {
+    main?: string;
+    mainCaption?: string;
+    mainBadge?: string;
+    secondaryLeft?: {
+      src: string;
+      caption?: string;
+    };
+    secondaryRight?: {
+      src: string;
+      caption?: string;
+    };
+    screens?: Array<{
+      src: string;
+      caption?: string;
+      isHighlighted?: boolean;
+    }>;
+  };
+}

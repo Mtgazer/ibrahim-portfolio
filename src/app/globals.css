@@ -1,9 +1,49 @@
 @import "tailwindcss";
 
-/*
-  Design tokens will be defined here in Phase 2,
-  once the Figma design system has been verified.
+@theme {
+  --font-sans: var(--font-epilogue), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
 
-  This file intentionally contains no colour, font,
-  or spacing decisions — those will come from the design.
-*/
+  --color-page: #0C0C0C;
+  --color-card: #141414;
+  --color-panel: #1A1A1A;
+  --color-gold: #E5B842;
+  --color-gold-hover: #F0C44E;
+  --color-gold-dark: #A8862A;
+  --color-border-dark: #222222;
+  --color-border-line: #1F1F1F;
+  --color-text-primary: #F3F3F3;
+  --color-text-secondary: #9E9E9E;
+  --color-text-muted: #666666;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #0C0C0C;
+}
+
+body {
+  background-color: #0C0C0C;
+  color: #F3F3F3;
+  font-family: var(--font-epilogue), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom editorial scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0C0C0C;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E5B842;
+}
