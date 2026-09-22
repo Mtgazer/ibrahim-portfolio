@@ -1,24 +1,20 @@
-/*
-  /admin/projects/[id] — edit existing project.
+import { requireAdmin } from "@/lib/auth";
 
-  Edit form for all project fields, image management, and link management
-  will be implemented in Phase 5.
-  Requires: Supabase (Phase 3), authentication (Phase 4).
-
-  params — Promise resolving to { id: string } (project UUID).
-  params is awaited here to satisfy Next.js 16 async params convention;
-  the value is not used until Phase 5.
-*/
 export default async function AdminProjectEditPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await params; // resolved in Phase 5 when the edit form is implemented
+  await requireAdmin();
+  const { id } = await params;
 
   return (
-    <main>
-      {/* Edit project form — Phase 5 */}
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="border border-[#1F1F1F] bg-[#141414] p-8">
+        <h1 className="font-mono text-sm text-[#E5B842] uppercase tracking-wider">
+          [EDIT PROJECT WORKSPACE // ID: {id} — DEFERRED TO PHASE 6]
+        </h1>
+      </div>
     </main>
   );
 }

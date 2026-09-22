@@ -1,15 +1,15 @@
-/*
-  /admin/projects/new — create new project.
+import { requireAdmin } from "@/lib/auth";
 
-  Project creation form with all fields (title, subtitle, description,
-  category, year, role, tools, tags, links, images) will be
-  implemented in Phase 5.
-  Requires: Supabase (Phase 3), authentication (Phase 4).
-*/
-export default function AdminProjectsNewPage() {
+export default async function AdminProjectsNewPage() {
+  await requireAdmin();
+
   return (
-    <main>
-      {/* Create project form — Phase 5 */}
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="border border-[#1F1F1F] bg-[#141414] p-8">
+        <h1 className="font-mono text-sm text-[#E5B842] uppercase tracking-wider">
+          [NEW PROJECT WORKSPACE — DEFERRED TO PHASE 6]
+        </h1>
+      </div>
     </main>
   );
 }
