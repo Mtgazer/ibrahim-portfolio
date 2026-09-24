@@ -6,6 +6,94 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
+// ---------------------------------------------------------------------------
+// PresentationData — strongly-typed shape of the presentation_data JSONB
+// column on the projects table.
+//
+// This is the canonical application-level contract.  Do NOT widen this to
+// Record<string, unknown> in calling code.
+// ---------------------------------------------------------------------------
+
+export interface PresentationDataVisualScreen {
+  src: string;
+  caption?: string;
+  isHighlighted?: boolean;
+}
+
+export interface PresentationDataVisualSide {
+  src: string;
+  caption?: string;
+}
+
+/**
+ * The JSONB visual fallback block stored inside presentation_data.
+ *
+ * Rendering precedence (applied in src/lib/projects.ts):
+ *   1. DB project_images rows (Storage URLs)
+ *   2. presentation_data.visuals paths (public/ folder fallback)
+ *
+ * If all uploaded Storage images are later deleted the public site will
+ * fall back to the paths stored here, which render only when the
+ * corresponding files exist under public/images/projects/.
+ */
+export interface PresentationDataVisuals {
+  /** Path for the primary / banner image (public/ relative path or URL). */
+  main?: string;
+  mainCaption?: string;
+  mainBadge?: string;
+  secondaryLeft?: PresentationDataVisualSide;
+  secondaryRight?: PresentationDataVisualSide;
+  /** Used by the 'screen-trio' mediaLayout. */
+  screens?: PresentationDataVisualScreen[];
+}
+
+export type MediaLayout = 'banner-with-grid' | 'screen-trio' | 'split-panel';
+export type LayoutVariant = 'default' | 'standard' | 'flipped';
+
+export interface PresentationDataMetric {
+  label: string;
+  value: string;
+  detail: string;
+  isGold?: boolean;
+}
+
+export interface PresentationDataPillar {
+  number: string;
+  title: string;
+  description: string;
+}
+
+export interface PresentationDataGrowthNote {
+  title: string;
+  text: string;
+}
+
+/**
+ * Full shape of the presentation_data JSONB column.
+ * This is the exported type that application code must use — never
+ * use a bare `Json` or `Record<string, unknown>` as the contract.
+ */
+export interface PresentationData {
+  projectNumber: string;
+  badge?: string;
+  teamStructure?: string;
+  disciplineScope?: string;
+  statusText?: string;
+  growthNote?: PresentationDataGrowthNote;
+  metrics?: PresentationDataMetric[];
+  pillars?: PresentationDataPillar[];
+  coreComponentSet?: string[];
+  ctaText?: string;
+  ctaMicrocopy?: string;
+  layoutVariant?: LayoutVariant;
+  mediaLayout?: MediaLayout;
+  /**
+   * Visual fallback paths. Overridden at render time by DB project_images
+   * rows (which carry Supabase Storage public URLs).
+   */
+  visuals?: PresentationDataVisuals;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -24,6 +112,7 @@ export interface Database {
           is_published: boolean;
           is_featured: boolean;
           sort_order: number;
+          presentation_data: PresentationData | null;
           created_at: string;
           updated_at: string;
         };
@@ -41,6 +130,7 @@ export interface Database {
           is_published?: boolean;
           is_featured?: boolean;
           sort_order?: number;
+          presentation_data?: PresentationData | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -58,6 +148,7 @@ export interface Database {
           is_published?: boolean;
           is_featured?: boolean;
           sort_order?: number;
+          presentation_data?: PresentationData | null;
           created_at?: string;
           updated_at?: string;
         };

@@ -4,10 +4,33 @@
   These interfaces define the shape of the project data model
   used throughout the public portfolio and admin dashboard.
 
-  They will be connected to the Supabase database schema in Phase 3.
-  Database-generated types (from `supabase gen types`) will either
-  replace or augment these in Phase 3.
+  Presentation-specific types (PresentationData, MediaLayout, LayoutVariant,
+  visuals shapes, metrics, pillars) live in src/types/database.ts as they
+  directly mirror the presentation_data JSONB column contract.
 */
+
+import type {
+  PresentationDataVisuals,
+  PresentationDataMetric,
+  PresentationDataPillar,
+  PresentationDataGrowthNote,
+  MediaLayout,
+  LayoutVariant,
+} from "@/types/database";
+
+// Re-export the PresentationData type family so consumers can import from
+// either @/types or @/types/database without caring about which file owns them.
+export type {
+  PresentationData,
+  PresentationDataVisuals,
+  PresentationDataVisualScreen,
+  PresentationDataVisualSide,
+  PresentationDataMetric,
+  PresentationDataPillar,
+  PresentationDataGrowthNote,
+  MediaLayout,
+  LayoutVariant,
+} from "@/types/database";
 
 // ---------------------------------------------------------------------------
 // Project
@@ -82,23 +105,14 @@ export interface AdminUser {
 }
 
 // ---------------------------------------------------------------------------
-// Editorial Case Study Presentation Types (Phase 2 / Phase 3)
+// Editorial Case Study Presentation Types (Phase 7: sourced from Supabase)
 // ---------------------------------------------------------------------------
 
-export interface ProjectMetric {
-  label: string;
-  value: string;
-  detail: string;
-  isGold?: boolean;
-}
+/** @deprecated Use PresentationDataMetric from @/types/database directly. */
+export type ProjectMetric = PresentationDataMetric;
 
-export interface TechnicalPillar {
-  number: string;
-  title: string;
-  description: string;
-}
-
-export type MediaLayout = 'banner-with-grid' | 'screen-trio' | 'split-panel';
+/** @deprecated Use PresentationDataPillar from @/types/database directly. */
+export type TechnicalPillar = PresentationDataPillar;
 
 export interface EditorialProject extends Project {
   projectNumber: string;
@@ -106,34 +120,23 @@ export interface EditorialProject extends Project {
   teamStructure?: string;
   disciplineScope?: string;
   statusText?: string;
-  growthNote?: {
-    title: string;
-    text: string;
-  };
-  metrics?: ProjectMetric[];
-  pillars?: TechnicalPillar[];
+  growthNote?: PresentationDataGrowthNote;
+  metrics?: PresentationDataMetric[];
+  pillars?: PresentationDataPillar[];
   coreComponentSet?: string[];
   ctaText?: string;
   ctaMicrocopy?: string;
-  layoutVariant?: 'default' | 'standard' | 'flipped';
+  layoutVariant?: LayoutVariant;
   mediaLayout?: MediaLayout;
-  visuals: {
-    main?: string;
-    mainCaption?: string;
-    mainBadge?: string;
-    secondaryLeft?: {
-      src: string;
-      caption?: string;
-    };
-    secondaryRight?: {
-      src: string;
-      caption?: string;
-    };
-    screens?: Array<{
-      src: string;
-      caption?: string;
-      isHighlighted?: boolean;
-    }>;
-  };
+  /**
+   * Resolved visuals for rendering.
+   *
+   * Precedence (applied in src/lib/projects.ts mapDbProjectToEditorialProject):
+   *   1. DB project_images rows (Supabase Storage public URLs)
+   *   2. presentation_data.visuals fallback (public/ local paths)
+   *
+   * If all uploaded Storage images are deleted the site will fall back to
+   * public/ paths stored in presentation_data.visuals (if present).
+   */
+  visuals: PresentationDataVisuals;
 }
-
