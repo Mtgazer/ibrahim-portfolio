@@ -31,7 +31,7 @@ export const personalInfo: PersonalInfo = {
   coordinates: "30.0444° N, 31.2357° E",
   timezone: "Eastern European Time [UTC+2]",
   email: "mtgazerr@gmail.com",
-  linkedinUrl: "https://linkedin.com/in/ibrahimkhalil",
+  linkedinUrl: "https://www.linkedin.com/in/ebrahim-khalil-a50168291/",
   githubUrl: "https://github.com/Mtgazer",
   dossierVersion: "V2.4",
   commissionStatus: "OPEN FOR COMMISSION",
