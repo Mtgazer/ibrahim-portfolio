@@ -1,10 +1,10 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
+import FieldNotesSection from "@/components/sections/FieldNotesSection";
 import EditorialCoordinateBar from "@/components/sections/EditorialCoordinateBar";
 import SelectedWorkHeader from "@/components/sections/SelectedWorkHeader";
 import ProjectArticle from "@/components/sections/ProjectArticle";
-import DailyUISection from "@/components/sections/DailyUISection";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
 import { getPublishedProjects, getProjectIndexRange } from "@/lib/projects";
@@ -23,24 +23,24 @@ export default async function HomePage() {
         {/* 2. Hero Section */}
         <HeroSection />
 
-        {/* 3. Top Progress & Editorial Coordinate Bar */}
+        {/* 3. Field Notes & Practice Area */}
+        <FieldNotesSection />
+
+        {/* 4. Top Progress & Editorial Coordinate Bar */}
         <EditorialCoordinateBar />
 
-        {/* 4. Selected Work Header */}
+        {/* 5. Selected Work Header */}
         <SelectedWorkHeader
           projectCount={projects.length}
           indexRange={indexRange}
         />
 
-        {/* 5. Project Case Study Presentations */}
+        {/* 6. Project Case Study Presentations */}
         <section className="w-full bg-[#0C0C0C]">
           {projects.map((project) => (
             <ProjectArticle key={project.id} project={project} />
           ))}
         </section>
-
-        {/* 6. Daily UI & Explorations (Flowly) */}
-        <DailyUISection />
 
         {/* 7. About & Capabilities Matrix */}
         <AboutSection />

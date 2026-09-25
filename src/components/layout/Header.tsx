@@ -46,10 +46,10 @@ export default function Header() {
             ABOUT & CAPABILITIES
           </Link>
           <Link
-            href="#daily-ui"
+            href="#field-notes"
             className="text-[#A0A0A0] hover:text-[#E5B842] transition-colors"
           >
-            ARCHIVE
+            FIELD NOTES
           </Link>
           <Link
             href="#contact"
@@ -145,11 +145,11 @@ export default function Header() {
             ABOUT & CAPABILITIES
           </Link>
           <Link
-            href="#daily-ui"
+            href="#field-notes"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-[#C0C0C0] hover:text-white py-2 border-b border-[#1A1A1A]"
           >
-            ARCHIVE / DAILY UI
+            FIELD NOTES
           </Link>
           <Link
             href="#contact"
