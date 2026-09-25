@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { personalInfo } from "@/data/personal";
 
@@ -59,36 +58,18 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Action + Avatar */}
-        <div className="hidden sm:flex items-center gap-4">
+        {/* Action */}
+        <div className="hidden sm:flex items-center">
           <Link
             href="#contact"
             className="border border-[#E5B842] px-4 py-1.5 text-xs font-mono tracking-wider text-[#E5B842] hover:bg-[#E5B842] hover:text-black transition-all duration-200"
           >
             LET&apos;S CONNECT
           </Link>
-          <div className="w-8 h-8 rounded-full overflow-hidden border border-[#333333] relative bg-[#1A1A1A] flex-shrink-0">
-            <Image
-              src="/images/avatar.png"
-              alt={personalInfo.name}
-              width={32}
-              height={32}
-              className="object-cover w-full h-full"
-            />
-          </div>
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex items-center gap-3 lg:hidden">
-          <div className="w-7 h-7 rounded-full overflow-hidden border border-[#333333] relative bg-[#1A1A1A] sm:hidden flex-shrink-0">
-            <Image
-              src="/images/avatar.png"
-              alt={personalInfo.name}
-              width={28}
-              height={28}
-              className="object-cover w-full h-full"
-            />
-          </div>
+        <div className="flex items-center lg:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
