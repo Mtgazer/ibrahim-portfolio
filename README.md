@@ -1,36 +1,288 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ibrahim Khalil — Portfolio & Work Archive
 
-## Getting Started
+> A living archive of my work, experiments, projects, and ongoing engineering journey.
 
-First, run the development server:
+[![Live Portfolio](https://img.shields.io/badge/Live%20Portfolio-Visit%20Site-black?style=for-the-badge)](https://ibrahim-portfolio-flax.vercel.app)
+
+---
+
+## About
+
+This repository contains my personal portfolio and professional work archive.
+
+The website is designed to document not only my major projects, but also the work I continuously build and explore across software development, UI/UX, AI, Data Science, Machine Learning, and data visualization.
+
+Instead of being a static portfolio, the goal is to make it a long-term record of my technical growth and work.
+
+## What You'll Find
+
+### Selected Work
+
+Major projects and case studies that represent larger pieces of work.
+
+### Field Notes
+
+Smaller and more frequent work such as:
+
+* AI experiments
+* Data Science projects
+* Machine Learning experiments
+* Power BI dashboards
+* Data analysis
+* Data visualization
+* UI/UX explorations
+* Frontend experiments
+* Backend experiments
+* DevOps and cloud work
+
+### Professional Identity
+
+Information about my background, skills, interests, and professional journey.
+
+---
+
+## Tech Stack
+
+### Frontend
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+
+### Backend & Data
+
+* Supabase
+* PostgreSQL
+* Supabase Auth
+* Supabase Storage
+* Row Level Security (RLS)
+* Server Actions
+
+### Deployment
+
+* Vercel
+
+---
+
+## Architecture
+
+The portfolio uses a Supabase-backed content architecture.
+
+```text
+Admin Dashboard
+       ↓
+   Supabase
+       ↓
+Published Content
+       ↓
+Public Portfolio
+```
+
+Projects are managed dynamically through the admin dashboard, including:
+
+* Project information
+* Publishing state
+* Featured state
+* Links
+* Images
+* Primary images
+* Ordering
+* Presentation data
+
+The long-term architecture also supports an independent Field Notes system for documenting ongoing work and experiments.
+
+---
+
+## Project Structure
+
+The portfolio is built around three main content concepts:
+
+### Projects
+
+Major, curated case studies and portfolio work.
+
+### Field Notes
+
+Frequent and lightweight records of recent work, experiments, dashboards, AI projects, Data Science work, and technical exploration.
+
+### Profile
+
+Professional identity, background, interests, and contact information.
+
+This structure allows the portfolio to evolve continuously without turning every new piece of work into a large case study.
+
+---
+
+## Features
+
+* Figma-driven editorial portfolio
+* Responsive public website
+* Supabase-backed project management
+* Admin authentication
+* Admin allowlisting
+* Project CRUD
+* Project publishing and ordering
+* Project link management
+* Project image management
+* Primary image management
+* Supabase Storage integration
+* PostgreSQL Row Level Security
+* Presentation data for project layouts
+* Server-side data access
+* Protected Server Actions
+* Vercel deployment
+
+---
+
+## Design
+
+The portfolio follows an editorial visual direction based on the original Figma design.
+
+Key characteristics:
+
+* Dark visual system
+* Editorial layouts
+* Strong typography
+* 12-column grid
+* Asymmetrical compositions
+* Structured spacing
+* Responsive layouts
+
+Typography:
+
+* Space Mono
+* Epilogue
+
+The public interface is intentionally designed as a single editorial experience rather than a traditional dashboard-style portfolio.
+
+---
+
+## Security
+
+The admin system uses:
+
+* Supabase Authentication
+* Admin allowlisting
+* Row Level Security
+* Protected Server Actions
+* Server-side mutations
+
+Public users can only access published content.
+
+Sensitive server credentials are never exposed to the client.
+
+---
+
+## Image Standards
+
+Project visuals are designed around consistent aspect ratios.
+
+Recommended project visuals:
+
+* Main / Hero / Secondary: `16:10`
+* Mobile screens: `9:16`
+
+Example dimensions:
+
+```text
+1600 × 1000
+1920 × 1200
+2400 × 1500
+
+Mobile:
+1080 × 1920
+```
+
+Preferred formats:
+
+* WebP
+* PNG
+
+Maximum upload size:
+
+```text
+10 MB
+```
+
+---
+
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run TypeScript checks:
 
-## Learn More
+```bash
+npx tsc --noEmit
+```
 
-To learn more about Next.js, take a look at the following resources:
+Run lint:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Build for production:
 
-## Deploy on Vercel
+```bash
+npm run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+The production website is deployed on Vercel.
+
+Live website:
+
+[https://ibrahim-portfolio-flax.vercel.app](https://ibrahim-portfolio-flax.vercel.app)
+
+The repository is connected to Vercel, so changes pushed to the `main` branch can trigger a new deployment.
+
+---
+
+## AI-Assisted Development
+
+This project was developed with AI assistance.
+
+AI is used as an engineering copilot for implementation, debugging, exploration, and iteration.
+
+Architecture, product direction, design decisions, security requirements, testing, review, and final acceptance remain human-driven.
+
+The goal is to use AI as a development tool while maintaining understanding and ownership of the resulting system.
+
+---
+
+## Project Status
+
+This project is actively evolving.
+
+The long-term goal is to turn the portfolio into a professional work archive where new projects, experiments, dashboards, AI work, Data Science work, and technical explorations can be continuously documented without rebuilding the website.
+
+The website is intended to grow alongside my career.
+
+---
+
+## License
+
+This repository contains my personal portfolio and project work.
+
+All rights reserved unless otherwise stated.
