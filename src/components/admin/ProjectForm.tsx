@@ -130,7 +130,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
       {errorMessage && (
         <div
           role="alert"
-          className="p-4 border border-[#E55353]/40 bg-[#1A1A1A] font-mono text-xs text-[#E55353] leading-relaxed flex items-center justify-between"
+          className="p-4 border border-[#E55353]/40 bg-[#1A1A1A] rounded-[6px] font-mono text-xs text-[#E55353] leading-relaxed flex items-center justify-between"
         >
           <span>{errorMessage}</span>
           <button
@@ -146,7 +146,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
       {successMessage && (
         <div
           role="status"
-          className="p-4 border border-[#E5B842]/40 bg-[#1A1A1A] font-mono text-xs text-[#E5B842] leading-relaxed flex items-center justify-between"
+          className="p-4 border border-[#E5B842]/40 bg-[#1A1A1A] rounded-[6px] font-mono text-xs text-[#E5B842] leading-relaxed flex items-center justify-between"
         >
           <span>{successMessage}</span>
           <button
@@ -160,7 +160,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
       )}
 
       {/* SECTION 1: Core Information */}
-      <section className="border border-[#1F1F1F] bg-[#141414] p-6 sm:p-8 space-y-6">
+      <section className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8 space-y-6">
         <div className="border-b border-[#1F1F1F] pb-4 flex items-center justify-between">
           <div>
             <span className="font-mono text-[10px] text-[#E5B842] uppercase tracking-widest block mb-1">
@@ -189,7 +189,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="e.g. HTI LMS – Student Academic Platform"
-              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors"
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors rounded-[8px]"
             />
           </div>
 
@@ -214,7 +214,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
               </button>
             </div>
             <div className="flex items-center">
-              <span className="bg-[#1C1C1C] border border-r-0 border-[#262626] text-[#707070] font-mono text-xs px-3 py-2.5 select-none">
+              <span className="bg-[#1C1C1C] border border-r-0 border-[#262626] text-[#707070] font-mono text-xs px-3 py-2.5 select-none rounded-l-[8px]">
                 /projects/
               </span>
               <input
@@ -227,7 +227,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
                   setSlugManuallyEdited(true);
                 }}
                 placeholder="hti-lms-student-academic-platform"
-                className="flex-1 bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors"
+                className="flex-1 bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors rounded-r-[8px]"
               />
             </div>
             <p className="font-mono text-[10px] text-[#707070] mt-1.5 tracking-wider">
@@ -249,7 +249,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
               placeholder="e.g. HTI COMPUTER SCIENCE · ACADEMIC PLATFORM"
-              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors"
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors rounded-[8px]"
             />
           </div>
 
@@ -267,14 +267,14 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="A comprehensive summary of the project architecture, goals, and design execution..."
-              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] text-sm px-4 py-2.5 outline-hidden transition-colors leading-relaxed"
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] text-sm px-4 py-2.5 outline-hidden transition-colors leading-relaxed rounded-[8px]"
             />
           </div>
         </div>
       </section>
 
       {/* SECTION 2: Classification & Architecture */}
-      <section className="border border-[#1F1F1F] bg-[#141414] p-6 sm:p-8 space-y-6">
+      <section className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8 space-y-6">
         <div className="border-b border-[#1F1F1F] pb-4">
           <span className="font-mono text-[10px] text-[#E5B842] uppercase tracking-widest block mb-1">
             [SECTION 02 // CLASSIFICATION]
@@ -299,7 +299,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="e.g. Academic Platform"
-              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors"
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors rounded-[8px]"
             />
           </div>
 
@@ -321,7 +321,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
                 setYear(e.target.value === "" ? "" : parseInt(e.target.value, 10))
               }
               placeholder="2024"
-              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors"
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors rounded-[8px]"
             />
           </div>
 
@@ -339,7 +339,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
               value={role}
               onChange={(e) => setRole(e.target.value)}
               placeholder="e.g. UI/UX Team Lead & Designer"
-              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors"
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors rounded-[8px]"
             />
           </div>
 
@@ -357,7 +357,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
               value={toolsInput}
               onChange={(e) => setToolsInput(e.target.value)}
               placeholder="Figma, FigJam, React Tokens, Tailwind CSS"
-              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors"
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors rounded-[8px]"
             />
           </div>
 
@@ -375,14 +375,14 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
               placeholder="UI/UX Design, Design Systems, Education, Product Architecture"
-              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors"
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-4 py-2.5 outline-hidden transition-colors rounded-[8px]"
             />
           </div>
         </div>
       </section>
 
       {/* SECTION 3: Publication & Visibility */}
-      <section className="border border-[#1F1F1F] bg-[#141414] p-6 sm:p-8 space-y-6">
+      <section className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8 space-y-6">
         <div className="border-b border-[#1F1F1F] pb-4">
           <span className="font-mono text-[10px] text-[#E5B842] uppercase tracking-widest block mb-1">
             [SECTION 03 // DISPOSITION]
@@ -394,7 +394,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {/* Published Toggle */}
-          <div className="border border-[#262626] bg-[#0C0C0C] p-4 space-y-2">
+          <div className="border border-[#262626] bg-[#0C0C0C] rounded-[8px] p-4 space-y-2">
             <div className="flex items-center justify-between">
               <label
                 htmlFor="project-published"
@@ -418,7 +418,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
           </div>
 
           {/* Featured Toggle */}
-          <div className="border border-[#262626] bg-[#0C0C0C] p-4 space-y-2">
+          <div className="border border-[#262626] bg-[#0C0C0C] rounded-[8px] p-4 space-y-2">
             <div className="flex items-center justify-between">
               <label
                 htmlFor="project-featured"
@@ -442,7 +442,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
           </div>
 
           {/* Sort Order */}
-          <div className="border border-[#262626] bg-[#0C0C0C] p-4 space-y-2">
+          <div className="border border-[#262626] bg-[#0C0C0C] rounded-[8px] p-4 space-y-2">
             <label
               htmlFor="project-sort-order"
               className="block font-mono text-xs font-semibold text-[#F3F3F3] uppercase tracking-wider"
@@ -458,7 +458,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
                   e.target.value === "" ? 0 : parseInt(e.target.value, 10)
                 )
               }
-              className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-3 py-1.5 outline-hidden"
+              className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-sm px-3 py-1.5 outline-hidden rounded-[8px]"
             />
             <p className="font-mono text-[10px] text-[#707070] leading-relaxed">
               Lower numbers appear first on the public homepage (1, 2, 3...).
@@ -471,7 +471,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
       <div className="flex items-center justify-between border-t border-[#1F1F1F] pt-6 flex-wrap gap-4">
         <Link
           href="/admin/projects"
-          className="font-mono text-xs text-[#9E9E9E] hover:text-[#F3F3F3] border border-[#262626] px-5 py-3 uppercase tracking-wider transition-colors"
+          className="font-mono text-xs text-[#9E9E9E] hover:text-[#F3F3F3] border border-[#262626] rounded-[8px] px-5 py-3 uppercase tracking-wider transition-colors"
         >
           ← Return to Project List
         </Link>
@@ -479,7 +479,7 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
         <button
           type="submit"
           disabled={loading}
-          className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold uppercase tracking-wider px-8 py-3.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold uppercase tracking-wider px-8 py-3.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 rounded-[8px]"
         >
           {loading ? (
             <>

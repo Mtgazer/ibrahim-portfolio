@@ -105,7 +105,7 @@ export default function ProjectListTable({
                 key={tab}
                 type="button"
                 onClick={() => setFilter(tab)}
-                className={`font-mono text-xs px-3.5 py-1.5 uppercase tracking-wider transition-colors cursor-pointer border ${
+                className={`font-mono text-xs px-3.5 py-1.5 uppercase tracking-wider transition-colors cursor-pointer border rounded-[6px] ${
                   isActive
                     ? "bg-[#E5B842] text-[#0C0C0C] border-[#E5B842] font-bold"
                     : "text-[#9E9E9E] hover:text-[#F3F3F3] border-[#222222] hover:border-[#333333]"
@@ -119,7 +119,7 @@ export default function ProjectListTable({
 
         <Link
           href="/admin/projects/new"
-          className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold px-4 py-2 uppercase tracking-wider transition-colors cursor-pointer"
+          className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold px-4 py-2 uppercase tracking-wider transition-colors cursor-pointer rounded-[8px]"
         >
           + New Project
         </Link>
@@ -140,7 +140,7 @@ export default function ProjectListTable({
           )}
         </div>
       ) : (
-        <div className="border border-[#1F1F1F] bg-[#141414] overflow-x-auto">
+        <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] overflow-x-auto">
           <table className="w-full text-left font-mono text-xs border-collapse">
             <thead>
               <tr className="border-b border-[#1F1F1F] bg-[#0E0E0E] text-[#707070] uppercase text-[10px] tracking-wider select-none">
@@ -171,7 +171,7 @@ export default function ProjectListTable({
                   >
                     {/* Thumbnail */}
                     <td className="py-3 px-4">
-                      <div className="relative w-12 h-9 bg-[#0C0C0C] border border-[#222222] overflow-hidden flex items-center justify-center">
+                      <div className="relative w-12 h-9 bg-[#0C0C0C] border border-[#222222] rounded-[6px] overflow-hidden flex items-center justify-center">
                         {imgSrc ? (
                           <Image
                             src={imgSrc}
@@ -222,7 +222,7 @@ export default function ProjectListTable({
                         type="button"
                         onClick={() => handleTogglePublished(p.id, p.is_published)}
                         disabled={isBusy}
-                        className={`px-2.5 py-1 text-[10px] uppercase font-bold border transition-colors cursor-pointer ${
+                        className={`px-2.5 py-1 text-[10px] uppercase font-bold border rounded-[6px] transition-colors cursor-pointer ${
                           p.is_published
                             ? "bg-[#E5B842]/10 border-[#E5B842]/50 text-[#E5B842] hover:bg-[#E5B842]/20"
                             : "bg-[#1E1E1E] border-[#333333] text-[#707070] hover:text-[#9E9E9E]"
@@ -239,7 +239,7 @@ export default function ProjectListTable({
                         type="button"
                         onClick={() => handleToggleFeatured(p.id, p.is_featured)}
                         disabled={isBusy}
-                        className={`px-2 py-1 text-[10px] uppercase border transition-colors cursor-pointer ${
+                        className={`px-2 py-1 text-[10px] uppercase border rounded-[6px] transition-colors cursor-pointer ${
                           p.is_featured
                             ? "border-[#E5B842] text-[#E5B842] bg-[#E5B842]/10"
                             : "border-[#262626] text-[#555555] hover:text-[#888888]"
@@ -258,14 +258,14 @@ export default function ProjectListTable({
                         </span>
                         <Link
                           href={`/admin/projects/${p.id}`}
-                          className="px-3 py-1.5 border border-[#333333] hover:border-[#E5B842] text-[#9E9E9E] hover:text-[#E5B842] uppercase tracking-wider transition-colors"
+                          className="px-3 py-1.5 border border-[#333333] hover:border-[#E5B842] text-[#9E9E9E] hover:text-[#E5B842] uppercase tracking-wider transition-colors rounded-[6px]"
                         >
                           Edit
                         </Link>
                         <ProjectDeleteButton
                           projectId={p.id}
                           projectTitle={p.title}
-                          className="px-2.5 py-1.5 border border-[#E55353]/30 text-[#E55353] hover:bg-[#E55353]/10 uppercase text-[11px] transition-colors"
+                          className="px-2.5 py-1.5 border border-[#E55353]/30 text-[#E55353] hover:bg-[#E55353]/10 uppercase text-[11px] transition-colors rounded-[6px]"
                         />
                       </div>
                     </td>

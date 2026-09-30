@@ -11,22 +11,22 @@ export default function HeroSection() {
   ];
 
   return (
-    <section className="relative w-full pt-12 pb-20 md:pt-20 md:pb-28 border-b border-[#1A1A1A]">
+    <section id="work" className="relative w-full pt-12 pb-20 md:pt-20 md:pb-28 border-b border-[#1A1A1A]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
           {/* Left Column (Main Editorial Content) */}
           <div className="lg:col-span-8 space-y-8">
             {/* Dossier Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#141414] border border-[#262626] font-mono text-[11px] text-[#A0A0A0] tracking-wider">
-              <span className="w-2 h-2 bg-[#E5B842] inline-block" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#141414] border border-[#262626] rounded-[6px] font-mono text-[11px] text-[#A0A0A0] tracking-wider">
+              <span className="w-2 h-2 bg-[#E5B842] inline-block rounded-[1px]" />
               <span>PORTFOLIO DOSSIER · {personalInfo.dossierVersion}</span>
             </div>
 
             {/* Display Headline */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-bold tracking-tight text-[#F3F3F3] leading-[1.08]">
-              Designing digital products with{" "}
+              Designing and building digital products with{" "}
               <span className="text-[#E5B842] italic font-serif font-normal">clarity</span>,
-              structure, and intent.
+              curiosity, and intent.
             </h1>
 
             {/* Bio Paragraph */}
@@ -40,14 +40,14 @@ export default function HeroSection() {
                 {pills.map((pill) => (
                   <span
                     key={pill}
-                    className="px-3 py-1 bg-[#141414] border border-[#222222] text-[#8E8E8E] font-mono text-[11px] tracking-wider uppercase"
+                    className="px-3 py-1 bg-[#141414] border border-[#222222] rounded-[6px] text-[#8E8E8E] font-mono text-[11px] tracking-wider uppercase"
                   >
                     {pill}
                   </span>
                 ))}
               </div>
               <div>
-                <span className="inline-block px-3 py-1 bg-[#141414] border border-[#E5B842]/50 text-[#E5B842] font-mono text-[11px] tracking-wider uppercase">
+                <span className="inline-block px-3 py-1 bg-[#141414] border border-[#E5B842]/50 rounded-[6px] text-[#E5B842] font-mono text-[11px] tracking-wider uppercase">
                   CS ENGINEERING FOCUS
                 </span>
               </div>
@@ -57,7 +57,7 @@ export default function HeroSection() {
             <div className="pt-4 flex flex-wrap items-center gap-6">
               <Link
                 href="#selected-work"
-                className="inline-flex items-center gap-2 border border-[#E5B842] bg-transparent text-[#E5B842] hover:bg-[#E5B842] hover:text-black px-6 py-3.5 font-mono text-xs uppercase tracking-wider transition-all duration-200 group"
+                className="inline-flex items-center gap-2 border border-[#E5B842] rounded-[8px] bg-transparent text-[#E5B842] hover:bg-[#E5B842] hover:text-black px-6 py-3.5 font-mono text-xs uppercase tracking-wider transition-all duration-200 group"
               >
                 <span>EXPLORE SELECTED WORK</span>
                 <span className="transition-transform group-hover:translate-y-0.5">↓</span>
@@ -105,7 +105,7 @@ export default function HeroSection() {
             </div>
 
             {/* Design Philosophy Card */}
-            <div className="bg-[#121212] border border-[#222222] p-5 space-y-3">
+            <div className="bg-[#121212] border border-[#222222] rounded-[10px] p-5 space-y-3">
               <div className="flex items-center gap-2 font-mono text-xs text-[#E5B842] tracking-wider uppercase">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E5B842]" />
                 <span>DESIGN PHILOSOPHY</span>

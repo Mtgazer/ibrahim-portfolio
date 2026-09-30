@@ -23,7 +23,7 @@ export default async function AdminProjectEditPage({
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       {/* Workspace Header */}
-      <div className="border border-[#1F1F1F] bg-[#141414] p-6 sm:p-8">
+      <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8">
         <div className="flex items-center justify-between border-b border-[#1F1F1F] pb-6 mb-6 flex-wrap gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-3 flex-wrap">
@@ -31,16 +31,16 @@ export default async function AdminProjectEditPage({
                 [PROJECT WORKSPACE // {project.slug}]
               </span>
               {project.is_published ? (
-                <span className="font-mono text-[10px] bg-[#E5B842]/10 border border-[#E5B842]/40 text-[#E5B842] px-2 py-0.5 uppercase">
+                <span className="font-mono text-[10px] bg-[#E5B842]/10 border border-[#E5B842]/40 rounded-[6px] text-[#E5B842] px-2 py-0.5 uppercase">
                   ● LIVE ON ARCHIVE
                 </span>
               ) : (
-                <span className="font-mono text-[10px] bg-[#222222] border border-[#333333] text-[#707070] px-2 py-0.5 uppercase">
+                <span className="font-mono text-[10px] bg-[#222222] border border-[#333333] rounded-[6px] text-[#707070] px-2 py-0.5 uppercase">
                   ○ DRAFT ONLY
                 </span>
               )}
               {project.is_featured && (
-                <span className="font-mono text-[10px] text-[#E5B842] border border-[#E5B842]/30 px-2 py-0.5 uppercase">
+                <span className="font-mono text-[10px] text-[#E5B842] border border-[#E5B842]/30 rounded-[6px] px-2 py-0.5 uppercase">
                   ★ FEATURED
                 </span>
               )}
@@ -55,7 +55,7 @@ export default async function AdminProjectEditPage({
               <Link
                 href="/"
                 target="_blank"
-                className="font-mono text-xs text-[#E5B842] hover:underline border border-[#E5B842]/40 bg-[#1A1A1A] px-3.5 py-2 uppercase tracking-wider"
+                className="font-mono text-xs text-[#E5B842] hover:underline border border-[#E5B842]/40 bg-[#1A1A1A] rounded-[8px] px-3.5 py-2 uppercase tracking-wider"
               >
                 View Public Showcase ↗
               </Link>

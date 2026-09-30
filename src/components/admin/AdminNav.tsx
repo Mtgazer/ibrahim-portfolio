@@ -28,7 +28,7 @@ export default function AdminNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`font-mono text-xs px-3 py-1.5 uppercase tracking-wider transition-colors border ${
+            className={`font-mono text-xs px-3 py-1.5 uppercase tracking-wider transition-colors border rounded-[6px] ${
               isActive
                 ? "bg-[#E5B842] text-[#0C0C0C] border-[#E5B842] font-semibold"
                 : "text-[#9E9E9E] hover:text-[#F3F3F3] border-[#222222] hover:border-[#E5B842]/40"

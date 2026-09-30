@@ -39,7 +39,7 @@ export const personalInfo: PersonalInfo = {
   designPhilosophy:
     "Interfaces are cognitive conduits, not decorative canvases. Having coded algorithms gives me a natural respect for layout predictability, responsive bounds, and component logic.",
   bioSummary:
-    "UI/UX Designer with a Computer Science foundation at HTI. I synthesize technical understanding with interface architecture—focusing on thoughtful user experiences, robust visual systems, high-fidelity prototypes, and scalable digital surfaces.",
+    "Software developer with a Computer Science foundation at HTI, working across UI/UX, frontend development, AI, and data. I enjoy turning ideas into real products while continuously exploring new tools, technologies, and ways of building.",
   aboutParagraphs: [
     "I am Ibrahim Khalil, a UI/UX Designer completing my Computer Science degree at the Higher Technological Institute (HTI) in Cairo, Egypt.",
     "My engineering foundation fundamentally shapes how I approach user experience. Instead of viewing design as isolated static artboards, I construct scalable modular systems with direct empathy for developer handoff, token naming conventions, responsive reflow, and edge cases.",

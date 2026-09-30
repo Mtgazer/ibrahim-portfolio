@@ -174,7 +174,7 @@ export default function ProjectLinksManager({
   };
 
   return (
-    <div className="border border-[#1F1F1F] bg-[#141414] p-6 sm:p-8 space-y-6">
+    <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8 space-y-6">
       <div className="border-b border-[#1F1F1F] pb-4 flex items-center justify-between flex-wrap gap-4">
         <div>
           <span className="font-mono text-[10px] text-[#E5B842] uppercase tracking-widest block mb-1">
@@ -192,7 +192,7 @@ export default function ProjectLinksManager({
               resetForm();
               setIsAdding(true);
             }}
-            className="font-mono text-xs bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-bold px-4 py-2 uppercase tracking-wider transition-colors cursor-pointer"
+            className="font-mono text-xs bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-bold px-4 py-2 uppercase tracking-wider transition-colors cursor-pointer rounded-[8px]"
           >
             + Add Link
           </button>
@@ -201,7 +201,7 @@ export default function ProjectLinksManager({
 
       {/* Error alert */}
       {error && (
-        <div className="p-3 bg-[#E55353]/10 border border-[#E55353]/40 font-mono text-xs text-[#E55353]">
+        <div className="p-3 bg-[#E55353]/10 border border-[#E55353]/40 rounded-[6px] font-mono text-xs text-[#E55353]">
           {error}
         </div>
       )}
@@ -210,7 +210,7 @@ export default function ProjectLinksManager({
       {(isAdding || editingId) && (
         <form
           onSubmit={handleSave}
-          className="border border-[#2E2E2E] bg-[#0C0C0C] p-5 space-y-4 font-mono text-xs"
+          className="border border-[#2E2E2E] bg-[#0C0C0C] rounded-[10px] p-5 space-y-4 font-mono text-xs"
         >
           <div className="flex items-center justify-between pb-2 border-b border-[#1F1F1F]">
             <span className="text-[#E5B842] uppercase font-bold">
@@ -236,7 +236,7 @@ export default function ProjectLinksManager({
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
                 placeholder="VIEW IN-DEPTH CASE STUDY →"
-                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3 py-2 outline-hidden"
+                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3 py-2 outline-hidden rounded-[8px]"
               />
             </div>
 
@@ -250,7 +250,7 @@ export default function ProjectLinksManager({
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://... or #contact"
-                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3 py-2 outline-hidden"
+                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3 py-2 outline-hidden rounded-[8px]"
               />
             </div>
 
@@ -261,7 +261,7 @@ export default function ProjectLinksManager({
               <select
                 value={type || "case-study"}
                 onChange={(e) => setType(e.target.value as ProjectLinkInput["type"])}
-                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3 py-2 outline-hidden"
+                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3 py-2 outline-hidden rounded-[8px]"
               >
                 <option value="case-study">Case Study (Gold Primary Button)</option>
                 <option value="demo">Live Demo</option>
@@ -280,7 +280,7 @@ export default function ProjectLinksManager({
                 value={microcopy}
                 onChange={(e) => setMicrocopy(e.target.value)}
                 placeholder="DETAILED RESEARCH & IA"
-                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3 py-2 outline-hidden"
+                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3 py-2 outline-hidden rounded-[8px]"
               />
             </div>
           </div>
@@ -290,14 +290,14 @@ export default function ProjectLinksManager({
               type="button"
               onClick={resetForm}
               disabled={loading}
-              className="px-3.5 py-1.5 border border-[#262626] text-[#9E9E9E] hover:text-[#F3F3F3] uppercase tracking-wider transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 border border-[#262626] text-[#9E9E9E] hover:text-[#F3F3F3] uppercase tracking-wider transition-colors cursor-pointer rounded-[8px]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-bold px-4 py-1.5 uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50"
+              className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-bold px-4 py-1.5 uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50 rounded-[8px]"
             >
               {loading ? "SAVING..." : editingId ? "UPDATE LINK" : "ADD LINK"}
             </button>
@@ -307,7 +307,7 @@ export default function ProjectLinksManager({
 
       {/* Links list */}
       {links.length === 0 ? (
-        <div className="p-8 border border-dashed border-[#262626] text-center font-mono text-xs text-[#707070]">
+        <div className="p-8 border border-dashed border-[#262626] rounded-[10px] text-center font-mono text-xs text-[#707070]">
           No links added yet. Click &ldquo;+ Add Link&rdquo; to add case study or demo CTA buttons.
         </div>
       ) : (
@@ -315,13 +315,13 @@ export default function ProjectLinksManager({
           {links.map((link, idx) => (
             <div
               key={link.id}
-              className="border border-[#222222] bg-[#0E0E0E] p-4 flex items-center justify-between flex-wrap gap-4"
+              className="border border-[#222222] bg-[#0E0E0E] rounded-[10px] p-4 flex items-center justify-between flex-wrap gap-4"
             >
               <div className="space-y-1 max-w-md">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-[#E5B842] font-semibold">{link.label}</span>
                   {link.type && (
-                    <span className="border border-[#333333] px-2 py-0.5 text-[10px] text-[#A0A0A0] uppercase">
+                    <span className="border border-[#333333] rounded-[6px] px-2 py-0.5 text-[10px] text-[#A0A0A0] uppercase">
                       {link.type}
                     </span>
                   )}
@@ -342,7 +342,7 @@ export default function ProjectLinksManager({
                   type="button"
                   onClick={() => handleMove(idx, "up")}
                   disabled={idx === 0}
-                  className="px-2 py-1 border border-[#222222] text-[#9E9E9E] hover:text-[#E5B842] disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed"
+                  className="px-2 py-1 border border-[#222222] text-[#9E9E9E] hover:text-[#E5B842] disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed rounded-[6px]"
                   title="Move Up"
                 >
                   ↑
@@ -351,7 +351,7 @@ export default function ProjectLinksManager({
                   type="button"
                   onClick={() => handleMove(idx, "down")}
                   disabled={idx === links.length - 1}
-                  className="px-2 py-1 border border-[#222222] text-[#9E9E9E] hover:text-[#E5B842] disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed"
+                  className="px-2 py-1 border border-[#222222] text-[#9E9E9E] hover:text-[#E5B842] disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed rounded-[6px]"
                   title="Move Down"
                 >
                   ↓
@@ -359,14 +359,14 @@ export default function ProjectLinksManager({
                 <button
                   type="button"
                   onClick={() => startEdit(link)}
-                  className="px-3 py-1 border border-[#2A2A2A] text-[#E5B842] hover:bg-[#E5B842]/10 transition-colors uppercase tracking-wider cursor-pointer"
+                  className="px-3 py-1 border border-[#2A2A2A] text-[#E5B842] hover:bg-[#E5B842]/10 transition-colors uppercase tracking-wider cursor-pointer rounded-[6px]"
                 >
                   Edit
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDelete(link.id)}
-                  className="px-3 py-1 border border-[#E55353]/30 text-[#E55353] hover:bg-[#E55353]/10 transition-colors uppercase tracking-wider cursor-pointer"
+                  className="px-3 py-1 border border-[#E55353]/30 text-[#E55353] hover:bg-[#E55353]/10 transition-colors uppercase tracking-wider cursor-pointer rounded-[6px]"
                 >
                   Delete
                 </button>

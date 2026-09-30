@@ -45,7 +45,7 @@ export default function FieldNotesSection() {
           {fieldNotes.map((note) => (
             <article
               key={note.id}
-              className="group relative border border-[#1F1F1F] hover:border-[#E5B842]/60 bg-[#121212] transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              className="group relative border border-[#1F1F1F] hover:border-[#E5B842]/60 bg-[#121212] rounded-[10px] transition-all duration-300 flex flex-col justify-between overflow-hidden"
             >
               {/* Card Image / Visual Preview Container */}
               {note.image && (
@@ -58,7 +58,7 @@ export default function FieldNotesSection() {
                     className="object-cover object-top group-hover:scale-[1.03] transition-transform duration-500"
                   />
                   {/* Technical Coordinate Watermark */}
-                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 bg-[#0C0C0C]/85 backdrop-blur-sm border border-[#262626] font-mono text-[10px] text-[#A0A0A0] tracking-wider uppercase">
+                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 bg-[#0C0C0C]/85 backdrop-blur-sm border border-[#262626] rounded-[6px] font-mono text-[10px] text-[#A0A0A0] tracking-wider uppercase">
                     NOTE // {note.noteNumber}
                   </div>
                 </div>
@@ -96,7 +96,7 @@ export default function FieldNotesSection() {
                 {/* Footer Tag & CTA */}
                 <div className="pt-3 border-t border-[#1C1C1C] flex items-center justify-between font-mono text-[10px] text-[#707070]">
                   {note.tag ? (
-                    <span className="px-2 py-0.5 bg-[#181818] border border-[#262626] text-[#A0A0A0] uppercase tracking-wider">
+                    <span className="px-2 py-0.5 bg-[#181818] border border-[#262626] rounded-[6px] text-[#A0A0A0] uppercase tracking-wider">
                       {note.tag}
                     </span>
                   ) : (

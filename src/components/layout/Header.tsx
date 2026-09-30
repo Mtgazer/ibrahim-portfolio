@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { personalInfo } from "@/data/personal";
 
@@ -13,9 +14,16 @@ export default function Header() {
         {/* Brand / Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2.5 group cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#E5B842]"
+          className="flex items-center gap-2.5 group cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#E5B842] rounded-[8px]"
         >
-          <span className="w-2.5 h-2.5 bg-[#E5B842] inline-block transition-transform group-hover:scale-110" />
+          <Image
+            src="/images/ik-logo.png"
+            alt="IK Logo"
+            width={20}
+            height={20}
+            priority
+            className="h-5 w-auto object-contain transition-transform duration-200 group-hover:scale-105 flex-shrink-0"
+          />
           <span className="font-mono text-xs sm:text-sm font-semibold tracking-wider text-white">
             {personalInfo.name.toUpperCase()}
           </span>
@@ -62,7 +70,7 @@ export default function Header() {
         <div className="hidden sm:flex items-center">
           <Link
             href="#contact"
-            className="border border-[#E5B842] px-4 py-1.5 text-xs font-mono tracking-wider text-[#E5B842] hover:bg-[#E5B842] hover:text-black transition-all duration-200"
+            className="border border-[#E5B842] rounded-[8px] px-4 py-1.5 text-xs font-mono tracking-wider text-[#E5B842] hover:bg-[#E5B842] hover:text-black transition-all duration-200"
           >
             LET&apos;S CONNECT
           </Link>
@@ -73,7 +81,7 @@ export default function Header() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
-            className="text-[#A0A0A0] hover:text-white p-2 focus:outline-none focus:ring-1 focus:ring-[#E5B842]"
+            className="text-[#A0A0A0] hover:text-white p-2 rounded-[8px] focus:outline-none focus:ring-1 focus:ring-[#E5B842]"
           >
             <svg
               className="w-6 h-6"
@@ -143,7 +151,7 @@ export default function Header() {
             <Link
               href="#contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="block text-center border border-[#E5B842] py-2.5 text-[#E5B842] hover:bg-[#E5B842] hover:text-black transition-colors"
+              className="block text-center border border-[#E5B842] rounded-[8px] py-2.5 text-[#E5B842] hover:bg-[#E5B842] hover:text-black transition-colors"
             >
               LET&apos;S CONNECT
             </Link>

@@ -81,7 +81,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md border border-[#1F1F1F] bg-[#141414] p-8 sm:p-10">
+    <div className="w-full max-w-md border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-8 sm:p-10">
       {/* Editorial Header */}
       <div className="border-b border-[#1F1F1F] pb-6 mb-6">
         <div className="flex items-center justify-between mb-3">
@@ -104,7 +104,7 @@ function LoginForm() {
       {errorMessage && (
         <div
           role="alert"
-          className="mb-6 p-4 border border-[#E5B842]/40 bg-[#1A1A1A] font-mono text-xs text-[#E5B842] leading-relaxed"
+          className="mb-6 p-4 border border-[#E5B842]/40 bg-[#1A1A1A] rounded-[6px] font-mono text-xs text-[#E5B842] leading-relaxed"
         >
           {errorMessage}
         </div>
@@ -128,7 +128,7 @@ function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
             placeholder="operator@domain.com"
-            className="w-full bg-[#0C0C0C] border border-[#222222] focus:border-[#E5B842] focus:outline-none text-[#F3F3F3] font-mono text-sm px-4 py-3 placeholder:text-[#555555] transition-colors disabled:opacity-50"
+            className="w-full bg-[#0C0C0C] border border-[#222222] rounded-[8px] focus:border-[#E5B842] focus:outline-none text-[#F3F3F3] font-mono text-sm px-4 py-3 placeholder:text-[#555555] transition-colors disabled:opacity-50"
           />
         </div>
 
@@ -148,14 +148,14 @@ function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
             placeholder="••••••••••••"
-            className="w-full bg-[#0C0C0C] border border-[#222222] focus:border-[#E5B842] focus:outline-none text-[#F3F3F3] font-mono text-sm px-4 py-3 placeholder:text-[#555555] transition-colors disabled:opacity-50"
+            className="w-full bg-[#0C0C0C] border border-[#222222] rounded-[8px] focus:border-[#E5B842] focus:outline-none text-[#F3F3F3] font-mono text-sm px-4 py-3 placeholder:text-[#555555] transition-colors disabled:opacity-50"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold uppercase tracking-wider py-3.5 px-6 transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+          className="w-full bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold uppercase tracking-wider py-3.5 px-6 rounded-[8px] transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
         >
           {loading ? (
             <>

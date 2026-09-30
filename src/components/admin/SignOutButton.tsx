@@ -34,7 +34,7 @@ export default function SignOutButton({ className }: SignOutButtonProps) {
       disabled={loading}
       className={
         className ||
-        "font-mono text-xs text-[#9E9E9E] hover:text-[#E5B842] border border-[#222222] hover:border-[#E5B842] px-3 py-1.5 transition-colors uppercase tracking-wider disabled:opacity-50 cursor-pointer"
+        "font-mono text-xs text-[#9E9E9E] hover:text-[#E5B842] border border-[#222222] hover:border-[#E5B842] rounded-[6px] px-3 py-1.5 transition-colors uppercase tracking-wider disabled:opacity-50 cursor-pointer"
       }
     >
       {loading ? "TERMINATING..." : "[TERMINATE SESSION]"}

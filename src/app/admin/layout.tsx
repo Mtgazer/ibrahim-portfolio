@@ -24,7 +24,7 @@ export default async function AdminLayout({
             </Link>
             <span className="text-[#333333]">/</span>
             <span className="font-mono text-xs text-[#9E9E9E]">ADMIN CONTROL</span>
-            <span className="font-mono text-[10px] bg-[#E5B842]/10 text-[#E5B842] border border-[#E5B842]/30 px-2 py-0.5 uppercase tracking-widest">
+            <span className="font-mono text-[10px] bg-[#E5B842]/10 text-[#E5B842] border border-[#E5B842]/30 rounded-[6px] px-2 py-0.5 uppercase tracking-widest">
               [AUTHORIZED ADMIN]
             </span>
           </div>

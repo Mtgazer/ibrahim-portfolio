@@ -40,7 +40,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                 {project.projectNumber}
               </span>
               {project.badge && (
-                <span className="px-3 py-1 border border-[#E5B842] text-[#E5B842] font-mono text-[11px] tracking-wider uppercase">
+                <span className="px-3 py-1 border border-[#E5B842] rounded-[6px] text-[#E5B842] font-mono text-[11px] tracking-wider uppercase">
                   {project.badge}
                 </span>
               )}
@@ -67,7 +67,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
 
             {/* Optional: Growth Note (e.g. Shopping App) */}
             {project.growthNote && (
-              <div className="border-l-2 border-[#E5B842] pl-4 py-1.5 space-y-1.5 bg-[#121212]/50">
+              <div className="border-l-2 border-[#E5B842] rounded-r-[6px] pl-4 py-1.5 space-y-1.5 bg-[#121212]/50">
                 <span className="font-mono text-[11px] text-[#E5B842] tracking-wider uppercase block font-semibold">
                   {project.growthNote.title}
                 </span>
@@ -141,7 +141,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
 
             {/* Optional: Core Component Set (e.g. Book Store) */}
             {project.coreComponentSet && project.coreComponentSet.length > 0 && (
-              <div className="border border-[#222222] bg-[#121212] p-5 space-y-3">
+              <div className="border border-[#222222] bg-[#121212] rounded-[10px] p-5 space-y-3">
                 <span className="font-mono text-[11px] text-[#E5B842] tracking-wider uppercase block font-semibold">
                   CORE COMPONENT SET
                 </span>
@@ -163,14 +163,14 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                   primaryLink.type === "case-study" ? (
                     <Link
                       href={primaryLink.url}
-                      className="inline-flex items-center gap-2 bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-semibold px-6 py-3.5 tracking-wider uppercase transition-colors"
+                      className="inline-flex items-center gap-2 bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-semibold px-6 py-3.5 tracking-wider uppercase transition-colors rounded-[8px]"
                     >
                       <span>{primaryLink.label}</span>
                     </Link>
                   ) : (
                     <Link
                       href={primaryLink.url}
-                      className="inline-block border border-[#262626] hover:border-[#E5B842] bg-[#141414] hover:text-[#E5B842] px-4 py-2.5 font-mono text-xs text-[#A0A0A0] tracking-wider uppercase transition-colors"
+                      className="inline-block border border-[#262626] hover:border-[#E5B842] bg-[#141414] hover:text-[#E5B842] px-4 py-2.5 font-mono text-xs text-[#A0A0A0] tracking-wider uppercase transition-colors rounded-[8px]"
                     >
                       {primaryLink.label}
                     </Link>
@@ -178,12 +178,12 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                 ) : project.ctaMicrocopy ? (
                   <Link
                     href="#contact"
-                    className="inline-flex items-center gap-2 bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-semibold px-6 py-3.5 tracking-wider uppercase transition-colors"
+                    className="inline-flex items-center gap-2 bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-semibold px-6 py-3.5 tracking-wider uppercase transition-colors rounded-[8px]"
                   >
                     <span>{project.ctaText}</span>
                   </Link>
                 ) : (
-                  <div className="inline-block border border-[#262626] bg-[#141414] px-4 py-2.5 font-mono text-xs text-[#A0A0A0] tracking-wider uppercase">
+                  <div className="inline-block border border-[#262626] bg-[#141414] px-4 py-2.5 font-mono text-xs text-[#A0A0A0] tracking-wider uppercase rounded-[8px]">
                     {project.ctaText}
                   </div>
                 )}
@@ -214,7 +214,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                 {project.visuals.screens.map((screen, idx) => (
                   <div
                     key={idx}
-                    className={`relative rounded-none overflow-hidden bg-[#121212] flex flex-col transition-transform duration-300 hover:scale-[1.02] ${
+                    className={`relative rounded-[10px] overflow-hidden bg-[#121212] flex flex-col transition-transform duration-300 hover:scale-[1.02] ${
                       screen.isHighlighted
                         ? "border-2 border-[#E5B842]/80 shadow-[0_0_20px_rgba(229,184,66,0.15)]"
                         : "border border-[#222222]"
@@ -244,7 +244,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
                 {/* Main Phone Viewport */}
                 {project.visuals.main && (
-                  <div className="sm:col-span-7 border border-[#222222] bg-[#121212] overflow-hidden group">
+                  <div className="sm:col-span-7 border border-[#222222] bg-[#121212] rounded-[10px] overflow-hidden group">
                     <div className="p-2.5 border-b border-[#1C1C1C] flex justify-between font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
                       <span>{project.visuals.mainCaption || "[VIEWPORT]"}</span>
                       {project.visuals.mainBadge && (
@@ -268,7 +268,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                 {/* Secondary Stacked Panels */}
                 <div className="sm:col-span-5 space-y-4">
                   {project.visuals.secondaryLeft && (
-                    <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
+                    <div className="border border-[#222222] bg-[#121212] rounded-[10px] overflow-hidden group">
                       {project.visuals.secondaryLeft.caption && (
                         <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
                           {project.visuals.secondaryLeft.caption}
@@ -286,7 +286,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                     </div>
                   )}
                   {project.visuals.secondaryRight && (
-                    <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
+                    <div className="border border-[#222222] bg-[#121212] rounded-[10px] overflow-hidden group">
                       {project.visuals.secondaryRight.caption && (
                         <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
                           {project.visuals.secondaryRight.caption}
@@ -311,7 +311,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
             {mediaLayout === "banner-with-grid" && (
               <div className="space-y-4">
                 {project.visuals.main && (
-                  <div className="border border-[#222222] bg-[#121212] overflow-hidden group">
+                  <div className="border border-[#222222] bg-[#121212] rounded-[10px] overflow-hidden group">
                     <div className="relative aspect-[16/9] w-full overflow-hidden">
                       <Image
                         src={project.visuals.main}
@@ -327,7 +327,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                 {/* Secondary Cards Below Main Banner */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {project.visuals.secondaryLeft && (
-                    <div className="border border-[#222222] bg-[#121212] overflow-hidden">
+                    <div className="border border-[#222222] bg-[#121212] rounded-[10px] overflow-hidden">
                       <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
                         {project.visuals.secondaryLeft.caption}
                       </div>
@@ -343,7 +343,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
                     </div>
                   )}
                   {project.visuals.secondaryRight && (
-                    <div className="border border-[#222222] bg-[#121212] overflow-hidden">
+                    <div className="border border-[#222222] bg-[#121212] rounded-[10px] overflow-hidden">
                       <div className="p-2 border-b border-[#1C1C1C] font-mono text-[10px] text-[#7A7A7A] uppercase tracking-wider">
                         {project.visuals.secondaryRight.caption}
                       </div>

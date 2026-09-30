@@ -81,7 +81,7 @@ export default function AboutSection() {
                   return (
                     <div
                       key={idx}
-                      className={`px-3 py-2 border w-fit ${
+                      className={`px-3 py-2 border rounded-[6px] w-fit ${
                         isGold
                           ? "border-[#E5B842] text-[#E5B842] bg-[#141414]"
                           : "border-[#222222] text-[#A0A0A0] bg-[#121212]"
@@ -105,7 +105,7 @@ export default function AboutSection() {
               {capabilities.map((item) => (
                 <div
                   key={item.code}
-                  className="p-5 border border-[#222222] bg-[#121212] space-y-2.5 transition-colors hover:border-[#333333]"
+                  className="p-5 border border-[#222222] bg-[#121212] rounded-[10px] space-y-2.5 transition-colors hover:border-[#333333]"
                 >
                   <span className="font-mono text-[11px] text-[#E5B842] tracking-wider uppercase block font-semibold">
                     {item.code}

@@ -11,7 +11,7 @@ export default async function AdminDashboardPage() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       {/* 1. Header & Identity Section */}
-      <div className="border border-[#1F1F1F] bg-[#141414] p-6 sm:p-8">
+      <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8">
         <div className="flex items-center justify-between border-b border-[#1F1F1F] pb-6 mb-6 flex-wrap gap-4">
           <div>
             <span className="font-mono text-[10px] text-[#E5B842] tracking-widest uppercase block mb-1">
@@ -24,7 +24,7 @@ export default async function AdminDashboardPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/admin/projects/new"
-              className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold px-4 py-2.5 uppercase tracking-wider transition-colors"
+              className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold px-4 py-2.5 uppercase tracking-wider transition-colors rounded-[8px]"
             >
               + Create Project
             </Link>
@@ -57,7 +57,7 @@ export default async function AdminDashboardPage() {
       <section>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Projects */}
-          <div className="border border-[#1F1F1F] bg-[#141414] p-5 space-y-2">
+          <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-5 space-y-2">
             <span className="font-mono text-[10px] text-[#707070] uppercase tracking-wider block">
               Total Projects
             </span>
@@ -70,7 +70,7 @@ export default async function AdminDashboardPage() {
           </div>
 
           {/* Published */}
-          <div className="border border-[#1F1F1F] bg-[#141414] p-5 space-y-2">
+          <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-5 space-y-2">
             <span className="font-mono text-[10px] text-[#707070] uppercase tracking-wider block">
               Published Live
             </span>
@@ -83,7 +83,7 @@ export default async function AdminDashboardPage() {
           </div>
 
           {/* Drafts */}
-          <div className="border border-[#1F1F1F] bg-[#141414] p-5 space-y-2">
+          <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-5 space-y-2">
             <span className="font-mono text-[10px] text-[#707070] uppercase tracking-wider block">
               Draft Projects
             </span>
@@ -96,7 +96,7 @@ export default async function AdminDashboardPage() {
           </div>
 
           {/* Featured */}
-          <div className="border border-[#1F1F1F] bg-[#141414] p-5 space-y-2">
+          <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-5 space-y-2">
             <span className="font-mono text-[10px] text-[#707070] uppercase tracking-wider block">
               Featured Flagged
             </span>
@@ -111,7 +111,7 @@ export default async function AdminDashboardPage() {
       </section>
 
       {/* 3. Quick Action & Overview Area */}
-      <section className="border border-[#1F1F1F] bg-[#141414] p-6 sm:p-8 space-y-6">
+      <section className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8 space-y-6">
         <div className="flex items-center justify-between border-b border-[#1F1F1F] pb-4 flex-wrap gap-4">
           <div>
             <span className="font-mono text-[10px] text-[#E5B842] uppercase tracking-widest block mb-1">
@@ -131,7 +131,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {recentProjects.length === 0 ? (
-          <div className="p-10 border border-dashed border-[#262626] text-center font-mono text-xs text-[#707070] space-y-3">
+          <div className="p-10 border border-dashed border-[#262626] rounded-[10px] text-center font-mono text-xs text-[#707070] space-y-3">
             <p>No project records currently exist in Supabase.</p>
             <p className="text-[11px] text-[#555555]">
               (The public site is currently rendering the 4 reference demonstration projects via local fallback.)
@@ -139,7 +139,7 @@ export default async function AdminDashboardPage() {
             <div className="pt-2">
               <Link
                 href="/admin/projects/new"
-                className="inline-block bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold px-4 py-2 uppercase tracking-wider transition-colors"
+                className="inline-block bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-mono text-xs font-bold px-4 py-2 uppercase tracking-wider transition-colors rounded-[8px]"
               >
                 + Create First Supabase Project
               </Link>
@@ -162,11 +162,11 @@ export default async function AdminDashboardPage() {
                         {p.title}
                       </span>
                       {p.is_published ? (
-                        <span className="px-2 py-0.5 text-[10px] bg-[#E5B842]/10 border border-[#E5B842]/30 text-[#E5B842] uppercase">
+                        <span className="px-2 py-0.5 text-[10px] bg-[#E5B842]/10 border border-[#E5B842]/30 rounded-[6px] text-[#E5B842] uppercase">
                           Published
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 text-[10px] bg-[#222222] border border-[#333333] text-[#707070] uppercase">
+                        <span className="px-2 py-0.5 text-[10px] bg-[#222222] border border-[#333333] rounded-[6px] text-[#707070] uppercase">
                           Draft
                         </span>
                       )}
@@ -185,7 +185,7 @@ export default async function AdminDashboardPage() {
                   <div className="flex items-center gap-3">
                     <Link
                       href={`/admin/projects/${p.id}`}
-                      className="px-3.5 py-1.5 border border-[#333333] hover:border-[#E5B842] text-[#9E9E9E] hover:text-[#E5B842] uppercase tracking-wider transition-colors"
+                      className="px-3.5 py-1.5 border border-[#333333] hover:border-[#E5B842] text-[#9E9E9E] hover:text-[#E5B842] uppercase tracking-wider transition-colors rounded-[8px]"
                     >
                       Manage Project →
                     </Link>

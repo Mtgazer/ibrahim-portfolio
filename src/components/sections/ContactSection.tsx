@@ -45,7 +45,7 @@ export default function ContactSection() {
         {/* Two Contact Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Card 1: Direct Transmission */}
-          <div className="border border-[#222222] bg-[#121212] p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+          <div className="border border-[#222222] bg-[#121212] rounded-[10px] p-6 sm:p-8 space-y-6 flex flex-col justify-between">
             <div className="space-y-2">
               <span className="font-mono text-[10px] sm:text-xs text-[#666666] tracking-wider uppercase block">
                 DIRECT TRANSMISSION
@@ -61,7 +61,7 @@ export default function ContactSection() {
             <div className="flex flex-wrap items-center gap-4 pt-2 font-mono text-xs">
               <a
                 href={`mailto:${personalInfo.email}`}
-                className="inline-flex items-center gap-1.5 bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-semibold px-5 py-3 tracking-wider uppercase transition-colors"
+                className="inline-flex items-center gap-1.5 bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-semibold px-5 py-3 tracking-wider uppercase transition-colors rounded-[8px]"
               >
                 <span>SEND MESSAGE</span>
                 <span>↗</span>
@@ -69,7 +69,7 @@ export default function ContactSection() {
 
               <button
                 onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 border border-[#333333] hover:border-[#E5B842] bg-[#181818] text-[#A0A0A0] hover:text-white px-4 py-3 tracking-wider uppercase transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 border border-[#333333] hover:border-[#E5B842] bg-[#181818] text-[#A0A0A0] hover:text-white px-4 py-3 tracking-wider uppercase transition-colors cursor-pointer rounded-[8px]"
               >
                 <span>⧉</span>
                 <span>{copied ? "ADDRESS COPIED!" : "COPY ADDRESS"}</span>
@@ -78,7 +78,7 @@ export default function ContactSection() {
           </div>
 
           {/* Card 2: Professional Network */}
-          <div className="border border-[#222222] bg-[#121212] p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+          <div className="border border-[#222222] bg-[#121212] rounded-[10px] p-6 sm:p-8 space-y-6 flex flex-col justify-between">
             <div className="space-y-2">
               <span className="font-mono text-[10px] sm:text-xs text-[#666666] tracking-wider uppercase block">
                 PROFESSIONAL NETWORK

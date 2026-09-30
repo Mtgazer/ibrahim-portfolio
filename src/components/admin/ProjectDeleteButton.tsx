@@ -58,7 +58,7 @@ export default function ProjectDeleteButton({
         }}
         className={
           className ||
-          "font-mono text-xs text-[#E55353] hover:text-[#FF6B6B] border border-[#E55353]/30 hover:border-[#E55353] px-3 py-1.5 uppercase tracking-wider transition-colors cursor-pointer"
+          "font-mono text-xs text-[#E55353] hover:text-[#FF6B6B] border border-[#E55353]/30 hover:border-[#E55353] rounded-[6px] px-3 py-1.5 uppercase tracking-wider transition-colors cursor-pointer"
         }
       >
         [DELETE PROJECT]
@@ -70,7 +70,7 @@ export default function ProjectDeleteButton({
           role="dialog"
           aria-modal="true"
         >
-          <div className="w-full max-w-lg bg-[#141414] border border-[#E55353]/40 p-6 sm:p-8 space-y-6 text-[#F3F3F3]">
+          <div className="w-full max-w-lg bg-[#141414] border border-[#E55353]/40 rounded-[10px] p-6 sm:p-8 space-y-6 text-[#F3F3F3]">
             {/* Header */}
             <div className="border-b border-[#262626] pb-4">
               <span className="font-mono text-[10px] text-[#E55353] uppercase tracking-widest block mb-1">
@@ -93,7 +93,7 @@ export default function ProjectDeleteButton({
               <p className="text-[#707070]">
                 To confirm, type the project title below:
               </p>
-              <div className="p-2 bg-[#0C0C0C] border border-[#262626] select-all text-[#F3F3F3]">
+              <div className="p-2 bg-[#0C0C0C] border border-[#262626] rounded-[6px] select-all text-[#F3F3F3]">
                 {projectTitle}
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function ProjectDeleteButton({
                 onChange={(e) => setTypedTitle(e.target.value)}
                 placeholder="Type exact title to verify"
                 disabled={loading}
-                className="w-full bg-[#0C0C0C] border border-[#2E2E2E] focus:border-[#E55353] text-[#F3F3F3] font-mono text-xs px-3.5 py-2.5 outline-hidden disabled:opacity-50"
+                className="w-full bg-[#0C0C0C] border border-[#2E2E2E] rounded-[8px] focus:border-[#E55353] text-[#F3F3F3] font-mono text-xs px-3.5 py-2.5 outline-hidden disabled:opacity-50"
               />
             </div>
 
@@ -123,7 +123,7 @@ export default function ProjectDeleteButton({
                 type="button"
                 onClick={() => setIsOpen(false)}
                 disabled={loading}
-                className="font-mono text-xs text-[#9E9E9E] hover:text-[#F3F3F3] border border-[#262626] px-4 py-2 uppercase tracking-wider transition-colors cursor-pointer"
+                className="font-mono text-xs text-[#9E9E9E] hover:text-[#F3F3F3] border border-[#262626] rounded-[8px] px-4 py-2 uppercase tracking-wider transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -131,7 +131,7 @@ export default function ProjectDeleteButton({
                 type="button"
                 onClick={handleDelete}
                 disabled={!isConfirmed || loading}
-                className="font-mono text-xs bg-[#E55353] hover:bg-[#FF6B6B] text-white font-bold px-4 py-2 uppercase tracking-wider transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                className="font-mono text-xs bg-[#E55353] hover:bg-[#FF6B6B] text-white font-bold rounded-[8px] px-4 py-2 uppercase tracking-wider transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
               >
                 {loading ? "PURGING..." : "CONFIRM PURGE"}
               </button>

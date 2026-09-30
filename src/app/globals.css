@@ -15,6 +15,14 @@
   --color-text-primary: #F3F3F3;
   --color-text-secondary: #9E9E9E;
   --color-text-muted: #666666;
+
+  /* Editorial Border Radius Design Tokens */
+  --radius-badge: 6px;
+  --radius-btn: 8px;
+  --radius-input: 8px;
+  --radius-card: 10px;
+  --radius-media: 10px;
+  --radius-feature: 12px;
 }
 
 :root {

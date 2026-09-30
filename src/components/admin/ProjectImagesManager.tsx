@@ -259,7 +259,7 @@ export default function ProjectImagesManager({
   };
 
   return (
-    <div className="border border-[#1F1F1F] bg-[#141414] p-6 sm:p-8 space-y-8">
+    <div className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8 space-y-8">
       {/* Header */}
       <div className="border-b border-[#1F1F1F] pb-4 flex items-center justify-between flex-wrap gap-4">
         <div>
@@ -277,7 +277,7 @@ export default function ProjectImagesManager({
 
       {/* Status Banners */}
       {error && (
-        <div className="p-4 border border-[#E55353]/40 bg-[#1A1A1A] font-mono text-xs text-[#E55353] flex items-center justify-between">
+        <div className="p-4 border border-[#E55353]/40 bg-[#1A1A1A] rounded-[6px] font-mono text-xs text-[#E55353] flex items-center justify-between">
           <span>{error}</span>
           <button
             type="button"
@@ -290,7 +290,7 @@ export default function ProjectImagesManager({
       )}
 
       {success && (
-        <div className="p-4 border border-[#E5B842]/40 bg-[#1A1A1A] font-mono text-xs text-[#E5B842] flex items-center justify-between">
+        <div className="p-4 border border-[#E5B842]/40 bg-[#1A1A1A] rounded-[6px] font-mono text-xs text-[#E5B842] flex items-center justify-between">
           <span>{success}</span>
           <button
             type="button"
@@ -305,7 +305,7 @@ export default function ProjectImagesManager({
       {/* UPLOAD PANEL */}
       <form
         onSubmit={handleUpload}
-        className="border border-[#262626] bg-[#0C0C0C] p-6 space-y-5 font-mono text-xs"
+        className="border border-[#262626] bg-[#0C0C0C] rounded-[10px] p-6 space-y-5 font-mono text-xs"
       >
         <div className="flex items-center justify-between border-b border-[#1F1F1F] pb-3">
           <span className="text-[#E5B842] font-semibold uppercase tracking-wider">
@@ -326,10 +326,10 @@ export default function ProjectImagesManager({
               accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
               onChange={handleFileSelect}
               disabled={uploading}
-              className="w-full text-xs text-[#9E9E9E] file:mr-3 file:py-2 file:px-3 file:border file:border-[#333333] file:text-xs file:font-mono file:bg-[#1A1A1A] file:text-[#E5B842] hover:file:border-[#E5B842] cursor-pointer"
+              className="w-full text-xs text-[#9E9E9E] file:mr-3 file:py-2 file:px-3 file:border file:border-[#333333] file:rounded-[6px] file:text-xs file:font-mono file:bg-[#1A1A1A] file:text-[#E5B842] hover:file:border-[#E5B842] cursor-pointer"
             />
             {filePreview && (
-              <div className="relative aspect-video w-full border border-[#2E2E2E] bg-[#141414] overflow-hidden mt-2">
+              <div className="relative aspect-video w-full border border-[#2E2E2E] bg-[#141414] rounded-[8px] overflow-hidden mt-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={filePreview}
@@ -351,7 +351,7 @@ export default function ProjectImagesManager({
                 value={altText}
                 onChange={(e) => setAltText(e.target.value)}
                 placeholder="Descriptive alt text for screen readers..."
-                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3.5 py-2 outline-hidden"
+                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3.5 py-2 outline-hidden rounded-[8px]"
               />
             </div>
 
@@ -364,7 +364,7 @@ export default function ProjectImagesManager({
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 placeholder="e.g. [HTI LMS — PRIMARY SHOWCASE]"
-                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3.5 py-2 outline-hidden"
+                className="w-full bg-[#141414] border border-[#2E2E2E] focus:border-[#E5B842] text-[#F3F3F3] px-3.5 py-2 outline-hidden rounded-[8px]"
               />
             </div>
 
@@ -388,7 +388,7 @@ export default function ProjectImagesManager({
               <button
                 type="submit"
                 disabled={!selectedFile || uploading}
-                className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-bold px-6 py-2.5 uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                className="bg-[#E5B842] hover:bg-[#F0C44E] text-[#0C0C0C] font-bold px-6 py-2.5 uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2 rounded-[8px]"
               >
                 {uploading ? (
                   <>
@@ -406,7 +406,7 @@ export default function ProjectImagesManager({
 
       {/* IMAGES GRID */}
       {images.length === 0 ? (
-        <div className="p-8 border border-dashed border-[#262626] text-center font-mono text-xs text-[#707070]">
+        <div className="p-8 border border-dashed border-[#262626] rounded-[10px] text-center font-mono text-xs text-[#707070]">
           No images uploaded for this project yet. Use the panel above to upload screenshots or diagrams to Supabase Storage.
         </div>
       ) : (
@@ -418,7 +418,7 @@ export default function ProjectImagesManager({
             return (
               <div
                 key={img.id}
-                className={`border bg-[#0C0C0C] flex flex-col justify-between transition-colors ${
+                className={`border bg-[#0C0C0C] rounded-[10px] overflow-hidden flex flex-col justify-between transition-colors ${
                   img.is_primary
                     ? "border-[#E5B842] shadow-[0_0_15px_rgba(229,184,66,0.1)]"
                     : "border-[#222222]"
@@ -443,13 +443,13 @@ export default function ProjectImagesManager({
 
                     {/* Primary Badge */}
                     {img.is_primary && (
-                      <div className="absolute top-2 left-2 bg-[#E5B842] text-[#0C0C0C] text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider">
+                      <div className="absolute top-2 left-2 bg-[#E5B842] text-[#0C0C0C] text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider rounded-[6px]">
                         ★ PRIMARY
                       </div>
                     )}
 
                     {/* Sort Order Badge */}
-                    <div className="absolute top-2 right-2 bg-black/80 text-[#707070] text-[10px] px-2 py-0.5">
+                    <div className="absolute top-2 right-2 bg-black/80 text-[#707070] text-[10px] px-2 py-0.5 rounded-[6px]">
                       #{idx + 1}
                     </div>
                   </div>
@@ -466,7 +466,7 @@ export default function ProjectImagesManager({
                             type="text"
                             value={editAltText}
                             onChange={(e) => setEditAltText(e.target.value)}
-                            className="w-full bg-[#141414] border border-[#2E2E2E] px-2 py-1 text-xs text-[#F3F3F3]"
+                            className="w-full bg-[#141414] border border-[#2E2E2E] px-2 py-1 text-xs text-[#F3F3F3] rounded-[6px]"
                           />
                         </div>
                         <div>
@@ -477,21 +477,21 @@ export default function ProjectImagesManager({
                             type="text"
                             value={editCaption}
                             onChange={(e) => setEditCaption(e.target.value)}
-                            className="w-full bg-[#141414] border border-[#2E2E2E] px-2 py-1 text-xs text-[#F3F3F3]"
+                            className="w-full bg-[#141414] border border-[#2E2E2E] px-2 py-1 text-xs text-[#F3F3F3] rounded-[6px]"
                           />
                         </div>
                         <div className="flex gap-2">
                           <button
                             type="button"
                             onClick={() => handleSaveMeta(img.id)}
-                            className="px-2.5 py-1 bg-[#E5B842] text-[#0C0C0C] font-bold uppercase text-[10px]"
+                            className="px-2.5 py-1 bg-[#E5B842] text-[#0C0C0C] font-bold uppercase text-[10px] rounded-[6px] cursor-pointer"
                           >
                             Save
                           </button>
                           <button
                             type="button"
                             onClick={() => setEditingImageId(null)}
-                            className="px-2.5 py-1 border border-[#2E2E2E] text-[#9E9E9E] uppercase text-[10px]"
+                            className="px-2.5 py-1 border border-[#2E2E2E] text-[#9E9E9E] uppercase text-[10px] rounded-[6px] cursor-pointer"
                           >
                             Cancel
                           </button>
@@ -534,7 +534,7 @@ export default function ProjectImagesManager({
                       type="button"
                       onClick={() => handleMove(idx, "up")}
                       disabled={idx === 0}
-                      className="px-2 py-1 border border-[#262626] text-[#9E9E9E] hover:text-[#E5B842] disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed"
+                      className="px-2 py-1 border border-[#262626] text-[#9E9E9E] hover:text-[#E5B842] disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed rounded-[6px]"
                       title="Move Left/Up"
                     >
                       ←
@@ -543,7 +543,7 @@ export default function ProjectImagesManager({
                       type="button"
                       onClick={() => handleMove(idx, "down")}
                       disabled={idx === images.length - 1}
-                      className="px-2 py-1 border border-[#262626] text-[#9E9E9E] hover:text-[#E5B842] disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed"
+                      className="px-2 py-1 border border-[#262626] text-[#9E9E9E] hover:text-[#E5B842] disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed rounded-[6px]"
                       title="Move Right/Down"
                     >
                       →
@@ -552,7 +552,7 @@ export default function ProjectImagesManager({
                       <button
                         type="button"
                         onClick={() => startEditMeta(img)}
-                        className="px-2 py-1 border border-[#262626] text-[#707070] hover:text-[#F3F3F3] text-[10px] uppercase cursor-pointer"
+                        className="px-2 py-1 border border-[#262626] text-[#707070] hover:text-[#F3F3F3] text-[10px] uppercase cursor-pointer rounded-[6px]"
                         title="Edit metadata"
                       >
                         Edit
@@ -565,7 +565,7 @@ export default function ProjectImagesManager({
                       <button
                         type="button"
                         onClick={() => handleSetPrimary(img.id)}
-                        className="px-2 py-1 border border-[#E5B842]/40 text-[#E5B842] hover:bg-[#E5B842]/10 text-[10px] uppercase tracking-wider cursor-pointer"
+                        className="px-2 py-1 border border-[#E5B842]/40 text-[#E5B842] hover:bg-[#E5B842]/10 text-[10px] uppercase tracking-wider cursor-pointer rounded-[6px]"
                       >
                         Set Primary
                       </button>
@@ -573,7 +573,7 @@ export default function ProjectImagesManager({
                     <button
                       type="button"
                       onClick={() => handleDeleteImage(img.id)}
-                      className="px-2 py-1 border border-[#E55353]/30 text-[#E55353] hover:bg-[#E55353]/10 text-[10px] uppercase tracking-wider cursor-pointer"
+                      className="px-2 py-1 border border-[#E55353]/30 text-[#E55353] hover:bg-[#E55353]/10 text-[10px] uppercase tracking-wider cursor-pointer rounded-[6px]"
                       title="Delete Image & Storage Object"
                     >
                       Delete
