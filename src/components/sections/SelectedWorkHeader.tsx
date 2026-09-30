@@ -11,9 +11,10 @@ export default function SelectedWorkHeader({
 
   return (
     <div
-      id="selected-work"
-      className="scroll-mt-20 w-full border-b border-[#1F1F1F] bg-[#0C0C0C] py-8 sm:py-12"
+      id="my-projects"
+      className="scroll-mt-20 w-full border-b border-[#1F1F1F] bg-[#0C0C0C] py-8 sm:py-12 relative"
     >
+      <span id="selected-work" className="absolute -top-20 pointer-events-none" aria-hidden="true" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="flex items-baseline gap-3 sm:gap-4 flex-wrap">

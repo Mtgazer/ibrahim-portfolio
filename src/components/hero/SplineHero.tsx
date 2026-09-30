@@ -3,8 +3,9 @@ import SplineHeroClient from "./SplineHeroClient";
 export default function SplineHero() {
   return (
     <section
+      id="home"
       aria-label="Interactive Hero"
-      className="relative w-full h-[calc(100svh-4rem)] min-h-[520px] sm:h-[calc(100vh-4rem)] sm:min-h-[560px] max-h-[1080px] bg-[#0C0C0C] border-b border-[#1A1A1A] overflow-hidden flex flex-col items-center justify-center"
+      className="scroll-mt-16 relative w-full h-[calc(100svh-4rem)] min-h-[520px] sm:h-[calc(100vh-4rem)] sm:min-h-[560px] max-h-[1080px] bg-[#0C0C0C] border-b border-[#1A1A1A] overflow-hidden flex flex-col items-center justify-center"
     >
       {/* 
         Dedicated Spline Interactive Scene
