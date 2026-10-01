@@ -1,12 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import HeroAtmosphere from "./HeroAtmosphere";
 
 export default function Hero() {
   const scrollToWork = () => {
-    const workEl = document.getElementById("work");
-    if (workEl) {
-      workEl.scrollIntoView({
+    const projectsEl =
+      document.getElementById("my-projects") ||
+      document.getElementById("selected-work");
+    if (projectsEl) {
+      projectsEl.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
@@ -42,68 +45,25 @@ export default function Hero() {
 
       {/* 2. Main Foreground Content Flow */}
       <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center">
-        {/* A. Official IK Logo Badge */}
+        {/* A. Official IK Logo */}
         <div className="mb-4 sm:mb-5 flex items-center justify-center">
           <div className="relative group select-none">
-            {/* Soft subtle glow behind badge */}
-            <div className="absolute inset-0 rounded-[14px] bg-[#E5B842]/15 blur-[12px] pointer-events-none transition-opacity duration-300 group-hover:opacity-100" />
+            {/* Soft subtle warm gold glow behind logo */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full bg-[#E5B842]/20 blur-[18px] pointer-events-none transition-opacity duration-300 group-hover:opacity-100"
+            />
 
-            {/* Badge Card Container */}
-            <div className="relative w-13 h-13 sm:w-15 sm:h-15 rounded-[14px] bg-[#111110] border border-[#8F6B24]/60 p-[3px] shadow-[0_4px_24px_rgba(0,0,0,0.7)] transition-transform duration-200 group-hover:scale-105">
-              <div className="w-full h-full rounded-[10px] border border-white/[0.08] flex items-center justify-center bg-gradient-to-b from-[#141413] to-[#0D0D0C]">
-                <svg
-                  width="36"
-                  height="36"
-                  viewBox="0 0 36 36"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-7 h-7 sm:w-8 sm:h-8"
-                  aria-label="IK Logo"
-                >
-                  {/* Letter I: Ivory vertical stroke */}
-                  <line
-                    x1="12"
-                    y1="8"
-                    x2="12"
-                    y2="28"
-                    stroke="#F5F5F0"
-                    strokeWidth="2.75"
-                    strokeLinecap="round"
-                  />
-                  {/* Letter K: Gold vertical stem */}
-                  <line
-                    x1="19.5"
-                    y1="8"
-                    x2="19.5"
-                    y2="28"
-                    stroke="#E5B842"
-                    strokeWidth="2.75"
-                    strokeLinecap="round"
-                  />
-                  {/* Letter K: Ivory diagonal upper arm */}
-                  <line
-                    x1="19.5"
-                    y1="18"
-                    x2="27"
-                    y2="9.5"
-                    stroke="#F5F5F0"
-                    strokeWidth="2.75"
-                    strokeLinecap="round"
-                  />
-                  {/* Letter K: Ivory diagonal lower arm */}
-                  <line
-                    x1="19.5"
-                    y1="18"
-                    x2="27"
-                    y2="26.5"
-                    stroke="#F5F5F0"
-                    strokeWidth="2.75"
-                    strokeLinecap="round"
-                  />
-                  {/* Subtle golden junction accent */}
-                  <circle cx="19.5" cy="18" r="1.5" fill="#F0C969" />
-                </svg>
-              </div>
+            {/* Official Logo Display Container */}
+            <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+              <Image
+                src="/images/ik-logo.png"
+                alt="Ibrahim Khalil Official Logo"
+                width={64}
+                height={64}
+                priority
+                className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(229,184,66,0.28)]"
+              />
             </div>
           </div>
         </div>
