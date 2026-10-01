@@ -10,7 +10,8 @@
     "seed:phase7": "npx tsx scripts/seed-phase7.ts",
     "verify:phase7": "npx tsx scripts/verify-phase7.ts",
     "seed:field-notes": "npx tsx scripts/seed-field-notes.ts",
-    "verify:field-notes": "npx tsx scripts/verify-field-notes.ts"
+    "verify:field-notes": "npx tsx scripts/verify-field-notes.ts",
+    "verify:field-notes-admin": "npx tsx scripts/verify-field-notes-admin.ts"
   },
   "dependencies": {
     "@splinetool/react-spline": "^4.1.0",
