@@ -30,7 +30,7 @@ export const personalInfo: PersonalInfo = {
   location: "Cairo, Egypt",
   coordinates: "30.0444° N, 31.2357° E",
   timezone: "Eastern European Time [UTC+2]",
-  email: "mtgazerr@gmail.com",
+  email: "ebrahimmmkh@gmail.com",
   linkedinUrl: "https://www.linkedin.com/in/ebrahim-khalil-a50168291/",
   githubUrl: "https://github.com/Mtgazer",
   dossierVersion: "V2.4",
