@@ -6,7 +6,7 @@ import Link from "next/link";
 import { fieldNotes } from "@/data/fieldNotes";
 
 export default function FieldNotesSection() {
-  const [currentIndex, setCurrentIndex] = useState(1); // Start on note 02 as shown in Stitch reference
+  const [currentIndex, setCurrentIndex] = useState(0); // Start on the first field note
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [stageHeight, setStageHeight] = useState<number | null>(null);
