@@ -140,3 +140,34 @@ export interface EditorialProject extends Project {
    */
   visuals: PresentationDataVisuals;
 }
+
+// ---------------------------------------------------------------------------
+// Field Note (Phase 2: Independent Content Entity)
+// ---------------------------------------------------------------------------
+
+export interface FieldNote {
+  id: string;
+  title: string;
+  slug?: string | null;
+  description?: string | null;
+  category?: string | null;
+  noteNumber?: string;
+  date?: string | null;
+  noteDate?: string | null;
+  coverImage?: string | null;
+  coverImagePath?: string | null;
+  coverImageUrl?: string | null;
+  coverAltText?: string | null;
+  tags: string[];
+  tag?: string | null;
+  externalLink?: string | null;
+  href?: string | null;
+  isPublished: boolean;
+  isFeatured: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+  /** UI backwards-compatibility alias for coverImage/coverImageUrl */
+  image?: string | null;
+}
+

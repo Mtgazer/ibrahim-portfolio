@@ -7,9 +7,13 @@ import ProjectArticle from "@/components/sections/ProjectArticle";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
 import { getPublishedProjects } from "@/lib/projects";
+import { getPublishedFieldNotes } from "@/lib/field-notes";
 
 export default async function HomePage() {
-  const projects = await getPublishedProjects();
+  const [projects, fieldNotes] = await Promise.all([
+    getPublishedProjects(),
+    getPublishedFieldNotes(),
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0C0C0C] text-[#F3F3F3]">
@@ -22,7 +26,7 @@ export default async function HomePage() {
         <Hero />
 
         {/* 2. Field Notes & Practice Area */}
-        <FieldNotesSection />
+        <FieldNotesSection initialNotes={fieldNotes} />
 
         {/* 3. Selected Work Header */}
         <SelectedWorkHeader projectCount={projects.length} />

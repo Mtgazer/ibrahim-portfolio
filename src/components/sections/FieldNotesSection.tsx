@@ -3,16 +3,22 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { fieldNotes } from "@/data/fieldNotes";
+import type { FieldNote } from "@/types";
+import { fieldNotes as defaultFieldNotes } from "@/data/fieldNotes";
 
-export default function FieldNotesSection() {
+interface FieldNotesSectionProps {
+  initialNotes?: FieldNote[];
+}
+
+export default function FieldNotesSection({ initialNotes }: FieldNotesSectionProps = {}) {
+  const notes = initialNotes && initialNotes.length > 0 ? initialNotes : defaultFieldNotes;
   const [currentIndex, setCurrentIndex] = useState(0); // Start on the first field note
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [stageHeight, setStageHeight] = useState<number | null>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
 
-  const totalNotes = fieldNotes.length;
+  const totalNotes = notes.length;
 
   const handlePrev = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + totalNotes) % totalNotes);
@@ -219,7 +225,7 @@ export default function FieldNotesSection() {
             }}
             className="relative w-full min-h-[480px] xs:min-h-[510px] sm:min-h-[550px] md:min-h-[620px] lg:min-h-[670px] overflow-visible select-none cursor-grab active:cursor-grabbing focus:outline-none touch-pan-y"
           >
-            {fieldNotes.map((note, index) => {
+            {notes.map((note, index) => {
               // Calculate circular offset from active card
               let diff = index - currentIndex;
               if (diff > totalNotes / 2) diff -= totalNotes;
