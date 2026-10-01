@@ -55,3 +55,24 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #E5B842;
 }
+
+/* Travelling gold border highlight animation for CTA buttons */
+@keyframes border-beam {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.animate-border-beam {
+  animation: border-beam 4.5s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-border-beam {
+    animation: none !important;
+  }
+}

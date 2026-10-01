@@ -1,6 +1,6 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import SplineHero from "@/components/hero/SplineHero";
+import Hero from "@/components/hero/Hero";
 import HeroSection from "@/components/sections/HeroSection";
 import FieldNotesSection from "@/components/sections/FieldNotesSection";
 import EditorialCoordinateBar from "@/components/sections/EditorialCoordinateBar";
@@ -21,8 +21,8 @@ export default async function HomePage() {
 
       {/* Main Content Flow */}
       <main className="flex-1 w-full">
-        {/* Section 1: Spline Interactive Opening Hero */}
-        <SplineHero />
+        {/* Section 1: Hero Section */}
+        <Hero />
 
         {/* Section 2: Portfolio Dossier & Intro Section */}
         <HeroSection />
