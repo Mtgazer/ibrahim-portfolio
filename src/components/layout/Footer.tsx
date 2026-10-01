@@ -50,7 +50,7 @@ export default function Footer() {
         {/* Bottom Line */}
         <div className="pt-8 border-t border-[#1A1A1A] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] text-[#666666] tracking-wider uppercase">
           <div>
-            LOC: CAIRO, EGYPT [{personalInfo.coordinates}]
+            LOCATION: CAIRO, EGYPT
           </div>
           <div>
             &copy; {new Date().getFullYear()} {personalInfo.name.toUpperCase()} — ALL RIGHTS RESERVED

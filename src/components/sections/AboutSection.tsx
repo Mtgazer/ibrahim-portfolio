@@ -8,38 +8,38 @@ interface Capability {
 
 const capabilities: Capability[] = [
   {
-    code: "01 // UI DESIGN",
+    code: "UI DESIGN",
     title: "Visual Design",
     description:
       "Color calibration, typography scales, responsive viewport reflow, and high-fidelity interface layouts crafted with pixel-level discipline."
   },
   {
-    code: "02 // UX DESIGN",
+    code: "UX DESIGN",
     title: "User Research",
     description:
       "User journey mapping, cognitive walkthroughs, information architecture structures, and user testing with real student cohorts."
   },
   {
-    code: "03 // SYSTEMS",
+    code: "SYSTEMS",
     title: "Design Architecture",
     description:
       "Figma variables, atomic design token mapping, component state matrices, and thorough engineering handoff specs."
   },
   {
-    code: "04 // INTERACTION",
+    code: "INTERACTION",
     title: "Prototyping",
     description:
       "Micro-interaction staging, smart-animate state transitions, mobile gesture mechanics, and realistic presentation flows."
   },
   {
-    code: "05 // STRUCTURE",
+    code: "STRUCTURE",
     title: "Wireframing",
     description:
       "Rapid structural iteration, low-fidelity paper and digital schematics, and functional feature validation before polish."
   },
   {
-    code: "06 // CS COGNITION",
-    title: "Technical Logic",
+    code: "TECHNICAL LOGIC",
+    title: "Frontend Engineering",
     description:
       "Direct understanding of DOM tree limits, layout constraints, API latency implications, and frontend engineering handoff feasibility."
   }
@@ -51,17 +51,24 @@ export default function AboutSection() {
       id="about"
       className="scroll-mt-20 w-full py-16 sm:py-24 border-b border-[#1A1A1A] bg-[#0C0C0C]"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-start">
-          {/* Left Column: Computational Perspective & Bio */}
-          <div className="lg:col-span-5 space-y-8">
-            <div className="flex items-center gap-2 font-mono text-xs text-[#E5B842] tracking-wider uppercase">
-              <span className="w-2 h-2 bg-[#E5B842] inline-block" />
-              <span>COMPUTATIONAL PERSPECTIVE</span>
-            </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
+        {/* Section Label */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E5B842] inline-block shadow-[0_0_6px_rgba(229,184,66,0.5)]" />
+            <span className="font-mono text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-[#E5B842] select-none">
+              ABOUT &amp; CAPABILITIES
+            </span>
+          </div>
 
+          <div className="w-full h-px bg-[#1F1F1F]" />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-start">
+          {/* Left Column: Bio & Core Philosophy */}
+          <div className="lg:col-span-5 space-y-8">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F3F3F3] leading-[1.12]">
-              Bridging algorithmic rigor with human-centered aesthetics.
+              How I think, design, and build.
             </h2>
 
             <div className="space-y-4 text-sm sm:text-base text-[#9E9E9E] leading-relaxed">
@@ -98,7 +105,7 @@ export default function AboutSection() {
           {/* Right Column: Capabilities Matrix */}
           <div className="lg:col-span-7 space-y-6">
             <div className="font-mono text-xs text-[#707070] tracking-wider uppercase border-b border-[#1C1C1C] pb-4">
-              CAPABILITIES MATRIX // EVALUATED SKILLS
+              CAPABILITIES MATRIX
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

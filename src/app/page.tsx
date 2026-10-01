@@ -2,16 +2,14 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/hero/Hero";
 import FieldNotesSection from "@/components/sections/FieldNotesSection";
-import EditorialCoordinateBar from "@/components/sections/EditorialCoordinateBar";
 import SelectedWorkHeader from "@/components/sections/SelectedWorkHeader";
 import ProjectArticle from "@/components/sections/ProjectArticle";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
-import { getPublishedProjects, getProjectIndexRange } from "@/lib/projects";
+import { getPublishedProjects } from "@/lib/projects";
 
 export default async function HomePage() {
   const projects = await getPublishedProjects();
-  const indexRange = await getProjectIndexRange();
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0C0C0C] text-[#F3F3F3]">
@@ -23,17 +21,11 @@ export default async function HomePage() {
         {/* Section 1: Hero Section */}
         <Hero />
 
-        {/* 3. Field Notes & Practice Area */}
+        {/* 2. Field Notes & Practice Area */}
         <FieldNotesSection />
 
-        {/* 4. Top Progress & Editorial Coordinate Bar */}
-        <EditorialCoordinateBar />
-
-        {/* 5. Selected Work Header */}
-        <SelectedWorkHeader
-          projectCount={projects.length}
-          indexRange={indexRange}
-        />
+        {/* 3. Selected Work Header */}
+        <SelectedWorkHeader projectCount={projects.length} />
 
         {/* 6. Project Case Study Presentations */}
         <section className="w-full bg-[#0C0C0C]">

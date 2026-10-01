@@ -22,12 +22,21 @@ export default function ContactSection() {
       id="contact"
       className="scroll-mt-20 w-full py-16 sm:py-24 border-b border-[#1A1A1A] bg-[#0C0C0C]"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
+        {/* Section Label */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E5B842] inline-block shadow-[0_0_6px_rgba(229,184,66,0.5)]" />
+            <span className="font-mono text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-[#E5B842] select-none">
+              CONTACT
+            </span>
+          </div>
+
+          <div className="w-full h-px bg-[#1F1F1F]" />
+        </div>
+
         {/* Header */}
         <div className="space-y-4 max-w-3xl">
-          <div className="font-mono text-xs text-[#E5B842] tracking-wider uppercase">
-            [COMMISSION &amp; ROLES // 2024]
-          </div>
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#F3F3F3] leading-[1.1]">
             Let&apos;s build something{" "}
             <span className="text-[#E5B842] italic font-serif font-normal">
@@ -116,7 +125,7 @@ export default function ContactSection() {
         <div className="pt-8 border-t border-[#1C1C1C] space-y-3 font-mono text-xs text-[#707070] tracking-wider">
           <div className="flex flex-col sm:flex-row justify-between gap-2">
             <div>
-              LOCATION: {personalInfo.location.toUpperCase()} [{personalInfo.coordinates}]
+              LOCATION: {personalInfo.location.toUpperCase()}
             </div>
             <div>TIMEZONE: {personalInfo.timezone.toUpperCase()}</div>
           </div>

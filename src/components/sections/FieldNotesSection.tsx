@@ -10,32 +10,23 @@ export default function FieldNotesSection() {
       className="scroll-mt-20 w-full py-16 sm:py-24 border-b border-[#1A1A1A] bg-[#0C0C0C]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
-        {/* Section Header */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 font-mono text-xs text-[#E5B842] tracking-wider uppercase">
-            <span className="w-2 h-2 bg-[#E5B842] inline-block" />
-            <span>DISPATCHES &amp; EXPERIMENTS // LAB NOTEBOOK</span>
+        {/* Section Label */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E5B842] inline-block shadow-[0_0_6px_rgba(229,184,66,0.5)]" />
+            <span className="font-mono text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-[#E5B842] select-none">
+              FIELD NOTES
+            </span>
           </div>
 
+          {/* Section Introduction & Dynamic Count (No redundant "Field Notes" <h2>) */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-[#1A1A1A]">
-            <div className="space-y-2 max-w-3xl">
-              <h2
-                id="field-notes-heading"
-                className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F3F3F3]"
-              >
-                Field Notes{" "}
-                <span className="text-[#707070] font-normal text-2xl sm:text-3xl md:text-4xl">
-                  {"// Practice Area"}
-                </span>
-              </h2>
-              <p className="text-sm sm:text-base text-[#9E9E9E] leading-relaxed">
-                Daily UI explorations, micro-interactions, component architecture
-                studies, and design experiments from my ongoing workbench.
-              </p>
-            </div>
+            <p className="text-sm sm:text-base text-[#9E9E9E] leading-relaxed max-w-2xl font-normal">
+              Daily UI explorations, micro-interactions, component architecture
+              studies, and design experiments from my ongoing workbench.
+            </p>
             <div className="font-mono text-xs text-[#707070] tracking-wider uppercase flex-shrink-0">
-              <span className="text-[#E5B842]">{fieldNotes.length} ENTRIES</span>{" "}
-              <span className="text-[#333333] mx-1">/</span> ONGOING PRACTICE
+              <span className="text-[#E5B842]">{fieldNotes.length} ENTRIES</span>
             </div>
           </div>
         </div>
