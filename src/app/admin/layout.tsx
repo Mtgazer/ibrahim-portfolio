@@ -1,6 +1,7 @@
 import { getAuthenticatedUser } from "@/lib/auth";
 import SignOutButton from "@/components/admin/SignOutButton";
 import AdminNav from "@/components/admin/AdminNav";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import Link from "next/link";
 
 export default async function AdminLayout({
@@ -11,7 +12,7 @@ export default async function AdminLayout({
   const user = await getAuthenticatedUser();
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-[#F3F3F3] flex flex-col">
+    <div className="min-h-screen bg-[var(--theme-bg-page)] text-[var(--theme-text-primary)] flex flex-col">
       {/* Admin Editorial Header Bar — Only rendered when user has an active session */}
       {user && (
         <header className="border-b border-[#1F1F1F] bg-[#141414] px-4 sm:px-8 py-3 flex items-center justify-between flex-wrap gap-4">
@@ -29,9 +30,10 @@ export default async function AdminLayout({
             </span>
           </div>
 
-          <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
             <AdminNav />
             <div className="h-4 w-px bg-[#262626] hidden sm:block" />
+            <ThemeToggle />
             <span className="font-mono text-xs text-[#707070] hidden md:inline">
               OP: <span className="text-[#F3F3F3]">{user.email}</span>
             </span>

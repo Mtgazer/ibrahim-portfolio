@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { personalInfo } from "@/data/personal";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 const NAV_ITEMS = [
   { id: "home", label: "HOME" },
@@ -138,13 +139,13 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#0C0C0C]/90 backdrop-blur-md border-b border-[#1F1F1F]">
+    <header className="sticky top-0 z-50 w-full bg-[var(--theme-header-bg)] backdrop-blur-md border-b border-[var(--theme-border)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand / Logo */}
         <Link
           href="#home"
           onClick={(e) => handleNavClick(e, "home")}
-          className="flex items-center gap-2.5 group cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#E5B842] rounded-[8px]"
+          className="flex items-center gap-2.5 group cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--theme-focus-ring)] rounded-[8px]"
         >
           <Image
             src="/images/ik-logo.png"
@@ -154,10 +155,10 @@ export default function Header() {
             priority
             className="h-5 w-auto object-contain transition-transform duration-200 group-hover:scale-105 flex-shrink-0"
           />
-          <span className="font-mono text-xs sm:text-sm font-semibold tracking-wider text-white">
+          <span className="font-mono text-xs sm:text-sm font-semibold tracking-wider text-[var(--theme-text-primary)]">
             {personalInfo.name.toUpperCase()}
           </span>
-          <span className="font-mono text-xs text-[#707070] hidden md:inline-block">
+          <span className="font-mono text-xs text-[var(--theme-text-muted)] hidden md:inline-block">
             [ {personalInfo.tagline} ]
           </span>
         </Link>
@@ -178,10 +179,10 @@ export default function Header() {
                 }}
                 href={`#${item.id}`}
                 onClick={(e) => handleNavClick(e, item.id)}
-                className={`relative py-1 transition-colors duration-200 focus:outline-none focus-visible:text-[#E5B842] ${
+                className={`relative py-1 transition-colors duration-200 focus:outline-none focus-visible:text-[var(--theme-gold-text)] ${
                   isActive
-                    ? "text-[#E5B842] font-semibold"
-                    : "text-[#A0A0A0] hover:text-[#E5B842]"
+                    ? "text-[var(--theme-gold-text)] font-semibold"
+                    : "text-[var(--theme-text-secondary)] hover:text-[var(--theme-gold-text)]"
                 }`}
               >
                 {item.label}
@@ -192,7 +193,7 @@ export default function Header() {
           {/* Shared sliding gold underline indicator */}
           <span
             aria-hidden="true"
-            className="absolute bottom-0 h-[2px] bg-[#E5B842] transition-all duration-300 ease-out pointer-events-none"
+            className="absolute bottom-0 h-[2px] bg-[var(--theme-gold-text)] transition-all duration-300 ease-out pointer-events-none"
             style={{
               left: `${indicatorStyle.left}px`,
               width: `${indicatorStyle.width}px`,
@@ -201,53 +202,58 @@ export default function Header() {
           />
         </nav>
 
-        {/* CTA */}
-        <div className="hidden sm:flex items-center">
-          <Link
-            href="#contact"
-            onClick={(e) => handleNavClick(e, "contact")}
-            className="border border-[#E5B842] rounded-[8px] px-4 py-1.5 text-xs font-mono tracking-wider text-[#E5B842] hover:bg-[#E5B842] hover:text-black transition-all duration-200"
-          >
-            LET&apos;S CONNECT
-          </Link>
-        </div>
+        {/* Actions Cluster: Theme Toggle + CTA + Mobile menu button */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <ThemeToggle />
 
-        {/* Mobile menu button */}
-        <div className="flex items-center lg:hidden">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation menu"
-            className="text-[#A0A0A0] hover:text-white p-2 rounded-[8px] focus:outline-none focus:ring-1 focus:ring-[#E5B842]"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          {/* CTA */}
+          <div className="hidden sm:flex items-center">
+            <Link
+              href="#contact"
+              onClick={(e) => handleNavClick(e, "contact")}
+              className="border border-[var(--theme-gold-text)] rounded-[8px] px-4 py-1.5 text-xs font-mono tracking-wider text-[var(--theme-gold-text)] hover:bg-[var(--theme-gold-text)] hover:text-white dark:hover:text-black transition-all duration-200"
             >
-              {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
+              LET&apos;S CONNECT
+            </Link>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="flex items-center lg:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle navigation menu"
+              className="text-[var(--theme-text-secondary)] hover:text-[var(--theme-text-primary)] p-2 rounded-[8px] focus:outline-none focus:ring-1 focus:ring-[var(--theme-focus-ring)]"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {mobileMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#1F1F1F] bg-[#0C0C0C] px-6 py-6 space-y-4 font-mono text-xs tracking-wider">
+        <div className="lg:hidden border-t border-[var(--theme-border)] bg-[var(--theme-bg-page)] px-6 py-6 space-y-4 font-mono text-xs tracking-wider">
           {NAV_ITEMS.map((item) => {
             const isActive = activeId === item.id;
             return (
@@ -255,10 +261,10 @@ export default function Header() {
                 key={item.id}
                 href={`#${item.id}`}
                 onClick={(e) => handleMobileNavClick(e, item.id)}
-                className={`block py-2 border-b border-[#1A1A1A] transition-colors ${
+                className={`block py-2 border-b border-[var(--theme-border-subtle)] transition-colors ${
                   isActive
-                    ? "text-[#E5B842] font-semibold"
-                    : "text-[#C0C0C0] hover:text-white"
+                    ? "text-[var(--theme-gold-text)] font-semibold"
+                    : "text-[var(--theme-text-secondary)] hover:text-[var(--theme-text-primary)]"
                 }`}
               >
                 {isActive ? `→ ${item.label}` : item.label}
@@ -272,7 +278,7 @@ export default function Header() {
                 setMobileMenuOpen(false);
                 handleNavClick(e, "contact");
               }}
-              className="block text-center border border-[#E5B842] rounded-[8px] py-2.5 text-[#E5B842] hover:bg-[#E5B842] hover:text-black transition-colors"
+              className="block text-center border border-[var(--theme-gold-text)] rounded-[8px] py-2.5 text-[var(--theme-gold-text)] hover:bg-[var(--theme-gold-text)] hover:text-white dark:hover:text-black transition-colors"
             >
               LET&apos;S CONNECT
             </Link>

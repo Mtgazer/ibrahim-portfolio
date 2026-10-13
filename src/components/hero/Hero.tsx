@@ -37,7 +37,7 @@ export default function Hero() {
     <section
       id="home"
       aria-label="Hero"
-      style={{ backgroundColor: "#050505" }}
+      style={{ backgroundColor: "var(--theme-bg-hero, #050505)" }}
       className="scroll-mt-16 relative w-full min-h-[calc(100svh-4rem)] sm:min-h-[calc(100vh-4rem)] py-16 sm:py-20 md:py-24 border-b border-[#1A1A1A] overflow-hidden flex flex-col items-center justify-center select-none"
     >
       {/* 1. Atmospheric Glow & Grain Texture */}
@@ -48,10 +48,13 @@ export default function Hero() {
         {/* A. Official IK Logo */}
         <div className="mb-4 sm:mb-5 flex items-center justify-center">
           <div className="relative group select-none">
-            {/* Soft subtle warm gold glow behind logo */}
+            {/* Soft subtle warm gold glow behind logo - tuned per theme */}
             <div
               aria-hidden="true"
-              className="absolute inset-0 rounded-full bg-[#E5B842]/20 blur-[18px] pointer-events-none transition-opacity duration-300 group-hover:opacity-100"
+              className="absolute inset-0 rounded-full blur-[18px] pointer-events-none transition-opacity duration-300 group-hover:opacity-100"
+              style={{
+                backgroundColor: "var(--theme-logo-glow-bg, rgba(229,184,66,0.20))",
+              }}
             />
 
             {/* Official Logo Display Container */}
@@ -62,7 +65,10 @@ export default function Hero() {
                 width={64}
                 height={64}
                 priority
-                className="w-full h-full object-contain drop-shadow-[0_4px_16px_rgba(229,184,66,0.28)]"
+                style={{
+                  filter: "var(--theme-logo-shadow)",
+                }}
+                className="w-full h-full object-contain"
               />
             </div>
           </div>
@@ -70,26 +76,26 @@ export default function Hero() {
 
         {/* B. Status / Availability Label */}
         <div className="mb-4 sm:mb-5">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 bg-[#0C0C0C]/90 backdrop-blur-sm border border-[#222222] rounded-[6px] transition-colors duration-200 hover:border-[#E5B842]/40 select-text">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 bg-[var(--theme-bg-surface)] backdrop-blur-sm border border-[var(--theme-border-strong)] rounded-[6px] transition-colors duration-200 hover:border-[var(--theme-gold-text)] select-text shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-[#E5B842] shadow-[0_0_8px_rgba(229,184,66,0.8)] animate-pulse" />
-            <span className="font-mono text-[10px] sm:text-[11px] font-medium tracking-[0.14em] uppercase text-[#B5B5AF]">
+            <span className="font-mono text-[10px] sm:text-[11px] font-medium tracking-[0.14em] uppercase text-[var(--theme-text-secondary)]">
               AVAILABLE FOR ENGINEERING &amp; DESIGN ROLES
             </span>
           </div>
         </div>
 
         {/* C. Name Display Heading */}
-        <h1 className="select-text font-sans font-bold text-4xl xs:text-5xl sm:text-6xl md:text-[4.25rem] lg:text-[4.75rem] text-[#F5F5F0] leading-[1.08] tracking-[-0.01em] sm:tracking-[0.01em] max-w-3xl">
+        <h1 className="select-text font-sans font-bold text-4xl xs:text-5xl sm:text-6xl md:text-[4.25rem] lg:text-[4.75rem] text-[var(--theme-text-primary)] leading-[1.08] tracking-[-0.01em] sm:tracking-[0.01em] max-w-3xl">
           Ibrahim Khalil
         </h1>
 
         {/* D. Hero Description */}
-        <p className="mt-4 sm:mt-5 select-text font-sans font-normal text-sm sm:text-base md:text-[1.05rem] text-[#9A9A9A] max-w-md sm:max-w-lg md:max-w-xl leading-relaxed">
+        <p className="mt-4 sm:mt-5 select-text font-sans font-normal text-sm sm:text-base md:text-[1.05rem] text-[var(--theme-text-secondary)] max-w-md sm:max-w-lg md:max-w-xl leading-relaxed">
           Software developer building{" "}
-          <span className="text-[#E5B842] font-medium">digital products</span>,
-          exploring <span className="text-[#E5B842] italic">AI</span>,{" "}
-          <span className="text-[#E5B842] italic">design</span>, and{" "}
-          <span className="text-[#E5B842] italic">data</span>.
+          <span className="text-[var(--theme-gold-text)] font-medium">digital products</span>,
+          exploring <span className="text-[var(--theme-gold-text)] italic">AI</span>,{" "}
+          <span className="text-[var(--theme-gold-text)] italic">design</span>, and{" "}
+          <span className="text-[var(--theme-gold-text)] italic">data</span>.
         </p>
 
         {/* E. Skill / Focus Tags */}
@@ -97,7 +103,7 @@ export default function Hero() {
           {focusTags.map((tag) => (
             <span
               key={tag}
-              className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-[#0D0D0D]/90 border border-[#222222] rounded-[5px] font-mono text-[10px] sm:text-[11px] font-normal tracking-[0.12em] uppercase text-[#8E8E8A] transition-colors duration-200 hover:border-[#E5B842]/40 hover:text-[#C4C4C0] select-text whitespace-nowrap"
+              className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-[var(--theme-bg-surface)] border border-[var(--theme-border)] rounded-[5px] font-mono text-[10px] sm:text-[11px] font-normal tracking-[0.12em] uppercase text-[var(--theme-text-secondary)] transition-colors duration-200 hover:border-[var(--theme-gold-text)] hover:text-[var(--theme-text-primary)] select-text whitespace-nowrap shadow-xs"
             >
               {tag}
             </span>
@@ -136,12 +142,12 @@ export default function Hero() {
             </button>
           </div>
 
-          {/* Button 2: Dark / Secondary Version */}
-          <div className="relative inline-flex p-[1px] rounded-[8px] overflow-hidden group focus-within:ring-2 focus-within:ring-[#F0C969]/60 w-full md:w-auto">
-            {/* Base Subtle Gold Border: rgba(212,168,79,0.45) */}
+          {/* Button 2: Secondary CTA Version */}
+          <div className="relative inline-flex p-[1px] rounded-[8px] overflow-hidden group focus-within:ring-2 focus-within:ring-[var(--theme-gold-text)] w-full md:w-auto">
+            {/* Base Subtle Border */}
             <div
               aria-hidden="true"
-              className="absolute inset-0 rounded-[8px] bg-[rgba(212,168,79,0.45)] transition-colors duration-200 group-hover:bg-[rgba(212,168,79,0.7)]"
+              className="absolute inset-0 rounded-[8px] bg-[var(--theme-secondary-btn-border)] transition-colors duration-200 group-hover:bg-[var(--theme-gold-text)]"
             />
 
             {/* Traveling Gold Highlight on Border */}
@@ -154,12 +160,12 @@ export default function Hero() {
               }}
             />
 
-            {/* Near-Black Button Surface */}
+            {/* Crisp Surface */}
             <button
               type="button"
               onClick={scrollToContact}
               aria-label="Get in touch contact section"
-              className="relative z-10 flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 bg-[#090909] text-[#F5F5F0] rounded-[7px] font-sans text-xs sm:text-[13px] font-medium tracking-[0.14em] uppercase transition-all duration-200 group-hover:bg-[#121212] group-hover:text-white cursor-pointer focus:outline-none min-w-[210px] sm:min-w-[220px] w-full md:w-auto"
+              className="relative z-10 flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 bg-[var(--theme-secondary-btn-bg)] text-[var(--theme-secondary-btn-text)] rounded-[7px] font-sans text-xs sm:text-[13px] font-medium tracking-[0.14em] uppercase transition-all duration-200 hover:bg-[var(--theme-secondary-btn-hover)] cursor-pointer focus:outline-none min-w-[210px] sm:min-w-[220px] w-full md:w-auto shadow-xs"
             >
               <span>GET IN TOUCH</span>
               <span className="text-sm font-bold">→</span>

@@ -4,17 +4,18 @@
   --font-sans: var(--font-epilogue), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-space-mono), ui-monospace, monospace;
 
-  --color-page: #0C0C0C;
-  --color-card: #141414;
-  --color-panel: #1A1A1A;
-  --color-gold: #E5B842;
-  --color-gold-hover: #F0C44E;
-  --color-gold-dark: #A8862A;
-  --color-border-dark: #222222;
-  --color-border-line: #1F1F1F;
-  --color-text-primary: #F3F3F3;
-  --color-text-secondary: #9E9E9E;
-  --color-text-muted: #666666;
+  --color-page: var(--theme-bg-page);
+  --color-card: var(--theme-bg-surface);
+  --color-panel: var(--theme-bg-surface-secondary);
+  --color-gold: var(--theme-gold-accent);
+  --color-gold-hover: var(--theme-gold-hover);
+  --color-gold-dark: var(--theme-gold-dark);
+  --color-gold-text: var(--theme-gold-text);
+  --color-border-dark: var(--theme-border-strong);
+  --color-border-line: var(--theme-border);
+  --color-text-primary: var(--theme-text-primary);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
 
   /* Editorial Border Radius Design Tokens */
   --radius-badge: 6px;
@@ -27,18 +28,104 @@
 
 :root {
   color-scheme: dark;
+
+  /* Theme tokens - Dark Mode (Default) */
+  --theme-bg-page: #0C0C0C;
+  --theme-bg-hero: #050505;
+  --theme-bg-vignette: #050505;
+  --theme-bg-surface: #121212;
+  --theme-bg-surface-elevated: #141414;
+  --theme-bg-surface-secondary: #181818;
+  --theme-bg-surface-subtle: #1A1A1A;
+  --theme-bg-surface-hover: #1E1E1E;
+  --theme-bg-input: #0C0C0C;
+
+  --theme-text-primary: #F3F3F3;
+  --theme-text-secondary: #9E9E9E;
+  --theme-text-muted: #707070;
+
+  --theme-border: #1F1F1F;
+  --theme-border-strong: #262626;
+  --theme-border-subtle: #1A1A1A;
+
+  --theme-gold-accent: #E5B842;
+  --theme-gold-text: #E5B842;
+  --theme-gold-hover: #F0C44E;
+  --theme-gold-dark: #A8862A;
+  --theme-gold-glow: rgba(229, 184, 66, 0.5);
+  --theme-focus-ring: #E5B842;
+
+  --theme-header-bg: rgba(12, 12, 12, 0.9);
+  --theme-scroll-track: #0C0C0C;
+  --theme-scroll-thumb: #262626;
+  --theme-scroll-thumb-hover: #E5B842;
+
+  /* Hero logo & CTA tokens */
+  --theme-logo-shadow: drop-shadow(0 4px 16px rgba(229, 184, 66, 0.28));
+  --theme-logo-glow-bg: rgba(229, 184, 66, 0.20);
+  --theme-hero-atmosphere-opacity: 1;
+  --theme-secondary-btn-bg: #090909;
+  --theme-secondary-btn-text: #F5F5F0;
+  --theme-secondary-btn-border: rgba(212, 168, 79, 0.45);
+  --theme-secondary-btn-hover: #121212;
+}
+
+[data-theme="light"],
+html.light {
+  color-scheme: light;
+
+  /* Theme tokens - Light Mode (Refined Warm Editorial) */
+  --theme-bg-page: #F5F3ED;
+  --theme-bg-hero: #F5F3ED;
+  --theme-bg-vignette: #F5F3ED;
+  --theme-bg-surface: #FFFFFF;
+  --theme-bg-surface-elevated: #FFFFFF;
+  --theme-bg-surface-secondary: #ECE9E0;
+  --theme-bg-surface-subtle: #ECE9E0;
+  --theme-bg-surface-hover: #E4DFD4;
+  --theme-bg-input: #FFFFFF;
+
+  --theme-text-primary: #191919;
+  --theme-text-secondary: #5F5B52;
+  --theme-text-muted: #807B70;
+
+  --theme-border: #D8D2C5;
+  --theme-border-strong: #BFB5A2;
+  --theme-border-subtle: #E2DDD2;
+
+  --theme-gold-accent: #E5B842;
+  --theme-gold-text: #89620B; /* Rich deep gold for high contrast (>= 5:1 on #F5F3ED and #FFFFFF) */
+  --theme-gold-hover: #6B4C08;
+  --theme-gold-dark: #89620B;
+  --theme-gold-glow: rgba(137, 98, 11, 0.35);
+  --theme-focus-ring: #89620B;
+
+  --theme-header-bg: rgba(245, 243, 237, 0.92);
+  --theme-scroll-track: #F5F3ED;
+  --theme-scroll-thumb: #D5CFBF;
+  --theme-scroll-thumb-hover: #89620B;
+
+  /* Hero logo & CTA tokens */
+  --theme-logo-shadow: drop-shadow(0 2px 4px rgba(45, 32, 10, 0.18)) drop-shadow(0 8px 16px rgba(70, 50, 15, 0.10));
+  --theme-logo-glow-bg: transparent;
+  --theme-hero-atmosphere-opacity: 0.22;
+  --theme-secondary-btn-bg: #FFFFFF;
+  --theme-secondary-btn-text: #191919;
+  --theme-secondary-btn-border: #BFB5A2;
+  --theme-secondary-btn-hover: #ECE9E0;
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #0C0C0C;
+  background-color: var(--theme-bg-page);
 }
 
 body {
-  background-color: #0C0C0C;
-  color: #F3F3F3;
+  background-color: var(--theme-bg-page);
+  color: var(--theme-text-primary);
   font-family: var(--font-epilogue), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Custom editorial scrollbar */
@@ -46,14 +133,207 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0C0C0C;
+  background: var(--theme-scroll-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: var(--theme-scroll-thumb);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #E5B842;
+  background: var(--theme-scroll-thumb-hover);
+}
+
+/* Light Mode Utility Overrides to preserve layout while applying the Light palette */
+[data-theme="light"] body {
+  background-color: var(--theme-bg-page);
+  color: var(--theme-text-primary);
+}
+
+[data-theme="light"] html {
+  background-color: var(--theme-bg-page);
+}
+
+/* Page background containers */
+[data-theme="light"] .bg-\[\#0C0C0C\],
+[data-theme="light"] .bg-\[\#050505\],
+[data-theme="light"] .bg-\[\#090909\] {
+  background-color: var(--theme-bg-page);
+}
+
+[data-theme="light"] .bg-\[\#0C0C0C\]\/90 {
+  background-color: var(--theme-header-bg);
+}
+
+/* Surface containers (cards, panels, modals) */
+[data-theme="light"] .bg-\[\#121212\],
+[data-theme="light"] .bg-\[\#141414\],
+[data-theme="light"] .bg-\[\#111113\],
+[data-theme="light"] .bg-\[\#0E0E10\],
+[data-theme="light"] .bg-\[\#0B0B0D\],
+[data-theme="light"] .bg-\[\#0C0C0E\]\/90 {
+  background-color: var(--theme-bg-surface);
+}
+
+/* Secondary surface containers (subtle sections, badges, inactive items) */
+[data-theme="light"] .bg-\[\#181818\],
+[data-theme="light"] .bg-\[\#18181A\],
+[data-theme="light"] .bg-\[\#18181B\],
+[data-theme="light"] .bg-\[\#1A1A1A\],
+[data-theme="light"] .bg-\[\#1C1C1C\],
+[data-theme="light"] .bg-\[\#121214\],
+[data-theme="light"] .bg-\[\#0D0D0D\]\/90 {
+  background-color: var(--theme-bg-surface-secondary);
+}
+
+[data-theme="light"] .bg-\[\#121212\]\/50 {
+  background-color: rgba(239, 238, 231, 0.65);
+}
+
+/* Form input elements */
+[data-theme="light"] input.bg-\[\#0C0C0C\],
+[data-theme="light"] textarea.bg-\[\#0C0C0C\],
+[data-theme="light"] select.bg-\[\#0C0C0C\] {
+  background-color: var(--theme-bg-input);
+  color: var(--theme-text-primary);
+}
+
+/* Borders */
+[data-theme="light"] .border-\[\#1F1F1F\],
+[data-theme="light"] .border-\[\#1A1A1A\],
+[data-theme="light"] .border-\[\#1C1C1C\],
+[data-theme="light"] .border-\[\#1E1E22\] {
+  border-color: var(--theme-border);
+}
+
+[data-theme="light"] .border-\[\#222222\],
+[data-theme="light"] .border-\[\#222226\],
+[data-theme="light"] .border-\[\#262626\],
+[data-theme="light"] .border-\[\#26262B\],
+[data-theme="light"] .border-\[\#28282D\],
+[data-theme="light"] .border-\[\#333333\] {
+  border-color: var(--theme-border-strong);
+}
+
+/* Dividers & horizontal lines */
+[data-theme="light"] .divide-\[\#1F1F1F\] > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--theme-border);
+}
+
+/* Primary text */
+[data-theme="light"] .text-\[\#F3F3F3\],
+[data-theme="light"] .text-\[\#F5F5F0\],
+[data-theme="light"] .text-\[\#D4D4D4\],
+[data-theme="light"] .text-\[\#CCCCCC\],
+[data-theme="light"] .text-\[\#C0C0C0\] {
+  color: var(--theme-text-primary);
+}
+
+/* Secondary text */
+[data-theme="light"] .text-\[\#9E9E9E\],
+[data-theme="light"] .text-\[\#A0A0A5\],
+[data-theme="light"] .text-\[\#9A9A9A\],
+[data-theme="light"] .text-\[\#8E8E8A\],
+[data-theme="light"] .text-\[\#B5B5AF\],
+[data-theme="light"] .text-\[\#808080\] {
+  color: var(--theme-text-secondary);
+}
+
+/* Special case for text-[#A0A0A0] */
+[data-theme="light"] .text-\[\#A0A0A0\] {
+  color: var(--theme-text-secondary);
+}
+
+/* Muted metadata text */
+[data-theme="light"] .text-\[\#707070\],
+[data-theme="light"] .text-\[\#666666\],
+[data-theme="light"] .text-\[\#7A7A7A\],
+[data-theme="light"] .text-\[\#555555\] {
+  color: var(--theme-text-muted);
+}
+
+/* Accessible Gold Accent for Light Mode */
+/* Text elements styled in gold must use #89670F for 4.5:1 contrast */
+[data-theme="light"] .text-\[\#E5B842\] {
+  color: var(--theme-gold-text);
+}
+
+[data-theme="light"] .hover\:text-\[\#E5B842\]:hover {
+  color: var(--theme-gold-text);
+}
+
+[data-theme="light"] .focus-visible\:text-\[\#E5B842\]:focus-visible {
+  color: var(--theme-gold-text);
+}
+
+/* Borders with gold */
+[data-theme="light"] .border-\[\#E5B842\] {
+  border-color: var(--theme-gold-text);
+}
+
+[data-theme="light"] .border-\[\#E5B842\]\/55,
+[data-theme="light"] .border-\[\#E5B842\]\/50,
+[data-theme="light"] .border-\[\#E5B842\]\/40,
+[data-theme="light"] .border-\[\#E5B842\]\/30 {
+  border-color: rgba(137, 103, 15, 0.45);
+}
+
+[data-theme="light"] .hover\:border-\[\#E5B842\]:hover,
+[data-theme="light"] .hover\:border-\[\#E5B842\]\/50:hover,
+[data-theme="light"] .hover\:border-\[\#E5B842\]\/40:hover {
+  border-color: var(--theme-gold-text);
+}
+
+/* Focus rings */
+[data-theme="light"] .focus\:ring-\[\#E5B842\]:focus,
+[data-theme="light"] .focus-visible\:ring-\[\#E5B842\]:focus-visible {
+  --tw-ring-color: var(--theme-focus-ring);
+}
+
+/* Buttons with bright gold background retain dark text */
+[data-theme="light"] .bg-\[\#E5B842\],
+[data-theme="light"] button.bg-\[\#E5B842\],
+[data-theme="light"] a.bg-\[\#E5B842\] {
+  background-color: var(--theme-gold-accent);
+  color: #0C0C0C !important;
+}
+
+[data-theme="light"] .bg-\[\#E5B842\] .text-\[\#0C0C0C\],
+[data-theme="light"] .bg-\[\#E5B842\] .text-\[\#090909\],
+[data-theme="light"] .bg-\[\#E5B842\] .text-black,
+[data-theme="light"] .bg-\[\#E5B842\] * {
+  color: #0C0C0C;
+}
+
+/* Outlined buttons on hover */
+[data-theme="light"] .hover\:bg-\[\#E5B842\]:hover {
+  background-color: var(--theme-gold-text);
+  color: #FFFFFF !important;
+}
+
+/* Field Notes carousel card shadows in light mode */
+[data-theme="light"] .shadow-\[0_8px_32px_rgba\(0\,0\,0\,0\.8\)\,0_0_24px_rgba\(229\,184\,66\,0\.12\)\] {
+  box-shadow: 0 8px 32px rgba(137, 103, 15, 0.12), 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .shadow-\[0_4px_24px_rgba\(0\,0\,0\,0\.6\)\] {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Hover and active states in light mode */
+[data-theme="light"] .hover\:text-white:hover,
+[data-theme="light"] .group-hover\:text-white {
+  color: var(--theme-text-primary);
+}
+
+[data-theme="light"] .hover\:bg-\[\#1A1A1A\]\/50:hover,
+[data-theme="light"] .hover\:bg-\[\#1A1A1A\]\/40:hover,
+[data-theme="light"] .hover\:bg-\[\#18181B\]:hover,
+[data-theme="light"] .hover\:bg-\[\#18181A\]:hover,
+[data-theme="light"] .hover\:bg-\[\#121212\]:hover,
+[data-theme="light"] .hover\:bg-\[\#2A2A2A\]:hover,
+[data-theme="light"] .hover\:bg-\[\#252525\]:hover,
+[data-theme="light"] .group-hover\:bg-\[\#121212\] {
+  background-color: var(--theme-bg-surface-hover);
 }
 
 /* Travelling gold border highlight animation for CTA buttons */

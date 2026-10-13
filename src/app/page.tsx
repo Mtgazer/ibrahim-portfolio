@@ -16,7 +16,7 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0C0C0C] text-[#F3F3F3]">
+    <div className="min-h-screen flex flex-col bg-[var(--theme-bg-page)] text-[var(--theme-text-primary)]">
       {/* 1. Header Navigation */}
       <Header />
 
@@ -32,7 +32,7 @@ export default async function HomePage() {
         <SelectedWorkHeader projectCount={projects.length} />
 
         {/* 6. Project Case Study Presentations */}
-        <section className="w-full bg-[#0C0C0C]">
+        <section className="w-full bg-[var(--theme-bg-page)]">
           {projects.map((project) => (
             <ProjectArticle key={project.id} project={project} />
           ))}
