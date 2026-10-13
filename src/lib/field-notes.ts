@@ -20,7 +20,12 @@ export { formatNoteDate };
  */
 export function mapDbFieldNoteToDomain(row: DbFieldNote): FieldNote {
   const formattedDate = row.note_date ? formatNoteDate(row.note_date) : null;
-  const image = row.cover_image_url || row.cover_image_path || null;
+  const resolvedUrl =
+    row.cover_image_url ||
+    (row.cover_image_path && process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/field-note-images/${row.cover_image_path}`
+      : row.cover_image_path) ||
+    null;
   const primaryTag = row.tags && row.tags.length > 0 ? row.tags[0] : row.category ?? null;
 
   return {
@@ -32,9 +37,9 @@ export function mapDbFieldNoteToDomain(row: DbFieldNote): FieldNote {
     noteNumber: row.note_number ?? String(row.sort_order).padStart(2, "0"),
     date: formattedDate,
     noteDate: row.note_date,
-    coverImage: image,
+    coverImage: resolvedUrl,
     coverImagePath: row.cover_image_path,
-    coverImageUrl: row.cover_image_url,
+    coverImageUrl: row.cover_image_url || resolvedUrl,
     coverAltText: row.cover_alt_text,
     tags: row.tags ?? [],
     tag: primaryTag,
@@ -46,7 +51,7 @@ export function mapDbFieldNoteToDomain(row: DbFieldNote): FieldNote {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     // UI convenience backwards-compatibility alias
-    image,
+    image: resolvedUrl,
   };
 }
 

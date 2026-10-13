@@ -504,20 +504,47 @@ export async function uploadFieldNoteCoverImageAction(
     const supabase = await createClient();
     if (!supabase) return { success: false, error: "Database client unavailable." };
 
+    if (!fieldNoteId || typeof fieldNoteId !== "string" || !fieldNoteId.trim()) {
+      return { success: false, error: "Field note ID is required." };
+    }
+
+    // 1. Verify target field note exists before touching storage
+    const { data: existingNote, error: fetchError } = await supabase
+      .from("field_notes")
+      .select("id, cover_image_path")
+      .eq("id", fieldNoteId)
+      .maybeSingle();
+
+    if (fetchError || !existingNote) {
+      return {
+        success: false,
+        error: fetchError
+          ? `Failed to verify field note: ${fetchError.message}`
+          : "Field note not found.",
+      };
+    }
+
     const file = formData.get("file") as File | null;
-    if (!file || !(file instanceof File) || file.size === 0) {
+    if (
+      !file ||
+      typeof file !== "object" ||
+      !("size" in file) ||
+      file.size === 0 ||
+      typeof file.arrayBuffer !== "function"
+    ) {
       return { success: false, error: "No image file provided for upload." };
     }
 
-    // Validate type
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    // 2. Validate MIME type
+    const mimeType = (file.type || "").toLowerCase().trim();
+    if (!ALLOWED_IMAGE_TYPES.includes(mimeType)) {
       return {
         success: false,
         error: `Unsupported file format "${file.type}". Allowed formats: JPEG, PNG, WebP, GIF, AVIF.`,
       };
     }
 
-    // Validate size (<= 10MB)
+    // 3. Validate size (<= 10MB)
     if (file.size > MAX_IMAGE_FILE_SIZE) {
       const mb = (file.size / (1024 * 1024)).toFixed(2);
       return {
@@ -527,27 +554,20 @@ export async function uploadFieldNoteCoverImageAction(
     }
 
     const altText = (formData.get("altText") as string)?.trim() || null;
+    const oldStoragePath = existingNote.cover_image_path;
 
-    // Check existing note to get old image path for cleanup
-    const { data: existingNote } = await supabase
-      .from("field_notes")
-      .select("cover_image_path")
-      .eq("id", fieldNoteId)
-      .maybeSingle();
-
-    const oldStoragePath = existingNote?.cover_image_path;
-
-    // Generate path: field-notes/{field_note_id}/{uuid}-{safe_filename}
-    const safeName = sanitizeFilename(file.name);
+    // 4. Generate collision-resistant storage path: field-notes/{field_note_id}/{uuid}-{safe_filename}
+    const rawName = typeof file.name === "string" ? file.name : "cover-image";
+    const safeName = sanitizeFilename(rawName) || "cover-image.png";
     const uniqueId = crypto.randomUUID();
     const storagePath = `field-notes/${fieldNoteId}/${uniqueId}-${safeName}`;
 
-    // Upload to Supabase Storage
+    // 5. Upload to Supabase Storage using authenticated server client
     const arrayBuffer = await file.arrayBuffer();
     const { error: uploadError } = await supabase.storage
       .from("field-note-images")
       .upload(storagePath, arrayBuffer, {
-        contentType: file.type,
+        contentType: mimeType,
         upsert: false,
       });
 
@@ -558,33 +578,38 @@ export async function uploadFieldNoteCoverImageAction(
       };
     }
 
-    // Get public URL
+    // 6. Retrieve public URL
     const { data: publicUrlData } = supabase.storage
       .from("field-note-images")
       .getPublicUrl(storagePath);
 
-    const publicUrl = publicUrlData?.publicUrl || null;
+    const publicUrl = publicUrlData?.publicUrl || "";
 
-    // Update database record
-    const { error: updateError } = await supabase
+    // 7. Update database record and verify update succeeded
+    const updatePayload: DbFieldNoteUpdate = {
+      cover_image_path: storagePath,
+      cover_image_url: publicUrl,
+    };
+    if (altText !== null) {
+      updatePayload.cover_alt_text = altText;
+    }
+
+    const { data: updatedRows, error: updateError } = await supabase
       .from("field_notes")
-      .update({
-        cover_image_path: storagePath,
-        cover_image_url: publicUrl,
-        ...(altText ? { cover_alt_text: altText } : {}),
-      })
-      .eq("id", fieldNoteId);
+      .update(updatePayload)
+      .eq("id", fieldNoteId)
+      .select("id");
 
-    if (updateError) {
-      // Rollback uploaded storage object on DB failure
+    if (updateError || !updatedRows || updatedRows.length === 0) {
+      // Rollback uploaded storage object on DB failure to prevent orphaned objects
       await supabase.storage.from("field-note-images").remove([storagePath]);
       return {
         success: false,
-        error: `Database update failed: ${updateError.message}`,
+        error: `Database update failed: ${updateError?.message || "Record could not be updated"}. Cleaned up uploaded file.`,
       };
     }
 
-    // Clean up old storage object if replaced
+    // 8. Clean up old storage object if replaced
     if (oldStoragePath && oldStoragePath !== storagePath) {
       await supabase.storage.from("field-note-images").remove([oldStoragePath]);
     }
@@ -598,7 +623,7 @@ export async function uploadFieldNoteCoverImageAction(
       success: true,
       data: {
         storagePath,
-        publicUrl: publicUrl || "",
+        publicUrl,
       },
     };
   } catch (err: unknown) {
@@ -619,19 +644,32 @@ export async function deleteFieldNoteCoverImageAction(
     const supabase = await createClient();
     if (!supabase) return { success: false, error: "Database client unavailable." };
 
-    const { data: note } = await supabase
+    if (!fieldNoteId || typeof fieldNoteId !== "string" || !fieldNoteId.trim()) {
+      return { success: false, error: "Field note ID is required." };
+    }
+
+    const { data: note, error: fetchError } = await supabase
       .from("field_notes")
-      .select("cover_image_path")
+      .select("id, cover_image_path")
       .eq("id", fieldNoteId)
       .maybeSingle();
 
-    if (note?.cover_image_path) {
+    if (fetchError || !note) {
+      return {
+        success: false,
+        error: fetchError
+          ? `Failed to find field note: ${fetchError.message}`
+          : "Field note not found.",
+      };
+    }
+
+    if (note.cover_image_path) {
       await supabase.storage
         .from("field-note-images")
         .remove([note.cover_image_path]);
     }
 
-    const { error } = await supabase
+    const { error: updateError } = await supabase
       .from("field_notes")
       .update({
         cover_image_path: null,
@@ -640,7 +678,7 @@ export async function deleteFieldNoteCoverImageAction(
       })
       .eq("id", fieldNoteId);
 
-    if (error) return { success: false, error: error.message };
+    if (updateError) return { success: false, error: updateError.message };
 
     safeRevalidatePath("/");
     safeRevalidatePath("/admin");
@@ -665,6 +703,25 @@ export async function updateFieldNoteCoverImageMetaAction(
     await requireAdmin();
     const supabase = await createClient();
     if (!supabase) return { success: false, error: "Database client unavailable." };
+
+    if (!fieldNoteId || typeof fieldNoteId !== "string" || !fieldNoteId.trim()) {
+      return { success: false, error: "Field note ID is required." };
+    }
+
+    const { data: note, error: fetchError } = await supabase
+      .from("field_notes")
+      .select("id")
+      .eq("id", fieldNoteId)
+      .maybeSingle();
+
+    if (fetchError || !note) {
+      return {
+        success: false,
+        error: fetchError
+          ? `Failed to find field note: ${fetchError.message}`
+          : "Field note not found.",
+      };
+    }
 
     const { error } = await supabase
       .from("field_notes")

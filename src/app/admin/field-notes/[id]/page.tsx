@@ -7,11 +7,14 @@ import FieldNoteDeleteButton from "@/components/admin/FieldNoteDeleteButton";
 
 export default async function AdminFieldNoteEditPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ error?: string; warning?: string }>;
 }) {
   await requireAdmin();
   const { id } = await params;
+  const resolvedParams = searchParams ? await searchParams : undefined;
   const note = await getFieldNoteById(id);
 
   if (!note) {
@@ -93,7 +96,11 @@ export default async function AdminFieldNoteEditPage({
       </div>
 
       {/* Field Note Edit Form */}
-      <FieldNoteForm initialNote={note} mode="edit" />
+      <FieldNoteForm
+        initialNote={note}
+        mode="edit"
+        initialError={resolvedParams?.error || resolvedParams?.warning}
+      />
     </main>
   );
 }

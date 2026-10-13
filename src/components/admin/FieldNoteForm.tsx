@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,7 +18,17 @@ import { formatNoteDate } from "@/lib/date";
 interface FieldNoteFormProps {
   initialNote?: FieldNote;
   mode: "create" | "edit";
+  initialError?: string;
 }
+
+const ALLOWED_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/avif",
+];
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
 const COMMON_CATEGORIES = [
   "MICRO-INTERACTION",
@@ -30,7 +40,7 @@ const COMMON_CATEGORIES = [
   "DESIGN SYSTEM",
 ];
 
-export default function FieldNoteForm({ initialNote, mode }: FieldNoteFormProps) {
+export default function FieldNoteForm({ initialNote, mode, initialError }: FieldNoteFormProps) {
   const router = useRouter();
 
   // Basic Information
@@ -66,10 +76,19 @@ export default function FieldNoteForm({ initialNote, mode }: FieldNoteFormProps)
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(mode === "edit");
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(initialError || null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Cleanup temporary object URLs on unmount or when imagePreviewUrl changes
+  useEffect(() => {
+    return () => {
+      if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreviewUrl);
+      }
+    };
+  }, [imagePreviewUrl]);
 
   // Auto-slug generator when typing title
   const handleTitleChange = (val: string) => {
@@ -102,21 +121,41 @@ export default function FieldNoteForm({ initialNote, mode }: FieldNoteFormProps)
     setTags(tags.filter((_, i) => i !== indexToRemove));
   };
 
-  // Image File Selection
+  // Image File Selection with strict client-side validation
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      setErrorMessage("Image file exceeds 10MB limit.");
+    // Validate MIME type
+    const mime = (file.type || "").toLowerCase().trim();
+    if (!ALLOWED_MIME_TYPES.includes(mime)) {
+      setErrorMessage(
+        `INVALID FORMAT // File type "${file.type}" is not supported. Please select JPEG, PNG, WebP, GIF, or AVIF.`
+      );
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
-    setSelectedImageFile(file);
+    // Validate size (10MB limit)
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      const mb = (file.size / (1024 * 1024)).toFixed(2);
+      setErrorMessage(
+        `FILE TOO LARGE // File size (${mb} MB) exceeds maximum allowed limit of 10 MB.`
+      );
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    // Revoke previous blob URL if exists
+    if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
     const localUrl = URL.createObjectURL(file);
+    setSelectedImageFile(file);
     setImagePreviewUrl(localUrl);
 
-    // If in edit mode and note exists, offer direct upload
+    // If in edit mode and note exists, trigger direct upload immediately
     if (mode === "edit" && initialNote?.id) {
       handleDirectImageUpload(file);
     }
@@ -126,6 +165,7 @@ export default function FieldNoteForm({ initialNote, mode }: FieldNoteFormProps)
     if (!initialNote?.id) return;
     setImageLoading(true);
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -137,28 +177,50 @@ export default function FieldNoteForm({ initialNote, mode }: FieldNoteFormProps)
       const res = await uploadFieldNoteCoverImageAction(initialNote.id, formData);
       if (!res.success) {
         setErrorMessage(res.error || "Failed to upload image.");
+        // Clear failed preview so user is not shown a deceptive successful visual
+        if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+          URL.revokeObjectURL(imagePreviewUrl);
+        }
+        setImagePreviewUrl(null);
+        setSelectedImageFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
       } else {
         setSuccessMessage("Cover image successfully uploaded.");
         if (res.data) {
+          if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+            URL.revokeObjectURL(imagePreviewUrl);
+          }
           setCoverUrl(res.data.publicUrl);
           setCoverPath(res.data.storagePath);
           setImagePreviewUrl(null);
           setSelectedImageFile(null);
         }
+        if (fileInputRef.current) fileInputRef.current.value = "";
         router.refresh();
       }
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Upload error.");
+      if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreviewUrl);
+      }
+      setImagePreviewUrl(null);
+      setSelectedImageFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } finally {
       setImageLoading(false);
     }
   };
 
   const handleDeleteCoverImage = async () => {
+    if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
     if (mode === "create") {
       setSelectedImageFile(null);
       setImagePreviewUrl(null);
       setCoverUrl(null);
+      setCoverPath(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
@@ -168,6 +230,7 @@ export default function FieldNoteForm({ initialNote, mode }: FieldNoteFormProps)
 
     setImageLoading(true);
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     try {
       const res = await deleteFieldNoteCoverImageAction(initialNote.id);
@@ -235,7 +298,16 @@ export default function FieldNoteForm({ initialNote, mode }: FieldNoteFormProps)
           const imgFormData = new FormData();
           imgFormData.append("file", selectedImageFile);
           if (coverAltText) imgFormData.append("altText", coverAltText);
-          await uploadFieldNoteCoverImageAction(newId, imgFormData);
+          const uploadRes = await uploadFieldNoteCoverImageAction(newId, imgFormData);
+          if (!uploadRes.success) {
+            router.push(
+              `/admin/field-notes/${newId}?warning=${encodeURIComponent(
+                `Note created, but cover image upload failed: ${uploadRes.error || "Upload error"}`
+              )}`
+            );
+            router.refresh();
+            return;
+          }
         }
 
         router.push(`/admin/field-notes/${newId}`);
@@ -649,6 +721,11 @@ export default function FieldNoteForm({ initialNote, mode }: FieldNoteFormProps)
                   alt={coverAltText || title || "Field Note Cover"}
                   fill
                   sizes="(max-width: 768px) 100vw, 480px"
+                  unoptimized={Boolean(
+                    imagePreviewUrl ||
+                      activePreviewImage?.startsWith("blob:") ||
+                      activePreviewImage?.startsWith("data:")
+                  )}
                   className="object-cover"
                 />
               ) : (
