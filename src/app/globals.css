@@ -68,6 +68,15 @@
   --theme-secondary-btn-text: #F5F5F0;
   --theme-secondary-btn-border: rgba(212, 168, 79, 0.45);
   --theme-secondary-btn-hover: #121212;
+
+  /* Hero Generative Geometric Art Tokens (Dark Mode) */
+  --hero-geom-line-subtle: rgba(255, 255, 255, 0.06);
+  --hero-geom-line-mid: rgba(255, 255, 255, 0.11);
+  --hero-geom-line-accent: rgba(229, 184, 66, 0.28);
+  --hero-geom-node-gold: #E5B842;
+  --hero-geom-node-glow: rgba(229, 184, 66, 0.45);
+  --hero-geom-node-neutral: rgba(255, 255, 255, 0.35);
+  --hero-geom-text: rgba(255, 255, 255, 0.24);
 }
 
 [data-theme="light"],
@@ -113,6 +122,15 @@ html.light {
   --theme-secondary-btn-text: #191919;
   --theme-secondary-btn-border: #BFB5A2;
   --theme-secondary-btn-hover: #ECE9E0;
+
+  /* Hero Generative Geometric Art Tokens (Light Mode) */
+  --hero-geom-line-subtle: rgba(95, 91, 82, 0.10);
+  --hero-geom-line-mid: rgba(95, 91, 82, 0.18);
+  --hero-geom-line-accent: rgba(137, 98, 11, 0.30);
+  --hero-geom-node-gold: #89620B;
+  --hero-geom-node-glow: rgba(137, 98, 11, 0.25);
+  --hero-geom-node-neutral: rgba(95, 91, 82, 0.35);
+  --hero-geom-text: rgba(95, 91, 82, 0.35);
 }
 
 html {
