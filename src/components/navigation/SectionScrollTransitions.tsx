@@ -21,15 +21,13 @@ interface Point {
   y: number;
 }
 
-interface TraceConfig {
-  id: string;
-  fromSection: string;
-  toSection: string;
+interface PathGeometry {
   pathD: string;
-  tickD: string;
+  ticksD: string;
+  points: Point[];
   totalLength: number;
-  targetMarkerId: string;
-  targetY: number;
+  segLengths: number[];
+  cumLengths: number[];
 }
 
 const MARKER_IDS = [
@@ -47,23 +45,18 @@ const PULSE_RING_IDS = [
 ] as const;
 
 export default function SectionScrollTransitions() {
-  const [traces, setTraces] = useState<TraceConfig[] | null>(null);
+  const [geometry, setGeometry] = useState<PathGeometry | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Trace DOM element refs for direct mutation (zero React re-renders on scroll)
-  const traceGroupRefs = useRef<(SVGGElement | null)[]>([]);
-  const progressPathRefs = useRef<(SVGPathElement | null)[]>([]);
-  const tipHighlightRefs = useRef<(SVGCircleElement | null)[]>([]);
+  // Direct DOM refs to avoid React re-render overhead during high-frequency scroll
+  const progressPathRef = useRef<SVGPathElement>(null);
+  const ambientPathRef = useRef<SVGPathElement>(null);
+  const tipHighlightRef = useRef<SVGCircleElement>(null);
 
   // Pulse tracking to prevent repeated flashing
-  const hasPulsedRef = useRef<Record<string, boolean>>({
-    [MARKER_IDS[0]]: false,
-    [MARKER_IDS[1]]: false,
-    [MARKER_IDS[2]]: false,
-    [MARKER_IDS[3]]: false,
-  });
-
+  const hasPulsedRef = useRef<boolean[]>([false, false, false, false]);
   const isUpdatingRef = useRef(false);
+  const isInitialMountRef = useRef(true);
 
   const reducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -71,11 +64,11 @@ export default function SectionScrollTransitions() {
     getReducedMotionServerSnapshot
   );
 
-  // Measure section marker centers and compute transition geometry
+  // Measure section markers and generate the continuous geometric path
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const measureAndBuildTraces = () => {
+    const measureAndBuildPath = () => {
       const markers = MARKER_IDS.map((id) => document.getElementById(id));
       if (markers.some((m) => !m)) return;
 
@@ -92,107 +85,116 @@ export default function SectionScrollTransitions() {
         };
       });
 
-      // Build 3 discrete, temporary transition traces:
-      // Trace 0: Field Notes -> Selected Work (leading to points[1])
-      // Trace 1: Selected Work -> About & Capabilities (leading to points[2])
-      // Trace 2: About & Capabilities -> Contact (leading to points[3])
-      const newTraces: TraceConfig[] = [
-        // 1. Transition into Selected Work
-        (() => {
-          const p = points[1];
-          const spanY = 120;
-          const startX = p.x - 12;
-          const startY = p.y - spanY;
-          const jogY = startY + 12;
-          const pathD = `M ${startX.toFixed(1)} ${startY.toFixed(1)} L ${p.x.toFixed(1)} ${jogY.toFixed(1)} L ${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
-          const tickD = `M ${(startX - 4).toFixed(1)} ${startY.toFixed(1)} L ${(startX + 4).toFixed(1)} ${startY.toFixed(1)}`;
-          const totalLength = Math.hypot(p.x - startX, jogY - startY) + (p.y - jogY);
-          return {
-            id: "trace-fn-to-sw",
-            fromSection: "field-notes",
-            toSection: "selected-work",
-            pathD,
-            tickD,
-            totalLength,
-            targetMarkerId: MARKER_IDS[1],
-            targetY: p.y,
-          };
-        })(),
+      // Construct continuous geometric path connecting:
+      // p0 (Field Notes) -> p1 (Selected Work) -> p2 (About) -> p3 (Contact)
+      //
+      // For each segment i from p[i] to p[i+1]:
+      // - Step straight down 24px from p[i]
+      // - Chamfer 45-deg into whitespace gutter (x - 18px)
+      // - Travel down through the clean gutter corridor (14px clear of all text/cards)
+      // - Chamfer 45-deg in toward next marker p[i+1]
+      // - Step straight down 24px into center of p[i+1]
+      const segLengths: number[] = [];
+      const cumLengths: number[] = [0];
+      const dParts: string[] = [];
+      const tickParts: string[] = [];
 
-        // 2. Transition into About & Capabilities
-        (() => {
-          const p = points[2];
-          const spanY = 120;
-          const startX = p.x + 12;
-          const startY = p.y - spanY;
-          const jogY = startY + 12;
-          const pathD = `M ${startX.toFixed(1)} ${startY.toFixed(1)} L ${p.x.toFixed(1)} ${jogY.toFixed(1)} L ${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
-          const tickD = `M ${(startX - 4).toFixed(1)} ${startY.toFixed(1)} L ${(startX + 4).toFixed(1)} ${startY.toFixed(1)}`;
-          const totalLength = Math.hypot(startX - p.x, jogY - startY) + (p.y - jogY);
-          return {
-            id: "trace-sw-to-about",
-            fromSection: "selected-work",
-            toSection: "about",
-            pathD,
-            tickD,
-            totalLength,
-            targetMarkerId: MARKER_IDS[2],
-            targetY: p.y,
-          };
-        })(),
+      dParts.push(`M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`);
+      tickParts.push(
+        `M ${(points[0].x - 4).toFixed(1)} ${points[0].y.toFixed(1)} L ${(points[0].x + 4).toFixed(1)} ${points[0].y.toFixed(1)}`
+      );
 
-        // 3. Transition into Contact
-        (() => {
-          const p = points[3];
-          const spanY = 115;
-          const startY = p.y - spanY;
-          const pathD = `M ${p.x.toFixed(1)} ${startY.toFixed(1)} L ${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
-          const tickD = `M ${(p.x - 5).toFixed(1)} ${startY.toFixed(1)} L ${(p.x + 5).toFixed(1)} ${startY.toFixed(1)}`;
-          const totalLength = spanY;
-          return {
-            id: "trace-about-to-contact",
-            fromSection: "about",
-            toSection: "contact",
-            pathD,
-            tickD,
-            totalLength,
-            targetMarkerId: MARKER_IDS[3],
-            targetY: p.y,
-          };
-        })(),
-      ];
+      for (let i = 0; i < points.length - 1; i++) {
+        const pStart = points[i];
+        const pEnd = points[i + 1];
 
-      setTraces(newTraces);
+        // Offset the vertical path into the left whitespace gutter
+        // Shifted ~22px farther to the left (40px offset from marker center)
+        // Guarded by minLeft (14px) to prevent clipping on narrower desktop viewports
+        const GUTTER_OFFSET = 40;
+        const MIN_LEFT = 14;
+        const gutterX_start = Math.max(MIN_LEFT, pStart.x - GUTTER_OFFSET);
+        const gutterX_end = Math.max(MIN_LEFT, pEnd.x - GUTTER_OFFSET);
+
+        // Drops 10px below marker to clear the dot, then chamfers out smoothly into the gutter
+        // Completes the bend well before the section heading begins
+        const yDrop = pStart.y + 10;
+        const yGutterStart = pStart.y + 36;
+        const yGutterEnd = pEnd.y - 36;
+        const yApproach = pEnd.y - 10;
+
+        // Path coordinates for this segment
+        dParts.push(`L ${pStart.x.toFixed(1)} ${yDrop.toFixed(1)}`);
+        dParts.push(`L ${gutterX_start.toFixed(1)} ${yGutterStart.toFixed(1)}`);
+        dParts.push(`L ${gutterX_end.toFixed(1)} ${yGutterEnd.toFixed(1)}`);
+        dParts.push(`L ${pEnd.x.toFixed(1)} ${yApproach.toFixed(1)}`);
+        dParts.push(`L ${pEnd.x.toFixed(1)} ${pEnd.y.toFixed(1)}`);
+
+        // Architectural datum ticks at key transition junctures
+        tickParts.push(
+          `M ${(gutterX_start - 3).toFixed(1)} ${yGutterStart.toFixed(1)} L ${(gutterX_start + 3).toFixed(1)} ${yGutterStart.toFixed(1)}`
+        );
+        tickParts.push(
+          `M ${(gutterX_end - 3).toFixed(1)} ${yGutterEnd.toFixed(1)} L ${(gutterX_end + 3).toFixed(1)} ${yGutterEnd.toFixed(1)}`
+        );
+        tickParts.push(
+          `M ${(pEnd.x - 4).toFixed(1)} ${pEnd.y.toFixed(1)} L ${(pEnd.x + 4).toFixed(1)} ${pEnd.y.toFixed(1)}`
+        );
+
+        // Calculate segment geometric length
+        const l1 = 10;
+        const l2 = Math.hypot(pStart.x - gutterX_start, yGutterStart - yDrop);
+        const l3 = Math.hypot(gutterX_end - gutterX_start, yGutterEnd - yGutterStart);
+        const l4 = Math.hypot(pEnd.x - gutterX_end, yApproach - yGutterEnd);
+        const l5 = 10;
+        const segLen = l1 + l2 + l3 + l4 + l5;
+
+        segLengths.push(segLen);
+        cumLengths.push(cumLengths[i] + segLen);
+      }
+
+      const totalLength = cumLengths[cumLengths.length - 1];
+      const pathD = dParts.join(" ");
+      const ticksD = tickParts.join(" ");
+
+      setGeometry({
+        pathD,
+        ticksD,
+        points,
+        totalLength,
+        segLengths,
+        cumLengths,
+      });
     };
 
-    measureAndBuildTraces();
+    measureAndBuildPath();
 
-    window.addEventListener("resize", measureAndBuildTraces, { passive: true });
-    const timer1 = setTimeout(measureAndBuildTraces, 350);
-    const timer2 = setTimeout(measureAndBuildTraces, 1200);
+    window.addEventListener("resize", measureAndBuildPath, { passive: true });
+    const timer1 = setTimeout(measureAndBuildPath, 350);
+    const timer2 = setTimeout(measureAndBuildPath, 1200);
 
     if (document.fonts) {
-      document.fonts.ready.then(measureAndBuildTraces).catch(() => {});
+      document.fonts.ready.then(measureAndBuildPath).catch(() => {});
     }
 
     let resizeObserver: ResizeObserver | null = null;
     const mainEl = containerRef.current?.parentElement;
     if (mainEl && typeof ResizeObserver !== "undefined") {
       resizeObserver = new ResizeObserver(() => {
-        measureAndBuildTraces();
+        measureAndBuildPath();
       });
       resizeObserver.observe(mainEl);
     }
 
     return () => {
-      window.removeEventListener("resize", measureAndBuildTraces);
+      window.removeEventListener("resize", measureAndBuildPath);
       clearTimeout(timer1);
       clearTimeout(timer2);
       if (resizeObserver) resizeObserver.disconnect();
     };
   }, []);
 
-  // Scroll transition and Section Pulse engine
+  // Scroll Progress Engine: maps scroll smoothly to Signal Trace & Section Pulse
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -226,11 +228,10 @@ export default function SectionScrollTransitions() {
       const mainEl = containerRef.current?.parentElement;
       if (!mainEl) return;
 
-      const mainRect = mainEl.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      const eyeLineY = windowHeight * 0.42;
+      const eyeLineY = windowHeight * 0.45; // Section reading reference line
 
-      // 1. Check all 4 section markers for Section Pulse
+      // 1. Evaluate Section Pulse triggers across all viewports (Mobile & Desktop)
       MARKER_IDS.forEach((id, idx) => {
         const marker = document.getElementById(id);
         if (!marker) return;
@@ -238,64 +239,91 @@ export default function SectionScrollTransitions() {
         const mRect = marker.getBoundingClientRect();
         const distFromEyeLine = mRect.top - eyeLineY;
 
-        // Approaching natural eye-line (within 35px threshold)
+        // On initial direct load/refresh at lower anchor, mark visited without flashing
+        if (isInitialMountRef.current) {
+          if (distFromEyeLine < 0) {
+            hasPulsedRef.current[idx] = true;
+          }
+          return;
+        }
+
+        // Section marker reaches eye line reading zone (within 35px)
         if (Math.abs(distFromEyeLine) <= 35) {
-          if (!hasPulsedRef.current[id]) {
-            hasPulsedRef.current[id] = true;
+          if (!hasPulsedRef.current[idx]) {
+            hasPulsedRef.current[idx] = true;
             triggerSectionPulse(idx);
           }
         }
-        // Reset when user has scrolled away (> 200px) so re-entry fires again
-        else if (Math.abs(distFromEyeLine) > 200) {
-          hasPulsedRef.current[id] = false;
+        // Hysteresis: re-arm pulse only when user has scrolled away (> 180px)
+        else if (Math.abs(distFromEyeLine) > 180) {
+          hasPulsedRef.current[idx] = false;
         }
       });
 
-      // 2. Animate Signal Traces during section transitions (Desktop >= 768px)
-      if (traces && window.innerWidth >= 768 && !reducedMotion) {
-        const enterThreshold = windowHeight * 0.88; // Trace begins as target marker approaches
-        const reachThreshold = windowHeight * 0.42; // Trace arrives at marker
-        const leaveThreshold = windowHeight * 0.22; // Trace fades after entry
+      // End initial mount check after evaluating markers
+      if (isInitialMountRef.current) {
+        isInitialMountRef.current = false;
+      }
 
-        traces.forEach((trace, idx) => {
-          const groupEl = traceGroupRefs.current[idx];
-          const pathEl = progressPathRefs.current[idx];
-          const tipEl = tipHighlightRefs.current[idx];
-          if (!groupEl || !pathEl) return;
+      // 2. Animate Desktop Continuous Signal Trace (>= 1024px)
+      if (geometry && window.innerWidth >= 1024 && !reducedMotion) {
+        const pathEl = progressPathRef.current;
+        const tipEl = tipHighlightRef.current;
+        if (!pathEl) return;
 
-          // Target marker viewport Y
-          const targetYInViewport = trace.targetY + mainRect.top;
+        const mainRect = mainEl.getBoundingClientRect();
+        const scrollYInMain = -mainRect.top + eyeLineY;
 
-          let progress = 0;
-          let opacity = 0;
+        // Calculate scroll-mapped drawn distance along the geometric path
+        let drawnDistance = 0;
 
-          if (targetYInViewport > enterThreshold || targetYInViewport < leaveThreshold) {
-            // Out of transition zone
-            opacity = 0;
-            progress = targetYInViewport < leaveThreshold ? 1 : 0;
-          } else if (targetYInViewport >= reachThreshold) {
-            // Phase A: Drawing progress as section approaches (enterThreshold -> reachThreshold)
-            progress = (enterThreshold - targetYInViewport) / (enterThreshold - reachThreshold);
-            progress = Math.max(0, Math.min(1, progress));
-            // Fade in gently at start
-            opacity = Math.min(1, progress * 2.2);
+        const p0 = geometry.points[0];
+        const p1 = geometry.points[1];
+        const p2 = geometry.points[2];
+        const p3 = geometry.points[3];
+
+        if (scrollYInMain <= p0.y) {
+          // Above Field Notes (in Hero section)
+          drawnDistance = 0;
+        } else if (scrollYInMain < p1.y) {
+          // Segment 0: Field Notes -> Selected Work
+          const ratio = (scrollYInMain - p0.y) / (p1.y - p0.y);
+          drawnDistance = geometry.cumLengths[0] + Math.max(0, Math.min(1, ratio)) * geometry.segLengths[0];
+        } else if (scrollYInMain < p2.y) {
+          // Segment 1: Selected Work -> About & Capabilities
+          const ratio = (scrollYInMain - p1.y) / (p2.y - p1.y);
+          drawnDistance = geometry.cumLengths[1] + Math.max(0, Math.min(1, ratio)) * geometry.segLengths[1];
+        } else if (scrollYInMain < p3.y) {
+          // Segment 2: About & Capabilities -> Contact
+          const ratio = (scrollYInMain - p2.y) / (p3.y - p2.y);
+          drawnDistance = geometry.cumLengths[2] + Math.max(0, Math.min(1, ratio)) * geometry.segLengths[2];
+        } else {
+          // At or past Contact
+          drawnDistance = geometry.totalLength;
+        }
+
+        // Clamp distance to total path length
+        drawnDistance = Math.max(0, Math.min(geometry.totalLength, drawnDistance));
+
+        // Direct DOM update: strokeDashoffset controls gold illumination
+        const offset = Math.max(0, geometry.totalLength - drawnDistance);
+        pathEl.style.strokeDashoffset = `${offset.toFixed(1)}px`;
+
+        // Update active endpoint highlight dot
+        if (tipEl) {
+          if (drawnDistance > 4 && drawnDistance < geometry.totalLength - 4) {
+            try {
+              const tipPt = pathEl.getPointAtLength(drawnDistance);
+              tipEl.setAttribute("cx", tipPt.x.toFixed(1));
+              tipEl.setAttribute("cy", tipPt.y.toFixed(1));
+              tipEl.style.opacity = "1";
+            } catch {
+              tipEl.style.opacity = "0";
+            }
           } else {
-            // Phase B: Section reached, trace fades out into the design (reachThreshold -> leaveThreshold)
-            progress = 1;
-            opacity = (targetYInViewport - leaveThreshold) / (reachThreshold - leaveThreshold);
-            opacity = Math.max(0, Math.min(1, opacity));
+            tipEl.style.opacity = "0";
           }
-
-          // Direct style mutations (100% smooth, no React re-render overhead)
-          groupEl.style.opacity = opacity.toFixed(3);
-          const strokeOffset = Math.max(0, trace.totalLength * (1 - progress));
-          pathEl.style.strokeDashoffset = `${strokeOffset.toFixed(1)}px`;
-
-          // Endpoint traveling highlight node
-          if (tipEl) {
-            tipEl.style.opacity = opacity > 0.1 && progress < 0.98 ? "0.9" : "0";
-          }
-        });
+        }
       }
     };
 
@@ -306,16 +334,16 @@ export default function SectionScrollTransitions() {
       }
     };
 
-    // Initial check
+    // Initial pass
     updateTransitions();
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
-  }, [traces, reducedMotion]);
+  }, [geometry, reducedMotion]);
 
-  if (!traces) {
+  if (!geometry) {
     return <div ref={containerRef} className="hidden" aria-hidden="true" />;
   }
 
@@ -325,71 +353,65 @@ export default function SectionScrollTransitions() {
       aria-hidden="true"
       className="absolute inset-0 pointer-events-none select-none z-20 overflow-visible"
     >
-      {/* Signal Traces: Desktop temporary transition lines (hidden on narrow screens to avoid clutter) */}
+      {/* Continuous Geometric Section Path (Desktop >= 1024px) */}
       <svg
-        className="hidden md:block w-full h-full pointer-events-none overflow-visible"
+        className="hidden lg:block w-full h-full pointer-events-none overflow-visible"
         style={{ position: "absolute", top: 0, left: 0 }}
       >
-        {traces.map((trace, idx) => (
-          <g
-            key={trace.id}
-            ref={(el) => {
-              traceGroupRefs.current[idx] = el;
+        {/* Layer A — Ambient Path: Permanently visible subtle neutral/gold base track */}
+        <path
+          ref={ambientPathRef}
+          d={geometry.pathD}
+          fill="none"
+          stroke="var(--theme-ambient-path, rgba(229, 184, 66, 0.16))"
+          strokeWidth="1.25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="transition-colors duration-300"
+        />
+
+        {/* Ambient Datum Reference Ticks */}
+        <path
+          d={geometry.ticksD}
+          fill="none"
+          stroke="var(--theme-ambient-path, rgba(229, 184, 66, 0.16))"
+          strokeWidth="1"
+          opacity="0.75"
+          className="transition-colors duration-300"
+        />
+
+        {/* Layer B — Active Signal Trace: Scroll-driven gold illumination */}
+        <path
+          ref={progressPathRef}
+          d={geometry.pathD}
+          fill="none"
+          stroke="var(--theme-gold-text, #E5B842)"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray={`${geometry.totalLength.toFixed(1)} ${geometry.totalLength.toFixed(1)}`}
+          strokeDashoffset={`${geometry.totalLength.toFixed(1)}px`}
+          style={{
+            filter: "var(--theme-signal-shadow, drop-shadow(0 0 4px rgba(229, 184, 66, 0.6)))",
+            transition: reducedMotion ? "none" : undefined,
+          }}
+        />
+
+        {/* Active Tip Traveling Highlight Node */}
+        {!reducedMotion && (
+          <circle
+            ref={tipHighlightRef}
+            cx="0"
+            cy="0"
+            r="2.5"
+            fill="var(--theme-gold-text, #E5B842)"
+            style={{
+              opacity: 0,
+              filter: "drop-shadow(0 0 5px rgba(229, 184, 66, 0.9))",
+              transition: "opacity 0.2s ease-out",
             }}
-            style={{ opacity: 0, transition: reducedMotion ? "none" : undefined }}
-          >
-            {/* Base Reference Datum Hairline (Ultra-subtle) */}
-            <path
-              d={trace.pathD}
-              fill="none"
-              stroke="var(--theme-border-strong, #3A3A3A)"
-              strokeWidth="1"
-              strokeDasharray="2 3"
-              opacity="0.35"
-            />
-
-            {/* Top Datum Origin Tick */}
-            <path
-              d={trace.tickD}
-              fill="none"
-              stroke="var(--theme-border-strong, #3A3A3A)"
-              strokeWidth="1"
-              opacity="0.45"
-            />
-
-            {/* Signal Trace Gold Progress Stroke */}
-            <path
-              ref={(el) => {
-                progressPathRefs.current[idx] = el;
-              }}
-              d={trace.pathD}
-              fill="none"
-              stroke="var(--theme-gold-text, #E5B842)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeDasharray={`${trace.totalLength.toFixed(1)} ${trace.totalLength.toFixed(1)}`}
-              strokeDashoffset={`${trace.totalLength.toFixed(1)}px`}
-              style={{
-                filter: "drop-shadow(0 0 3px rgba(229, 184, 66, 0.65))",
-              }}
-            />
-
-            {/* Endpoint Traveling Node */}
-            <circle
-              ref={(el) => {
-                tipHighlightRefs.current[idx] = el;
-              }}
-              cx="0"
-              cy="0"
-              r="2"
-              fill="var(--theme-gold-text, #E5B842)"
-              style={{
-                opacity: 0,
-                filter: "drop-shadow(0 0 4px rgba(229, 184, 66, 0.9))",
-              }}
-            />
-          </g>
-        ))}
+          />
+        )}
       </svg>
     </div>
   );

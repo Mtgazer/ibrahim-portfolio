@@ -53,6 +53,8 @@
   --theme-gold-hover: #F0C44E;
   --theme-gold-dark: #A8862A;
   --theme-gold-glow: rgba(229, 184, 66, 0.5);
+  --theme-ambient-path: rgba(229, 184, 66, 0.16);
+  --theme-signal-shadow: drop-shadow(0 0 4px rgba(229, 184, 66, 0.6));
   --theme-focus-ring: #E5B842;
 
   --theme-header-bg: rgba(12, 12, 12, 0.9);
@@ -107,6 +109,8 @@ html.light {
   --theme-gold-hover: #6B4C08;
   --theme-gold-dark: #89620B;
   --theme-gold-glow: rgba(137, 98, 11, 0.35);
+  --theme-ambient-path: rgba(137, 98, 11, 0.22);
+  --theme-signal-shadow: drop-shadow(0 0 3px rgba(137, 98, 11, 0.35));
   --theme-focus-ring: #89620B;
 
   --theme-header-bg: rgba(245, 243, 237, 0.92);
