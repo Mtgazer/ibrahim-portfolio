@@ -16,12 +16,15 @@ export default function SelectedWorkHeader({
       <span id="selected-work" className="absolute -top-20 pointer-events-none" aria-hidden="true" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Section Label */}
-        <div className="flex items-center gap-2">
-          <span
-            id="section-marker-projects"
-            className="w-1.5 h-1.5 rounded-full bg-[#E5B842] inline-block shadow-[0_0_6px_rgba(229,184,66,0.5)] transition-transform duration-300"
-          />
-          <span className="font-mono text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-[#E5B842] select-none">
+        <div className="relative flex items-center">
+          {/* Gutter Section Marker Dot */}
+          <div className="flex items-center flex-shrink-0 lg:absolute lg:-left-7 lg:inset-y-0 z-30">
+            <span
+              id="section-marker-projects"
+              className="w-2 h-2 rounded-full bg-[var(--theme-gold-text,#E5B842)] inline-block shadow-[0_0_6px_var(--theme-gold-glow,rgba(229,184,66,0.5))] transition-all duration-300"
+            />
+          </div>
+          <span className="font-mono text-xs sm:text-sm lg:text-[16px] xl:text-[17px] font-semibold tracking-[0.14em] uppercase text-[var(--theme-gold-text,#E5B842)] select-none ml-2.5 lg:ml-0">
             SELECTED WORK
           </span>
         </div>

@@ -62,15 +62,8 @@ export default function HeroGenerativeBackground({
   const exitAssemblyRef = useRef<SVGGElement>(null);
 
   // Dedicated Mobile Target Element Refs (Decoupled from Desktop)
-  const mobArcLeftRef = useRef<SVGPathElement>(null);
-  const mobArcLeftMetricRef = useRef<SVGPathElement>(null);
-  const mobArcRightRef = useRef<SVGPathElement>(null);
-  const mobArcRightMetricRef = useRef<SVGPathElement>(null);
-  const mobVecLeftRef = useRef<SVGLineElement>(null);
-  const mobVecRightRef = useRef<SVGLineElement>(null);
-  const mobNodeAlphaRef = useRef<SVGGElement>(null);
-  const mobNodeBetaRef = useRef<SVGGElement>(null);
-  const mobExitRef = useRef<SVGGElement>(null);
+  const mobHaloRef = useRef<SVGPathElement>(null);
+  const mobOuterRef = useRef<SVGGElement>(null);
 
   const reducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -514,132 +507,36 @@ export default function HeroGenerativeBackground({
     });
 
     // =========================================================================
-    // 2. MOBILE VIEWPORT (max-width: 767px): NATURAL SCROLLING, IMMEDIATE VISIBILITY
+    // 2. MOBILE VIEWPORT (max-width: 767px): NATURAL SCROLLING, LIGHTWEIGHT ENTRANCE
     // =========================================================================
     mm.add("(max-width: 767px)", () => {
-      // Natural document scrolling: triggers as the hero naturally scrolls through viewport
-      const mobTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: trackEl,
-          start: "top top+=64",
-          end: "bottom top", // Fully natural scroll bound
-          scrub: true, // Direct 1:1 scrub with zero lag/delay
-          invalidateOnRefresh: true,
-        },
+      // Natural document flow: zero scroll-locking, zero ScrollTrigger scrub
+      if (reducedMotion) {
+        if (mobHaloRef.current) gsap.set(mobHaloRef.current, { opacity: 0.85, strokeDashoffset: 0 });
+        if (mobOuterRef.current) gsap.set(mobOuterRef.current, { opacity: 1, y: 0 });
+        return;
+      }
+
+      // Single, lightweight entrance animation revealing lines once on page load
+      const entranceTl = gsap.timeline({
+        defaults: { ease: "power2.out" },
       });
 
-      // Mobile Arc Motion: Noticeable rotation and subtle scale
-      if (mobArcLeftRef.current) {
-        mobTl.to(
-          mobArcLeftRef.current,
-          {
-            rotation: 16,
-            scale: 1.12,
-            x: -12,
-            transformOrigin: "40px 420px",
-            ease: "none",
-            duration: 0.7,
-          },
-          0
-        );
-      }
-      if (mobArcLeftMetricRef.current) {
-        mobTl.to(
-          mobArcLeftMetricRef.current,
-          {
-            rotation: -14,
-            transformOrigin: "65px 420px",
-            ease: "none",
-            duration: 0.7,
-          },
-          0
+      if (mobHaloRef.current) {
+        entranceTl.fromTo(
+          mobHaloRef.current,
+          { opacity: 0, strokeDashoffset: 90 },
+          { opacity: 0.85, strokeDashoffset: 0, duration: 0.8 },
+          0.1
         );
       }
 
-      if (mobArcRightRef.current) {
-        mobTl.to(
-          mobArcRightRef.current,
-          {
-            rotation: -16,
-            scale: 1.12,
-            x: 12,
-            transformOrigin: "350px 420px",
-            ease: "none",
-            duration: 0.7,
-          },
-          0
-        );
-      }
-      if (mobArcRightMetricRef.current) {
-        mobTl.to(
-          mobArcRightMetricRef.current,
-          {
-            rotation: 14,
-            transformOrigin: "325px 420px",
-            ease: "none",
-            duration: 0.7,
-          },
-          0
-        );
-      }
-
-      // Mobile Traveling Nodes: travel along visible diagonal vectors
-      if (mobNodeAlphaRef.current) {
-        mobTl.to(
-          mobNodeAlphaRef.current,
-          {
-            x: 35,
-            y: 130,
-            ease: "none",
-            duration: 0.7,
-          },
-          0
-        );
-      }
-      if (mobNodeBetaRef.current) {
-        mobTl.to(
-          mobNodeBetaRef.current,
-          {
-            x: -35,
-            y: 130,
-            ease: "none",
-            duration: 0.7,
-          },
-          0
-        );
-      }
-
-      // Mobile Trajectory Vector extension
-      if (mobVecLeftRef.current) {
-        mobTl.to(
-          mobVecLeftRef.current,
-          {
-            strokeDashoffset: 0,
-            ease: "none",
-            duration: 0.6,
-          },
-          0
-        );
-      }
-      if (mobVecRightRef.current) {
-        mobTl.to(
-          mobVecRightRef.current,
-          {
-            strokeDashoffset: 0,
-            ease: "none",
-            duration: 0.6,
-          },
-          0
-        );
-      }
-
-      // Mobile Directional Streamers: emerge near bottom as user descends into Field Notes
-      if (mobExitRef.current) {
-        mobTl.fromTo(
-          mobExitRef.current,
-          { opacity: 0, y: -15 },
-          { opacity: 1, y: 0, ease: "none", duration: 0.35 },
-          0.45
+      if (mobOuterRef.current) {
+        entranceTl.fromTo(
+          mobOuterRef.current,
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.7 },
+          0.2
         );
       }
     });
@@ -656,352 +553,158 @@ export default function HeroGenerativeBackground({
       className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0"
     >
       {/* =================================================================== */}
-      {/* A. MOBILE-NATIVE SVG COMPOSITION (block md:hidden, viewBox 0 0 390 844) */}
+      {/* A. MOBILE-NATIVE REFINED COMPOSITION (block md:hidden, viewBox 0 0 390 844) */}
       {/* =================================================================== */}
       <svg
         viewBox="0 0 390 844"
         preserveAspectRatio="xMidYMid slice"
         className="block md:hidden w-full h-full text-[var(--hero-geom-line-subtle)]"
       >
-        <defs>
-          {/* Mobile Central Elliptical Clearing Mask (calibrated for phone viewport) */}
-          <radialGradient
-            id="hero-mobile-center-mask"
-            cx="50%"
-            cy="47%"
-            r="38%"
-            fx="50%"
-            fy="47%"
-          >
-            <stop offset="0%" stopColor="#000" stopOpacity="0.0" />
-            <stop offset="42%" stopColor="#000" stopOpacity="0.2" />
-            <stop offset="72%" stopColor="#fff" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#fff" stopOpacity="1" />
-          </radialGradient>
-          <mask id="hero-mobile-mask">
-            <rect width="390" height="844" fill="url(#hero-mobile-center-mask)" />
-          </mask>
-        </defs>
+        {/* 1. Restrained Architectural Halo Behind / Framing Logo */}
+        <g id="mob-logo-halo-group">
+          {/* Subtle concentric guide arc */}
+          <path
+            d="M 135 160 A 60 60 0 0 1 255 160"
+            fill="none"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
+            opacity="0.6"
+          />
+          {/* Primary gold accent halo arc (animated once on load) */}
+          <path
+            ref={mobHaloRef}
+            d="M 145 160 A 50 50 0 0 1 245 160"
+            fill="none"
+            stroke="var(--hero-geom-line-accent)"
+            strokeWidth="1.2"
+            strokeDasharray="4 4"
+            opacity={reducedMotion ? "0.85" : "0"}
+          />
+          {/* Horizontal framing hairline segments with datum tick marks */}
+          <line
+            x1="105"
+            y1="160"
+            x2="132"
+            y2="160"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
+          />
+          <line
+            x1="115"
+            y1="156"
+            x2="115"
+            y2="164"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
+          />
 
-        {/* Master Mobile Geometry masked cleanly around foreground content */}
-        <g mask="url(#hero-mobile-mask)">
-          {/* 1. Mobile Orbital Arcs (Immediately Visible on Phone) */}
-          <g id="mob-arcs-group">
-            {/* Left Primary Arc */}
-            <path
-              ref={mobArcLeftRef}
-              d="M 35 110 A 310 310 0 0 0 40 730"
-              fill="none"
-              stroke="var(--hero-geom-line-mid)"
-              strokeWidth="1.15"
-            />
-            {/* Left Dashed Metric Arc */}
-            <path
-              ref={mobArcLeftMetricRef}
-              d="M 60 160 A 270 270 0 0 0 65 680"
-              fill="none"
-              stroke="var(--hero-geom-line-subtle)"
-              strokeWidth="0.85"
-              strokeDasharray="3 8"
-            />
-            {/* Left Gold Accent Arc (Immediately Visible) */}
-            <path
-              d="M 80 230 A 230 230 0 0 0 85 450"
-              fill="none"
-              stroke="var(--hero-geom-line-accent)"
-              strokeWidth="1.5"
-            />
-
-            {/* Right Primary Arc */}
-            <path
-              ref={mobArcRightRef}
-              d="M 355 110 A 310 310 0 0 1 350 730"
-              fill="none"
-              stroke="var(--hero-geom-line-mid)"
-              strokeWidth="1.15"
-            />
-            {/* Right Dashed Metric Arc */}
-            <path
-              ref={mobArcRightMetricRef}
-              d="M 330 160 A 270 270 0 0 1 325 680"
-              fill="none"
-              stroke="var(--hero-geom-line-subtle)"
-              strokeWidth="0.85"
-              strokeDasharray="3 8"
-            />
-            {/* Right Gold Accent Arc (Immediately Visible) */}
-            <path
-              d="M 310 230 A 230 230 0 0 1 305 450"
-              fill="none"
-              stroke="var(--hero-geom-line-accent)"
-              strokeWidth="1.5"
-            />
-
-            {/* Subtle calibration rings */}
-            <circle
-              cx="45"
-              cy="180"
-              r="40"
-              fill="none"
-              stroke="var(--hero-geom-line-subtle)"
-              strokeWidth="0.65"
-              strokeDasharray="2 6"
-            />
-            <circle
-              cx="345"
-              cy="660"
-              r="45"
-              fill="none"
-              stroke="var(--hero-geom-line-subtle)"
-              strokeWidth="0.65"
-              strokeDasharray="2 6"
-            />
-          </g>
-
-          {/* 2. Mobile Architectural Datums & Trajectory Lines */}
-          <g id="mob-datums-group">
-            {/* Top Datum Lines */}
-            <line
-              x1="15"
-              y1="135"
-              x2="120"
-              y2="135"
-              stroke="var(--hero-geom-line-mid)"
-              strokeWidth="0.8"
-            />
-            <line
-              x1="270"
-              y1="135"
-              x2="375"
-              y2="135"
-              stroke="var(--hero-geom-line-mid)"
-              strokeWidth="0.8"
-            />
-            {/* Tick marks */}
-            <line x1="45" y1="131" x2="45" y2="139" stroke="var(--hero-geom-line-mid)" strokeWidth="0.8" />
-            <line x1="345" y1="131" x2="345" y2="139" stroke="var(--hero-geom-line-mid)" strokeWidth="0.8" />
-
-            {/* Bottom Datum Lines */}
-            <line
-              x1="15"
-              y1="720"
-              x2="120"
-              y2="720"
-              stroke="var(--hero-geom-line-subtle)"
-              strokeWidth="0.75"
-            />
-            <line
-              x1="270"
-              y1="720"
-              x2="375"
-              y2="720"
-              stroke="var(--hero-geom-line-subtle)"
-              strokeWidth="0.75"
-            />
-
-            {/* Left Diagonal Trajectory Vector (Draws as user scrolls) */}
-            <line
-              ref={mobVecLeftRef}
-              x1="45"
-              y1="135"
-              x2="95"
-              y2="340"
-              stroke="var(--hero-geom-line-mid)"
-              strokeWidth="0.95"
-              strokeDasharray="220"
-              strokeDashoffset={reducedMotion ? "0" : "80"}
-            />
-            {/* Right Diagonal Trajectory Vector */}
-            <line
-              ref={mobVecRightRef}
-              x1="345"
-              y1="135"
-              x2="295"
-              y2="340"
-              stroke="var(--hero-geom-line-mid)"
-              strokeWidth="0.95"
-              strokeDasharray="220"
-              strokeDashoffset={reducedMotion ? "0" : "80"}
-            />
-
-            {/* Mid Network Anchor Line */}
-            <line
-              x1="45"
-              y1="490"
-              x2="105"
-              y2="490"
-              stroke="var(--hero-geom-line-accent)"
-              strokeWidth="1.1"
-            />
-            <line
-              x1="285"
-              y1="490"
-              x2="345"
-              y2="490"
-              stroke="var(--hero-geom-line-accent)"
-              strokeWidth="1.1"
-            />
-          </g>
-
-          {/* 3. Mobile Nodes & Technical Coordinate Details */}
-          <g id="mob-nodes-group">
-            {/* Left Origin Ring & Node */}
-            <circle
-              cx="45"
-              cy="135"
-              r="5"
-              fill="none"
-              stroke="var(--hero-geom-node-neutral)"
-              strokeWidth="0.8"
-            />
-            <circle cx="45" cy="135" r="1.8" fill="var(--hero-geom-node-gold)" />
-
-            {/* Right Origin Ring & Node */}
-            <circle
-              cx="345"
-              cy="135"
-              r="5"
-              fill="none"
-              stroke="var(--hero-geom-node-neutral)"
-              strokeWidth="0.8"
-            />
-            <circle cx="345" cy="135" r="1.8" fill="var(--hero-geom-node-gold)" />
-
-            {/* Mid Secondary Nodes (Immediately Visible) */}
-            <circle
-              cx="75"
-              cy="490"
-              r="4.5"
-              fill="none"
-              stroke="var(--hero-geom-node-gold)"
-              strokeWidth="1"
-            />
-            <circle cx="75" cy="490" r="1.6" fill="var(--hero-geom-node-gold)" />
-
-            <circle
-              cx="315"
-              cy="490"
-              r="4.5"
-              fill="none"
-              stroke="var(--hero-geom-node-gold)"
-              strokeWidth="1"
-            />
-            <circle cx="315" cy="490" r="1.6" fill="var(--hero-geom-node-gold)" />
-
-            {/* Traveling Node Alpha (Mobile) */}
-            <g ref={mobNodeAlphaRef}>
-              <circle
-                cx="45"
-                cy="135"
-                r="6"
-                fill="var(--theme-bg-hero, #050505)"
-                stroke="var(--hero-geom-node-gold)"
-                strokeWidth="1.2"
-              />
-              <circle cx="45" cy="135" r="2.2" fill="var(--hero-geom-node-gold)" />
-            </g>
-
-            {/* Traveling Node Beta (Mobile) */}
-            <g ref={mobNodeBetaRef}>
-              <circle
-                cx="345"
-                cy="135"
-                r="6"
-                fill="var(--theme-bg-hero, #050505)"
-                stroke="var(--hero-geom-node-gold)"
-                strokeWidth="1.2"
-              />
-              <circle cx="345" cy="135" r="2.2" fill="var(--hero-geom-node-gold)" />
-            </g>
-
-            {/* Mobile Registration Crosshairs */}
-            <path
-              d="M 40 720 L 50 720 M 45 715 L 45 725"
-              stroke="var(--hero-geom-node-neutral)"
-              strokeWidth="0.8"
-            />
-            <path
-              d="M 340 720 L 350 720 M 345 715 L 345 725"
-              stroke="var(--hero-geom-node-neutral)"
-              strokeWidth="0.8"
-            />
-
-            {/* Mobile Coordinate Annotations */}
-            <text
-              x="20"
-              y="124"
-              fontFamily="var(--font-mono, monospace)"
-              fontSize="7.5"
-              letterSpacing="0.1em"
-              fill="var(--hero-geom-text)"
-            >
-              30.04° N
-            </text>
-            <text
-              x="315"
-              y="124"
-              fontFamily="var(--font-mono, monospace)"
-              fontSize="7.5"
-              letterSpacing="0.1em"
-              fill="var(--hero-geom-text)"
-            >
-              31.23° E
-            </text>
-            <text
-              x="20"
-              y="733"
-              fontFamily="var(--font-mono, monospace)"
-              fontSize="7"
-              letterSpacing="0.1em"
-              fill="var(--hero-geom-text)"
-            >
-              [SYS.M]
-            </text>
-            <text
-              x="320"
-              y="733"
-              fontFamily="var(--font-mono, monospace)"
-              fontSize="7"
-              letterSpacing="0.1em"
-              fill="var(--hero-geom-text)"
-            >
-              [V.01]
-            </text>
-          </g>
+          <line
+            x1="258"
+            y1="160"
+            x2="285"
+            y2="160"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
+          />
+          <line
+            x1="275"
+            y1="156"
+            x2="275"
+            y2="164"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
+          />
         </g>
 
-        {/* 4. Mobile Directional Streamers for Natural Handoff */}
-        <g ref={mobExitRef} style={{ opacity: reducedMotion ? 1 : 0 }}>
+        {/* 2. Controlled Outer Margin Datums & Gold Nodes (strictly outside content column) */}
+        <g ref={mobOuterRef} id="mob-outer-datums" opacity={reducedMotion ? "1" : "0"}>
+          {/* Left Margin Hairlines (x = 18) */}
           <line
-            x1="45"
-            y1="670"
-            x2="45"
-            y2="745"
-            stroke="var(--hero-geom-line-mid)"
-            strokeWidth="0.85"
-            strokeDasharray="3 5"
+            x1="18"
+            y1="75"
+            x2="18"
+            y2="280"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
+          />
+          {/* Left Controlled Gold Node */}
+          <circle
+            cx="18"
+            cy="160"
+            r="4.5"
+            fill="none"
+            stroke="var(--hero-geom-node-neutral)"
+            strokeWidth="0.8"
+          />
+          <circle cx="18" cy="160" r="1.8" fill="var(--hero-geom-node-gold)" />
+
+          {/* Left Lower Hairline and Crosshair */}
+          <line
+            x1="18"
+            y1="560"
+            x2="18"
+            y2="760"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
           />
           <path
-            d="M 42 738 L 45 745 L 48 738"
-            fill="none"
-            stroke="var(--hero-geom-node-gold)"
-            strokeWidth="1.2"
+            d="M 14 660 L 22 660 M 18 656 L 18 664"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
           />
 
+          {/* Right Margin Hairlines (x = 372) */}
           <line
-            x1="345"
-            y1="670"
-            x2="345"
-            y2="745"
-            stroke="var(--hero-geom-line-mid)"
-            strokeWidth="0.85"
-            strokeDasharray="3 5"
+            x1="372"
+            y1="75"
+            x2="372"
+            y2="280"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
+          />
+          {/* Right Controlled Gold Node */}
+          <circle
+            cx="372"
+            cy="160"
+            r="4.5"
+            fill="none"
+            stroke="var(--hero-geom-node-neutral)"
+            strokeWidth="0.8"
+          />
+          <circle cx="372" cy="160" r="1.8" fill="var(--hero-geom-node-gold)" />
+
+          {/* Right Lower Hairline and Crosshair */}
+          <line
+            x1="372"
+            y1="560"
+            x2="372"
+            y2="760"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
           />
           <path
-            d="M 342 738 L 345 745 L 348 738"
+            d="M 368 660 L 376 660 M 372 656 L 372 664"
+            stroke="var(--hero-geom-line-subtle)"
+            strokeWidth="0.8"
+          />
+
+          {/* 3. Subtle Bottom Directional Hint into Field Notes */}
+          <line
+            x1="195"
+            y1="755"
+            x2="195"
+            y2="790"
+            stroke="var(--hero-geom-line-mid)"
+            strokeWidth="0.85"
+            strokeDasharray="3 4"
+            opacity="0.6"
+          />
+          <path
+            d="M 191 785 L 195 791 L 199 785"
             fill="none"
             stroke="var(--hero-geom-node-gold)"
             strokeWidth="1.2"
+            opacity="0.75"
           />
         </g>
       </svg>
