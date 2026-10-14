@@ -66,6 +66,21 @@ export default function AboutSection() {
                 className="section-pulse-ring absolute w-2 h-2 rounded-full pointer-events-none opacity-0"
                 aria-hidden="true"
               />
+              {/* Mobile subtle geometric transition trace stem (in whitespace beneath marker, never crossing text) */}
+              <svg
+                id="section-trace-about"
+                className="lg:hidden absolute top-2.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none overflow-visible section-trace-stem"
+                viewBox="0 0 10 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M 5 0 L 5 11 L 8 14"
+                  stroke="var(--theme-ambient-path, rgba(229,184,66,0.2))"
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                />
+              </svg>
             </div>
             <span className="font-mono text-xs sm:text-sm lg:text-[16px] xl:text-[17px] font-semibold tracking-[0.14em] uppercase text-[var(--theme-gold-text,#E5B842)] select-none">
               ABOUT &amp; CAPABILITIES
@@ -77,7 +92,7 @@ export default function AboutSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-start">
           {/* Left Column: Bio & Core Philosophy */}
-          <div className="lg:col-span-5 space-y-8">
+          <div className="reveal-heading lg:col-span-5 space-y-8">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F3F3F3] leading-[1.12]">
               How I think, design, and build.
             </h2>
@@ -114,7 +129,7 @@ export default function AboutSection() {
           </div>
 
           {/* Right Column: Capabilities Matrix */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="reveal-card reveal-delay-1 lg:col-span-7 space-y-6">
             <div className="font-mono text-xs text-[#707070] tracking-wider uppercase border-b border-[#1C1C1C] pb-4">
               CAPABILITIES MATRIX
             </div>

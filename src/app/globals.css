@@ -453,3 +453,104 @@ body {
     width: 100% !important;
   }
 }
+
+/* ========================================================================= */
+/* Editorial Scroll Reveal System (Desktop & Mobile)                        */
+/* ========================================================================= */
+
+/* Progressive Enhancement: by default everything is visible.
+   Only when reveal engine adds 'reveal-ready' do unrevealed elements start offset */
+html.reveal-ready .reveal-heading,
+html.reveal-ready .reveal-card,
+html.reveal-ready .reveal-item {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+/* Reduced translation on mobile for editorial restraint and thumb comfort */
+@media (max-width: 767px) {
+  html.reveal-ready .reveal-heading,
+  html.reveal-ready .reveal-card,
+  html.reveal-ready .reveal-item {
+    transform: translateY(12px);
+    transition-duration: 0.55s;
+  }
+}
+
+/* Revealed state */
+html.reveal-ready .reveal-heading.is-revealed,
+html.reveal-ready .reveal-card.is-revealed,
+html.reveal-ready .reveal-item.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Visuals / Media Reveal (subtle clip & micro-scale) */
+html.reveal-ready .reveal-media {
+  opacity: 0;
+  transform: scale(0.985);
+  clip-path: inset(2.5% 0% 0% 0% round 10px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              clip-path 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, clip-path;
+}
+
+@media (max-width: 767px) {
+  html.reveal-ready .reveal-media {
+    transform: scale(0.99);
+    clip-path: inset(2% 0% 0% 0% round 8px);
+    transition-duration: 0.6s;
+  }
+}
+
+html.reveal-ready .reveal-media.is-revealed {
+  opacity: 1;
+  transform: scale(1);
+  clip-path: inset(0% 0% 0% 0% round 10px);
+}
+
+/* Stagger utilities for grouped elements */
+.reveal-delay-1 {
+  transition-delay: 90ms !important;
+}
+
+.reveal-delay-2 {
+  transition-delay: 180ms !important;
+}
+
+.reveal-delay-3 {
+  transition-delay: 270ms !important;
+}
+
+/* Mobile Section Geometric Trace Stem */
+.section-trace-stem path {
+  transition: stroke 0.35s ease, filter 0.35s ease, opacity 0.35s ease;
+}
+
+.section-trace-active path {
+  stroke: var(--theme-gold-text, #E5B842) !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 3px var(--theme-gold-glow, rgba(229, 184, 66, 0.65)));
+}
+
+/* Reduced Motion Override: Instant visibility and zero transitions */
+@media (prefers-reduced-motion: reduce) {
+  html.reveal-ready .reveal-heading,
+  html.reveal-ready .reveal-card,
+  html.reveal-ready .reveal-item,
+  html.reveal-ready .reveal-media {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+
+  .section-trace-stem path {
+    transition: none !important;
+  }
+}
+

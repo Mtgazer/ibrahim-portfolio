@@ -44,6 +44,13 @@ const PULSE_RING_IDS = [
   "section-pulse-ring-contact",
 ] as const;
 
+const TRACE_STEM_IDS = [
+  "section-trace-field-notes",
+  "section-trace-projects",
+  "section-trace-about",
+  "section-trace-contact",
+] as const;
+
 export default function SectionScrollTransitions() {
   const [geometry, setGeometry] = useState<PathGeometry | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -198,12 +205,13 @@ export default function SectionScrollTransitions() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Trigger subtle section pulse once per entry
+    // Trigger subtle section pulse and mobile transition trace once per entry
     const triggerSectionPulse = (idx: number) => {
       if (reducedMotion) return;
 
       const markerEl = document.getElementById(MARKER_IDS[idx]);
       const ringEl = document.getElementById(PULSE_RING_IDS[idx]);
+      const traceEl = document.getElementById(TRACE_STEM_IDS[idx]);
 
       if (markerEl) {
         markerEl.classList.remove("section-pulse-active");
@@ -217,9 +225,16 @@ export default function SectionScrollTransitions() {
         ringEl.classList.add("section-pulse-ring-active");
       }
 
+      if (traceEl) {
+        traceEl.classList.remove("section-trace-active");
+        void traceEl.offsetWidth; // Force reflow
+        traceEl.classList.add("section-trace-active");
+      }
+
       setTimeout(() => {
         markerEl?.classList.remove("section-pulse-active");
         ringEl?.classList.remove("section-pulse-ring-active");
+        traceEl?.classList.remove("section-trace-active");
       }, 750);
     };
 

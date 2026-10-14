@@ -28,7 +28,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
           {/* Content Column                                                */}
           {/* ============================================================= */}
           <div
-            className={`space-y-8 ${
+            className={`reveal-item space-y-8 ${
               isFlipped
                 ? "lg:col-span-5 lg:col-start-8"
                 : "lg:col-span-5"
@@ -202,7 +202,7 @@ export default function ProjectArticle({ project }: ProjectArticleProps) {
           {/* Visuals Column (Generic Data-Driven Media Presentation)       */}
           {/* ============================================================= */}
           <div
-            className={`space-y-4 ${
+            className={`reveal-media reveal-delay-1 space-y-4 ${
               isFlipped
                 ? "lg:col-span-7 lg:col-start-1"
                 : "lg:col-span-7"

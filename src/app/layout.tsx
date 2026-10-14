@@ -44,9 +44,11 @@ export default function RootLayout({
       data-theme="dark"
       className={`${epilogue.variable} ${spaceMono.variable} scroll-smooth dark`}
     >
-      <head>
+      <head suppressHydrationWarning>
         {/* Anti-FOUC theme initialization script: executes before initial render */}
         <script
+          id="theme-initializer"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `(function(){
               try {

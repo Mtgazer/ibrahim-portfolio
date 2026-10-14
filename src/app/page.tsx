@@ -8,6 +8,7 @@ import ProjectArticle from "@/components/sections/ProjectArticle";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
 import SectionScrollTransitions from "@/components/navigation/SectionScrollTransitions";
+import ScrollRevealProvider from "@/components/navigation/ScrollRevealProvider";
 import { getPublishedProjects } from "@/lib/projects";
 import { getPublishedFieldNotes } from "@/lib/field-notes";
 
@@ -29,6 +30,9 @@ export default async function HomePage() {
       <main className="flex-1 w-full relative">
         {/* Phase 3: Editorial Signal Trace + Section Pulse Transitions */}
         <SectionScrollTransitions />
+
+        {/* Viewport Entry Scroll Reveal Engine */}
+        <ScrollRevealProvider />
 
         {/* Section 1: Hero Section */}
         <Hero />

@@ -193,6 +193,21 @@ export default function FieldNotesSection({ initialNotes }: FieldNotesSectionPro
                 className="section-pulse-ring absolute w-2 h-2 rounded-full pointer-events-none opacity-0"
                 aria-hidden="true"
               />
+              {/* Mobile subtle geometric transition trace stem (in whitespace beneath marker, never crossing text) */}
+              <svg
+                id="section-trace-field-notes"
+                className="lg:hidden absolute top-2.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none overflow-visible section-trace-stem"
+                viewBox="0 0 10 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M 5 0 L 5 11 L 8 14"
+                  stroke="var(--theme-ambient-path, rgba(229,184,66,0.2))"
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                />
+              </svg>
             </div>
             <span className="font-mono text-xs sm:text-sm lg:text-[16px] xl:text-[17px] font-semibold tracking-[0.14em] uppercase text-[var(--theme-gold-text,#E5B842)] select-none">
               FIELD NOTES
@@ -200,7 +215,7 @@ export default function FieldNotesSection({ initialNotes }: FieldNotesSectionPro
           </div>
 
           {/* Section Introduction & Dynamic Count */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-[#1A1A1A]">
+          <div className="reveal-heading flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-[#1A1A1A]">
             <p className="text-sm sm:text-base text-[#9E9E9E] leading-relaxed max-w-2xl font-normal">
               Daily UI explorations, micro-interactions, component architecture
               studies, and design experiments from my ongoing workbench.
@@ -213,7 +228,7 @@ export default function FieldNotesSection({ initialNotes }: FieldNotesSectionPro
 
         {/* 3-Card Centered Editorial Carousel Stage Wrapper with horizontal containment and vertical clearance */}
         <div
-          className="relative w-full overflow-x-clip overflow-y-visible"
+          className="reveal-card reveal-delay-1 relative w-full overflow-x-clip overflow-y-visible"
           style={{ overflowX: "clip", overflowY: "visible" }}
         >
           <div
