@@ -374,3 +374,47 @@ body {
     animation: none !important;
   }
 }
+
+/* Section Pulse Animation (Phase 3: Editorial Scroll Transition) */
+@keyframes section-pulse-ring-anim {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+    border: 1px solid var(--theme-gold-text, #E5B842);
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+    border: 1px solid var(--theme-gold-text, #E5B842);
+  }
+}
+
+@keyframes section-dot-brighten {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 6px var(--theme-gold-glow, rgba(229, 184, 66, 0.5));
+  }
+  40% {
+    transform: scale(1.35);
+    box-shadow: 0 0 12px var(--theme-gold-glow, rgba(229, 184, 66, 0.85)), 0 0 20px rgba(229, 184, 66, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 6px var(--theme-gold-glow, rgba(229, 184, 66, 0.5));
+  }
+}
+
+.section-pulse-active {
+  animation: section-dot-brighten 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.section-pulse-ring-active {
+  animation: section-pulse-ring-anim 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-pulse-active,
+  .section-pulse-ring-active {
+    animation: none !important;
+  }
+}
