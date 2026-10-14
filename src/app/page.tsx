@@ -6,6 +6,7 @@ import SelectedWorkHeader from "@/components/sections/SelectedWorkHeader";
 import ProjectArticle from "@/components/sections/ProjectArticle";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
+import SectionProgressLine from "@/components/navigation/SectionProgressLine";
 import { getPublishedProjects } from "@/lib/projects";
 import { getPublishedFieldNotes } from "@/lib/field-notes";
 
@@ -21,7 +22,10 @@ export default async function HomePage() {
       <Header />
 
       {/* Main Content Flow */}
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full relative">
+        {/* Desktop Section Connection Progress Line (Phase 2) */}
+        <SectionProgressLine />
+
         {/* Section 1: Hero Section */}
         <Hero />
 

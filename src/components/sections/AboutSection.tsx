@@ -55,7 +55,10 @@ export default function AboutSection() {
         {/* Section Label */}
         <div className="space-y-6">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E5B842] inline-block shadow-[0_0_6px_rgba(229,184,66,0.5)]" />
+            <span
+              id="section-marker-about"
+              className="w-1.5 h-1.5 rounded-full bg-[#E5B842] inline-block shadow-[0_0_6px_rgba(229,184,66,0.5)] transition-transform duration-300"
+            />
             <span className="font-mono text-[11px] sm:text-xs font-medium tracking-[0.14em] uppercase text-[#E5B842] select-none">
               ABOUT &amp; CAPABILITIES
             </span>
