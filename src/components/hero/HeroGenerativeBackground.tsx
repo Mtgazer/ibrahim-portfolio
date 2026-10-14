@@ -66,6 +66,8 @@ export default function HeroGenerativeBackground({
   const mobHaloSecondaryRef = useRef<SVGPathElement>(null);
   const mobNodeLeftRef = useRef<SVGGElement>(null);
   const mobNodeRightRef = useRef<SVGGElement>(null);
+  const mobLineLeftRef = useRef<SVGLineElement>(null);
+  const mobLineRightRef = useRef<SVGLineElement>(null);
   const mobCrosshairLeftRef = useRef<SVGPathElement>(null);
   const mobCrosshairRightRef = useRef<SVGPathElement>(null);
   const mobTransitLineRef = useRef<SVGLineElement>(null);
@@ -519,34 +521,37 @@ export default function HeroGenerativeBackground({
     mm.add("(max-width: 767px)", () => {
       if (reducedMotion) {
         if (mobHaloPrimaryRef.current) gsap.set(mobHaloPrimaryRef.current, { opacity: 0.85, scale: 1, rotation: 0 });
-        if (mobHaloSecondaryRef.current) gsap.set(mobHaloSecondaryRef.current, { opacity: 0.65, scale: 1, rotation: 0 });
+        if (mobHaloSecondaryRef.current) gsap.set(mobHaloSecondaryRef.current, { opacity: 0.5, scale: 1, rotation: 0 });
         if (mobOuterRef.current) gsap.set(mobOuterRef.current, { opacity: 1, y: 0 });
         return;
       }
 
       // Initial geometric background is immediately visible on page load
       if (mobOuterRef.current) gsap.set(mobOuterRef.current, { opacity: 1 });
-      if (mobHaloPrimaryRef.current) gsap.set(mobHaloPrimaryRef.current, { opacity: 0.85 });
-      if (mobHaloSecondaryRef.current) gsap.set(mobHaloSecondaryRef.current, { opacity: 0.65 });
+      if (mobHaloPrimaryRef.current) gsap.set(mobHaloPrimaryRef.current, { opacity: 0.9, scale: 1, rotation: 0 });
+      if (mobHaloSecondaryRef.current) gsap.set(mobHaloSecondaryRef.current, { opacity: 0.5, scale: 1, rotation: 0 });
+      if (mobLineLeftRef.current) gsap.set(mobLineLeftRef.current, { strokeDashoffset: 200 });
+      if (mobLineRightRef.current) gsap.set(mobLineRightRef.current, { strokeDashoffset: 200 });
 
       // Natural finger scroll-driven generative transformation scrubbing over trackEl
+      // Starts immediately on initial finger scroll from scrollY = 0
       const mobTl = gsap.timeline({
         scrollTrigger: {
           trigger: trackEl,
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.5,
+          start: "top top+=64",
+          end: "bottom top+=64",
+          scrub: 0.25,
           invalidateOnRefresh: true,
         },
       });
 
-      // Stage 1 (0% -> 35%): Logo Halo Expansion & Node Glides
+      // Stage 1 (0% -> 40%): Central Aperture Expansion & Progressive Gutter Lines
       if (mobHaloPrimaryRef.current) {
         mobTl.to(
           mobHaloPrimaryRef.current,
           {
-            scale: 1.35,
-            rotation: 26,
+            scale: 1.5,
+            rotation: 35,
             transformOrigin: "195px 160px",
             opacity: 1,
             ease: "power1.inOut",
@@ -559,12 +564,36 @@ export default function HeroGenerativeBackground({
         mobTl.to(
           mobHaloSecondaryRef.current,
           {
-            scale: 1.25,
-            rotation: -18,
+            scale: 1.35,
+            rotation: -25,
             transformOrigin: "195px 160px",
             opacity: 0.85,
             ease: "power1.inOut",
             duration: 0.45,
+          },
+          0
+        );
+      }
+
+      // Progressive active gold line drawing along margins
+      if (mobLineLeftRef.current) {
+        mobTl.to(
+          mobLineLeftRef.current,
+          {
+            strokeDashoffset: 0,
+            ease: "power1.inOut",
+            duration: 0.6,
+          },
+          0
+        );
+      }
+      if (mobLineRightRef.current) {
+        mobTl.to(
+          mobLineRightRef.current,
+          {
+            strokeDashoffset: 0,
+            ease: "power1.inOut",
+            duration: 0.6,
           },
           0
         );
@@ -575,7 +604,7 @@ export default function HeroGenerativeBackground({
         mobTl.to(
           mobNodeLeftRef.current,
           {
-            y: 90,
+            y: 120,
             ease: "power1.inOut",
             duration: 0.65,
           },
@@ -586,7 +615,7 @@ export default function HeroGenerativeBackground({
         mobTl.to(
           mobNodeRightRef.current,
           {
-            y: 90,
+            y: 120,
             ease: "power1.inOut",
             duration: 0.65,
           },
@@ -594,13 +623,13 @@ export default function HeroGenerativeBackground({
         );
       }
 
-      // Stage 2 (35% -> 70%): Lower Crosshair Rotation
+      // Stage 2 (35% -> 75%): Lower Crosshair Rotation
       if (mobCrosshairLeftRef.current) {
         mobTl.to(
           mobCrosshairLeftRef.current,
           {
             rotation: 45,
-            transformOrigin: "18px 660px",
+            transformOrigin: "16px 660px",
             opacity: 1,
             ease: "power1.out",
             duration: 0.35,
@@ -613,7 +642,7 @@ export default function HeroGenerativeBackground({
           mobCrosshairRightRef.current,
           {
             rotation: -45,
-            transformOrigin: "372px 660px",
+            transformOrigin: "374px 660px",
             opacity: 1,
             ease: "power1.out",
             duration: 0.35,
@@ -622,11 +651,11 @@ export default function HeroGenerativeBackground({
         );
       }
 
-      // Stage 3 (55% -> 100%): Transition Progressing into Field Notes
+      // Stage 3 (50% -> 100%): Transition Progressing into Field Notes
       if (mobTransitLineRef.current) {
         mobTl.fromTo(
           mobTransitLineRef.current,
-          { strokeDashoffset: 45 },
+          { strokeDashoffset: 50 },
           { strokeDashoffset: 0, ease: "power1.out", duration: 0.45 },
           0.5
         );
@@ -635,8 +664,8 @@ export default function HeroGenerativeBackground({
         mobTl.to(
           mobTransitNodeRef.current,
           {
-            y: 18,
-            scale: 1.3,
+            y: 20,
+            scale: 1.35,
             transformOrigin: "center center",
             ease: "power1.out",
             duration: 0.45,
@@ -650,8 +679,8 @@ export default function HeroGenerativeBackground({
         mobTl.to(
           mobHaloPrimaryRef.current,
           {
-            opacity: 0.2,
-            scale: 1.5,
+            opacity: 0.25,
+            scale: 1.65,
             ease: "power1.in",
             duration: 0.35,
           },
@@ -662,8 +691,8 @@ export default function HeroGenerativeBackground({
         mobTl.to(
           mobHaloSecondaryRef.current,
           {
-            opacity: 0.1,
-            scale: 1.4,
+            opacity: 0.15,
+            scale: 1.5,
             ease: "power1.in",
             duration: 0.35,
           },
@@ -691,166 +720,217 @@ export default function HeroGenerativeBackground({
         preserveAspectRatio="xMidYMid slice"
         className="block md:hidden w-full h-full text-[var(--hero-geom-line-subtle)]"
       >
-        {/* 1. Restrained Architectural Halo Behind / Framing Logo */}
+        {/* 1. Architectural Halo Behind / Framing Logo */}
         <g id="mob-logo-halo-group">
-          {/* Concentric guide arc */}
+          {/* Concentric outer guide arc */}
           <path
             ref={mobHaloSecondaryRef}
-            d="M 130 160 A 65 65 0 0 1 260 160"
+            d="M 125 160 A 70 70 0 0 1 265 160"
             fill="none"
-            stroke="var(--hero-geom-line-subtle)"
-            strokeWidth="0.8"
-            opacity="0.65"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="0.9"
+            opacity="0.45"
+            strokeDasharray="4 3"
           />
           {/* Primary gold accent halo arc (scrubbed on scroll) */}
           <path
             ref={mobHaloPrimaryRef}
             d="M 145 160 A 50 50 0 0 1 245 160"
             fill="none"
-            stroke="var(--hero-geom-line-accent)"
-            strokeWidth="1.2"
-            strokeDasharray="4 4"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1.6"
+            strokeDasharray="6 3"
             opacity="0.85"
+            filter="drop-shadow(0 0 4px var(--theme-gold-glow, rgba(229,184,66,0.4)))"
+          />
+          {/* Inner technical aperture tick arc */}
+          <path
+            d="M 160 160 A 35 35 0 0 1 230 160"
+            fill="none"
+            stroke="var(--hero-geom-line-mid)"
+            strokeWidth="0.8"
+            opacity="0.6"
           />
           {/* Horizontal framing hairline segments with datum tick marks */}
           <line
-            x1="105"
+            x1="95"
             y1="160"
-            x2="132"
+            x2="128"
             y2="160"
-            stroke="var(--hero-geom-line-subtle)"
-            strokeWidth="0.8"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1"
+            opacity="0.6"
           />
           <line
-            x1="115"
-            y1="156"
-            x2="115"
-            y2="164"
-            stroke="var(--hero-geom-line-subtle)"
-            strokeWidth="0.8"
+            x1="110"
+            y1="155"
+            x2="110"
+            y2="165"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1"
+            opacity="0.75"
           />
 
           <line
-            x1="258"
+            x1="262"
             y1="160"
-            x2="285"
+            x2="295"
             y2="160"
-            stroke="var(--hero-geom-line-subtle)"
-            strokeWidth="0.8"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1"
+            opacity="0.6"
           />
           <line
-            x1="275"
-            y1="156"
-            x2="275"
-            y2="164"
-            stroke="var(--hero-geom-line-subtle)"
-            strokeWidth="0.8"
+            x1="280"
+            y1="155"
+            x2="280"
+            y2="165"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1"
+            opacity="0.75"
           />
         </g>
 
         {/* 2. Controlled Outer Margin Datums & Gold Nodes (strictly outside content column) */}
         <g ref={mobOuterRef} id="mob-outer-datums" opacity="1">
-          {/* Left Margin Hairlines (x = 18) */}
+          {/* Left Margin Hairlines (x = 16) */}
+          {/* Permanent ambient guide rail */}
           <line
-            x1="18"
-            y1="75"
-            x2="18"
-            y2="280"
-            stroke="var(--hero-geom-line-subtle)"
+            x1="16"
+            y1="70"
+            x2="16"
+            y2="380"
+            stroke="var(--hero-geom-line-mid)"
             strokeWidth="0.8"
+            opacity="0.5"
+          />
+          {/* Active progressive gold line that draws during scroll */}
+          <line
+            ref={mobLineLeftRef}
+            x1="16"
+            y1="160"
+            x2="16"
+            y2="360"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1.4"
+            strokeDasharray="200"
+            strokeDashoffset="200"
+            opacity="0.85"
           />
           {/* Left Controlled Gold Node (sliding group) */}
           <g ref={mobNodeLeftRef}>
             <circle
-              cx="18"
+              cx="16"
               cy="160"
-              r="4.5"
+              r="5.5"
               fill="none"
-              stroke="var(--hero-geom-node-neutral)"
+              stroke="var(--theme-gold-accent, #E5B842)"
               strokeWidth="0.8"
+              opacity="0.5"
             />
-            <circle cx="18" cy="160" r="1.8" fill="var(--hero-geom-node-gold)" />
+            <circle cx="16" cy="160" r="2.2" fill="var(--theme-gold-accent, #E5B842)" />
           </g>
 
           {/* Left Lower Hairline and Crosshair */}
           <line
-            x1="18"
+            x1="16"
             y1="560"
-            x2="18"
+            x2="16"
             y2="760"
-            stroke="var(--hero-geom-line-subtle)"
+            stroke="var(--hero-geom-line-mid)"
             strokeWidth="0.8"
+            opacity="0.5"
           />
           <path
             ref={mobCrosshairLeftRef}
-            d="M 14 660 L 22 660 M 18 656 L 18 664"
-            stroke="var(--hero-geom-line-subtle)"
-            strokeWidth="0.8"
+            d="M 11 660 L 21 660 M 16 655 L 16 665"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1.2"
+            opacity="0.7"
           />
 
-          {/* Right Margin Hairlines (x = 372) */}
+          {/* Right Margin Hairlines (x = 374) */}
+          {/* Permanent ambient guide rail */}
           <line
-            x1="372"
-            y1="75"
-            x2="372"
-            y2="280"
-            stroke="var(--hero-geom-line-subtle)"
+            x1="374"
+            y1="70"
+            x2="374"
+            y2="380"
+            stroke="var(--hero-geom-line-mid)"
             strokeWidth="0.8"
+            opacity="0.5"
+          />
+          {/* Active progressive gold line that draws during scroll */}
+          <line
+            ref={mobLineRightRef}
+            x1="374"
+            y1="160"
+            x2="374"
+            y2="360"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1.4"
+            strokeDasharray="200"
+            strokeDashoffset="200"
+            opacity="0.85"
           />
           {/* Right Controlled Gold Node (sliding group) */}
           <g ref={mobNodeRightRef}>
             <circle
-              cx="372"
+              cx="374"
               cy="160"
-              r="4.5"
+              r="5.5"
               fill="none"
-              stroke="var(--hero-geom-node-neutral)"
+              stroke="var(--theme-gold-accent, #E5B842)"
               strokeWidth="0.8"
+              opacity="0.5"
             />
-            <circle cx="372" cy="160" r="1.8" fill="var(--hero-geom-node-gold)" />
+            <circle cx="374" cy="160" r="2.2" fill="var(--theme-gold-accent, #E5B842)" />
           </g>
 
           {/* Right Lower Hairline and Crosshair */}
           <line
-            x1="372"
+            x1="374"
             y1="560"
-            x2="372"
+            x2="374"
             y2="760"
-            stroke="var(--hero-geom-line-subtle)"
+            stroke="var(--hero-geom-line-mid)"
             strokeWidth="0.8"
+            opacity="0.5"
           />
           <path
             ref={mobCrosshairRightRef}
-            d="M 368 660 L 376 660 M 372 656 L 372 664"
-            stroke="var(--hero-geom-line-subtle)"
-            strokeWidth="0.8"
+            d="M 369 660 L 379 660 M 374 655 L 374 665"
+            stroke="var(--theme-gold-accent, #E5B842)"
+            strokeWidth="1.2"
+            opacity="0.7"
           />
 
-          {/* 3. Subtle Bottom Directional Transit into Field Notes */}
+          {/* 3. Bottom Directional Transit into Field Notes */}
           <g id="mob-bottom-transit">
             <line
               ref={mobTransitLineRef}
               x1="195"
-              y1="745"
+              y1="735"
               x2="195"
-              y2="790"
-              stroke="var(--hero-geom-line-mid)"
-              strokeWidth="1"
-              strokeDasharray="4 4"
-              opacity="0.8"
+              y2="795"
+              stroke="var(--theme-gold-accent, #E5B842)"
+              strokeWidth="1.4"
+              strokeDasharray="50"
+              strokeDashoffset="50"
+              opacity="0.85"
             />
             <circle
               ref={mobTransitNodeRef}
               cx="195"
               cy="790"
-              r="2.2"
-              fill="var(--hero-geom-node-gold)"
+              r="2.5"
+              fill="var(--theme-gold-accent, #E5B842)"
             />
             <path
-              d="M 191 785 L 195 791 L 199 785"
+              d="M 190 784 L 195 791 L 200 784"
               fill="none"
-              stroke="var(--hero-geom-node-gold)"
-              strokeWidth="1.2"
+              stroke="var(--theme-gold-accent, #E5B842)"
+              strokeWidth="1.4"
               opacity="0.85"
             />
           </g>

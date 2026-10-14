@@ -71,21 +71,6 @@ export default function ContactSection() {
                 className="section-pulse-ring absolute w-2 h-2 rounded-full pointer-events-none opacity-0"
                 aria-hidden="true"
               />
-              {/* Mobile subtle geometric transition trace stem (in whitespace beneath marker, never crossing text) */}
-              <svg
-                id="section-trace-contact"
-                className="lg:hidden absolute top-2.5 left-1/2 -translate-x-1/2 w-2.5 h-4 pointer-events-none overflow-visible section-trace-stem"
-                viewBox="0 0 10 16"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M 5 0 L 5 11 L 8 14"
-                  stroke="var(--theme-ambient-path, rgba(229,184,66,0.2))"
-                  strokeWidth="1"
-                  strokeLinecap="round"
-                />
-              </svg>
             </div>
             <span className="font-mono text-xs sm:text-sm lg:text-[16px] xl:text-[17px] font-semibold tracking-[0.14em] uppercase text-[var(--theme-gold-text,#E5B842)] select-none">
               CONTACT

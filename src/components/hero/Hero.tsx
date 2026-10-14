@@ -67,13 +67,13 @@ export default function Hero() {
       className={`relative w-full ${
         reducedMotion
           ? "min-h-[calc(100svh-4rem)] sm:min-h-[calc(100vh-4rem)] border-b border-[var(--theme-border)]"
-          : "min-h-[calc(100svh-4rem)] md:h-[185vh] border-b md:border-b-0 border-[var(--theme-border)]"
+          : "h-[132svh] md:h-[185vh] border-b md:border-b-0 border-[var(--theme-border)]"
       }`}
     >
-      {/* Hero Viewport Container: Normal document flow on mobile (zero scroll-locking), sticky on desktop */}
+      {/* Hero Viewport Container: naturally bounded sticky container during mobile & desktop transformation */}
       <div
-        className={`w-full min-h-[calc(100svh-4rem)] md:h-[calc(100vh-4rem)] md:min-h-[580px] md:border-b border-[var(--theme-border)] overflow-hidden flex flex-col items-center justify-center select-none py-12 md:py-0 ${
-          reducedMotion ? "relative" : "relative md:sticky md:top-16"
+        className={`w-full h-[calc(100svh-4rem)] md:h-[calc(100vh-4rem)] md:min-h-[580px] md:border-b border-[var(--theme-border)] overflow-hidden flex flex-col items-center justify-center select-none py-12 md:py-0 ${
+          reducedMotion ? "relative" : "sticky top-16"
         }`}
       >
         {/* 1. Atmospheric Glow & Grain Texture */}

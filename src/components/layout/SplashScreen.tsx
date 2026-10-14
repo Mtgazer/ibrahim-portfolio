@@ -93,30 +93,31 @@ export default function SplashScreen() {
     const attemptExit = () => {
       if (minTimeElapsed && criticalReady) {
         setIsExiting(true);
-        // Smooth 700ms cinematic dissolve
+        // Smooth 800ms cinematic dissolve into hero
         setTimeout(() => {
           setVisible(false);
           try {
             sessionStorage.setItem("ik_portfolio_intro_done", "1");
           } catch {}
-        }, 700);
+        }, 800);
       }
     };
 
-    // Refined cinematic stage progression:
-    // Stage 0 (PLAN): 0ms - Calm initial illumination
-    // Stage 1 (DESIGN): 700ms - Smooth stroke advance into Node 1
-    // Stage 2 (BUILD): 1400ms - Smooth stroke advance into Node 2
-    // Stage 3 (DEPLOY): 2100ms - Smooth stroke advance into Node 3
-    // Completion: 2800ms - Natural pause before dissolving into hero
-    const timerStage1 = setTimeout(() => setActiveStage(1), 700);
-    const timerStage2 = setTimeout(() => setActiveStage(2), 1400);
-    const timerStage3 = setTimeout(() => setActiveStage(3), 2100);
+    // Refined comfortable lifecycle stage progression (6-7s total presentation):
+    // Stage 0 (PLAN - "Understand the problem"): 0ms -> 1350ms (~1.35s readable window)
+    // Stage 1 (DESIGN - "Architect the solution"): 1350ms -> 2700ms (~1.35s readable window)
+    // Stage 2 (BUILD - "Turn ideas into systems"): 2700ms -> 4050ms (~1.35s readable window)
+    // Stage 3 (DEPLOY - "Ready for the real world"): 4050ms -> 5400ms (~1.35s readable window)
+    // Completion hold (all 4 nodes connected): 5400ms -> 6500ms (1.1s contemplative hold)
+    // Dissolve into hero begins at 6500ms with smooth 800ms fade (total ~7.3s)
+    const timerStage1 = setTimeout(() => setActiveStage(1), 1350);
+    const timerStage2 = setTimeout(() => setActiveStage(2), 2700);
+    const timerStage3 = setTimeout(() => setActiveStage(3), 4050);
 
     const minTimer = setTimeout(() => {
       minTimeElapsed = true;
       attemptExit();
-    }, 2800);
+    }, 6500);
 
     // Critical readiness measurement: page load & fonts ready
     const onReady = () => {
@@ -142,12 +143,12 @@ export default function SplashScreen() {
         });
     }
 
-    // Safety timeout: guarantee dismissal at 3500ms
+    // Safety timeout: guarantee dismissal at 8000ms
     const maxTimer = setTimeout(() => {
       minTimeElapsed = true;
       criticalReady = true;
       attemptExit();
-    }, 3500);
+    }, 8000);
 
     return () => {
       clearTimeout(timerStage1);
@@ -243,7 +244,7 @@ export default function SplashScreen() {
 
               {/* Active gold progress fill stroke with calm cinematic easing */}
               <div
-                className="absolute top-0 left-0 h-full bg-[var(--theme-gold-accent,#E5B842)] transition-all duration-750 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                className="absolute top-0 left-0 h-full bg-[var(--theme-gold-accent,#E5B842)] transition-all duration-1000 ease-[cubic-bezier(0.4,0,0.2,1)]"
                 style={{
                   width: `${progressPercent}%`,
                   boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.5))",

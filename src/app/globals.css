@@ -526,17 +526,6 @@ html.reveal-ready .reveal-media.is-revealed {
   transition-delay: 270ms !important;
 }
 
-/* Mobile Section Geometric Trace Stem */
-.section-trace-stem path {
-  transition: stroke 0.35s ease, filter 0.35s ease, opacity 0.35s ease;
-}
-
-.section-trace-active path {
-  stroke: var(--theme-gold-text, #E5B842) !important;
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 3px var(--theme-gold-glow, rgba(229, 184, 66, 0.65)));
-}
-
 /* Reduced Motion Override: Instant visibility and zero transitions */
 @media (prefers-reduced-motion: reduce) {
   html.reveal-ready .reveal-heading,
@@ -546,10 +535,6 @@ html.reveal-ready .reveal-media.is-revealed {
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
-    transition: none !important;
-  }
-
-  .section-trace-stem path {
     transition: none !important;
   }
 }

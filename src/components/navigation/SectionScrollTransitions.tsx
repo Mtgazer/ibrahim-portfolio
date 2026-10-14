@@ -44,13 +44,6 @@ const PULSE_RING_IDS = [
   "section-pulse-ring-contact",
 ] as const;
 
-const TRACE_STEM_IDS = [
-  "section-trace-field-notes",
-  "section-trace-projects",
-  "section-trace-about",
-  "section-trace-contact",
-] as const;
-
 export default function SectionScrollTransitions() {
   const [geometry, setGeometry] = useState<PathGeometry | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,39 +89,42 @@ export default function SectionScrollTransitions() {
       // p0 (Field Notes) -> p1 (Selected Work) -> p2 (About) -> p3 (Contact)
       //
       // For each segment i from p[i] to p[i+1]:
-      // - Step straight down 24px from p[i]
-      // - Chamfer 45-deg into whitespace gutter (x - 18px)
-      // - Travel down through the clean gutter corridor (14px clear of all text/cards)
+      // - Step straight down from p[i]
+      // - Chamfer 45-deg into whitespace gutter
+      // - Travel down through the clean gutter corridor (safe clearance from text/cards)
       // - Chamfer 45-deg in toward next marker p[i+1]
-      // - Step straight down 24px into center of p[i+1]
+      // - Step straight down into center of p[i+1]
+      const isMobile = window.innerWidth < 1024;
       const segLengths: number[] = [];
       const cumLengths: number[] = [0];
       const dParts: string[] = [];
       const tickParts: string[] = [];
 
       dParts.push(`M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`);
+      const startTickHalf = isMobile ? 2.5 : 4;
       tickParts.push(
-        `M ${(points[0].x - 4).toFixed(1)} ${points[0].y.toFixed(1)} L ${(points[0].x + 4).toFixed(1)} ${points[0].y.toFixed(1)}`
+        `M ${(points[0].x - startTickHalf).toFixed(1)} ${points[0].y.toFixed(1)} L ${(points[0].x + startTickHalf).toFixed(1)} ${points[0].y.toFixed(1)}`
       );
 
       for (let i = 0; i < points.length - 1; i++) {
         const pStart = points[i];
         const pEnd = points[i + 1];
 
-        // Offset the vertical path into the left whitespace gutter
-        // Shifted ~22px farther to the left (40px offset from marker center)
-        // Guarded by minLeft (14px) to prevent clipping on narrower desktop viewports
-        const GUTTER_OFFSET = 40;
-        const MIN_LEFT = 14;
-        const gutterX_start = Math.max(MIN_LEFT, pStart.x - GUTTER_OFFSET);
-        const gutterX_end = Math.max(MIN_LEFT, pEnd.x - GUTTER_OFFSET);
+        // Responsive gutter calculation:
+        // Desktop (>= 1024px): 40px left offset from marker (min 14px)
+        // Mobile / Tablet (< 1024px): Position safely inside the left page gutter margin (x = ~7.5px)
+        // Leaving 8.5px+ clearance from all headings, cards, project images, and buttons
+        const gutterX_start = isMobile
+          ? Math.max(6, Math.min(12, pStart.x - 12.5))
+          : Math.max(14, pStart.x - 40);
+        const gutterX_end = isMobile
+          ? Math.max(6, Math.min(12, pEnd.x - 12.5))
+          : Math.max(14, pEnd.x - 40);
 
-        // Drops 10px below marker to clear the dot, then chamfers out smoothly into the gutter
-        // Completes the bend well before the section heading begins
-        const yDrop = pStart.y + 10;
-        const yGutterStart = pStart.y + 36;
-        const yGutterEnd = pEnd.y - 36;
-        const yApproach = pEnd.y - 10;
+        const yDrop = pStart.y + (isMobile ? 8 : 10);
+        const yGutterStart = pStart.y + (isMobile ? 20 : 36);
+        const yGutterEnd = pEnd.y - (isMobile ? 20 : 36);
+        const yApproach = pEnd.y - (isMobile ? 8 : 10);
 
         // Path coordinates for this segment
         dParts.push(`L ${pStart.x.toFixed(1)} ${yDrop.toFixed(1)}`);
@@ -138,22 +134,32 @@ export default function SectionScrollTransitions() {
         dParts.push(`L ${pEnd.x.toFixed(1)} ${pEnd.y.toFixed(1)}`);
 
         // Architectural datum ticks at key transition junctures
-        tickParts.push(
-          `M ${(gutterX_start - 3).toFixed(1)} ${yGutterStart.toFixed(1)} L ${(gutterX_start + 3).toFixed(1)} ${yGutterStart.toFixed(1)}`
-        );
-        tickParts.push(
-          `M ${(gutterX_end - 3).toFixed(1)} ${yGutterEnd.toFixed(1)} L ${(gutterX_end + 3).toFixed(1)} ${yGutterEnd.toFixed(1)}`
-        );
-        tickParts.push(
-          `M ${(pEnd.x - 4).toFixed(1)} ${pEnd.y.toFixed(1)} L ${(pEnd.x + 4).toFixed(1)} ${pEnd.y.toFixed(1)}`
-        );
+        if (!isMobile) {
+          tickParts.push(
+            `M ${(gutterX_start - 3).toFixed(1)} ${yGutterStart.toFixed(1)} L ${(gutterX_start + 3).toFixed(1)} ${yGutterStart.toFixed(1)}`
+          );
+          tickParts.push(
+            `M ${(gutterX_end - 3).toFixed(1)} ${yGutterEnd.toFixed(1)} L ${(gutterX_end + 3).toFixed(1)} ${yGutterEnd.toFixed(1)}`
+          );
+          tickParts.push(
+            `M ${(pEnd.x - 4).toFixed(1)} ${pEnd.y.toFixed(1)} L ${(pEnd.x + 4).toFixed(1)} ${pEnd.y.toFixed(1)}`
+          );
+        } else {
+          // Streamlined subtle ticks on mobile to preserve minimal clarity
+          tickParts.push(
+            `M ${(gutterX_start - 2).toFixed(1)} ${yGutterStart.toFixed(1)} L ${(gutterX_start + 2).toFixed(1)} ${yGutterStart.toFixed(1)}`
+          );
+          tickParts.push(
+            `M ${(pEnd.x - 3).toFixed(1)} ${pEnd.y.toFixed(1)} L ${(pEnd.x + 3).toFixed(1)} ${pEnd.y.toFixed(1)}`
+          );
+        }
 
         // Calculate segment geometric length
-        const l1 = 10;
+        const l1 = isMobile ? 8 : 10;
         const l2 = Math.hypot(pStart.x - gutterX_start, yGutterStart - yDrop);
         const l3 = Math.hypot(gutterX_end - gutterX_start, yGutterEnd - yGutterStart);
         const l4 = Math.hypot(pEnd.x - gutterX_end, yApproach - yGutterEnd);
-        const l5 = 10;
+        const l5 = isMobile ? 8 : 10;
         const segLen = l1 + l2 + l3 + l4 + l5;
 
         segLengths.push(segLen);
@@ -205,13 +211,12 @@ export default function SectionScrollTransitions() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Trigger subtle section pulse and mobile transition trace once per entry
+    // Trigger subtle section pulse once per entry
     const triggerSectionPulse = (idx: number) => {
       if (reducedMotion) return;
 
       const markerEl = document.getElementById(MARKER_IDS[idx]);
       const ringEl = document.getElementById(PULSE_RING_IDS[idx]);
-      const traceEl = document.getElementById(TRACE_STEM_IDS[idx]);
 
       if (markerEl) {
         markerEl.classList.remove("section-pulse-active");
@@ -225,16 +230,9 @@ export default function SectionScrollTransitions() {
         ringEl.classList.add("section-pulse-ring-active");
       }
 
-      if (traceEl) {
-        traceEl.classList.remove("section-trace-active");
-        void traceEl.offsetWidth; // Force reflow
-        traceEl.classList.add("section-trace-active");
-      }
-
       setTimeout(() => {
         markerEl?.classList.remove("section-pulse-active");
         ringEl?.classList.remove("section-pulse-ring-active");
-        traceEl?.classList.remove("section-trace-active");
       }, 750);
     };
 
@@ -280,8 +278,8 @@ export default function SectionScrollTransitions() {
         isInitialMountRef.current = false;
       }
 
-      // 2. Animate Desktop Continuous Signal Trace (>= 1024px)
-      if (geometry && window.innerWidth >= 1024 && !reducedMotion) {
+      // 2. Animate Continuous Signal Trace (Mobile, Tablet & Desktop)
+      if (geometry && !reducedMotion) {
         const pathEl = progressPathRef.current;
         const tipEl = tipHighlightRef.current;
         if (!pathEl) return;
@@ -368,9 +366,9 @@ export default function SectionScrollTransitions() {
       aria-hidden="true"
       className="absolute inset-0 pointer-events-none select-none z-20 overflow-visible"
     >
-      {/* Continuous Geometric Section Path (Desktop >= 1024px) */}
+      {/* Continuous Geometric Section Path (Responsive: Mobile, Tablet & Desktop) */}
       <svg
-        className="hidden lg:block w-full h-full pointer-events-none overflow-visible"
+        className="w-full h-full pointer-events-none overflow-visible"
         style={{ position: "absolute", top: 0, left: 0 }}
       >
         {/* Layer A — Ambient Path: Permanently visible subtle neutral/gold base track */}
