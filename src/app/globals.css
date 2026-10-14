@@ -422,3 +422,34 @@ body {
     animation: none !important;
   }
 }
+
+/* Splash Screen Progress Animation */
+@keyframes splash-progress-anim {
+  0% {
+    width: 0%;
+    opacity: 0.6;
+  }
+  25% {
+    width: 35%;
+    opacity: 1;
+  }
+  65% {
+    width: 78%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.splash-progress-bar {
+  animation: splash-progress-anim 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-progress-bar {
+    animation: none !important;
+    width: 100% !important;
+  }
+}

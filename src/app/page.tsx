@@ -1,5 +1,6 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import SplashScreen from "@/components/layout/SplashScreen";
 import Hero from "@/components/hero/Hero";
 import FieldNotesSection from "@/components/sections/FieldNotesSection";
 import SelectedWorkHeader from "@/components/sections/SelectedWorkHeader";
@@ -18,6 +19,9 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--theme-bg-page)] text-[var(--theme-text-primary)]">
+      {/* Editorial Intro Splash Screen (Fresh entry only) */}
+      <SplashScreen />
+
       {/* 1. Header Navigation */}
       <Header />
 
