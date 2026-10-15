@@ -127,9 +127,9 @@ export default function Hero() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-12 items-center">
             {/* Left Column: Editorial Copy, Badges, and CTAs (cols 1-7) */}
             <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
-              {/* Mobile-Only Visual Signature: Clean compact circular halo at top on mobile */}
+              {/* Mobile-Only Visual Signature: Clean compact circular halo at top on mobile with subtle orbital ring */}
               <div className="lg:hidden mb-5 flex items-center justify-center">
-                <div className="relative group select-none">
+                <div className="relative group select-none flex items-center justify-center">
                   <div
                     aria-hidden="true"
                     className="absolute inset-0 rounded-full blur-[14px] pointer-events-none"
@@ -137,6 +137,37 @@ export default function Hero() {
                       backgroundColor: "var(--theme-logo-glow-bg, rgba(229,184,66,0.20))",
                     }}
                   />
+                  {/* Subtle mobile orbital ring around monogram with scroll-driven rotation */}
+                  <svg
+                    viewBox="0 0 88 88"
+                    className="absolute -inset-3 w-[88px] h-[88px] pointer-events-none select-none overflow-visible"
+                    aria-hidden="true"
+                  >
+                    <g id="mobile-hero-orbit" style={{ transformOrigin: "44px 44px" }}>
+                      <circle
+                        cx="44"
+                        cy="44"
+                        r="38"
+                        fill="none"
+                        stroke="var(--hero-geom-line-subtle)"
+                        strokeWidth="0.75"
+                        strokeDasharray="2 6"
+                      />
+                      <path
+                        d="M 44 6 A 38 38 0 0 1 82 44"
+                        fill="none"
+                        stroke="var(--theme-gold-accent)"
+                        strokeWidth="1.2"
+                      />
+                      <circle
+                        cx="75"
+                        cy="22"
+                        r="2"
+                        fill="var(--theme-gold-accent)"
+                        style={{ filter: "drop-shadow(0 0 3px var(--theme-gold-glow))" }}
+                      />
+                    </g>
+                  </svg>
                   <div className="relative w-16 h-16 rounded-full border border-[var(--theme-border-strong)] bg-[var(--theme-bg-surface)]/80 backdrop-blur-sm flex items-center justify-center shadow-[0_2px_14px_rgba(229,184,66,0.18)]">
                     <Image
                       src="/images/ik-logo.png"

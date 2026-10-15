@@ -31,19 +31,66 @@ let isListening = false;
 let rafId: number | null = null;
 let intersectionObserver: IntersectionObserver | null = null;
 
+interface CachedSection {
+  meta: SectionMeta;
+  el: HTMLElement | null;
+  top: number;
+}
+
+let cachedSections: CachedSection[] = [];
+let cachedDocHeight = 0;
+let cachedWindowHeight = 0;
+let cachedMaxScroll = 1;
+
+/**
+ * Caches section element offsets and document dimensions to prevent
+ * forced synchronous layout reads (layout thrashing) on every scroll frame.
+ */
+export function updateCachedLayout() {
+  if (typeof window === "undefined") return;
+  cachedWindowHeight = window.innerHeight;
+  cachedDocHeight = document.documentElement.scrollHeight;
+  cachedMaxScroll = Math.max(1, cachedDocHeight - cachedWindowHeight);
+
+  cachedSections = HOMEPAGE_SECTIONS.map((section) => {
+    let el = document.getElementById(section.id);
+    if (!el && section.id === "my-projects") {
+      el = document.getElementById("selected-work");
+    }
+    return {
+      meta: section,
+      el,
+      top: el ? el.offsetTop : 0,
+    };
+  });
+}
+
+/**
+ * Fast normalized scroll progress of the hero section on mobile (0 to 1).
+ * Reaches 1.0 as the hero approaches the handoff to Field Notes.
+ * 100% arithmetic-only with zero DOM layout queries on scroll frames.
+ */
+export function getHeroMobileProgress(): number {
+  if (typeof window === "undefined") return 0;
+  const fieldNotesTop = cachedSections[1]?.top || (cachedWindowHeight || 700);
+  const scrollY = window.scrollY;
+  // Progresses from 0 at top to 1.0 when scrolling 65% of the distance to Field Notes
+  const heroHandoffThreshold = Math.max(100, fieldNotesTop * 0.65);
+  return Math.min(1, Math.max(0, scrollY / heroHandoffThreshold));
+}
+
 /**
  * High-efficiency scroll and active section evaluator.
- * Uses a unified reading eye-line at 42% of the viewport.
+ * Uses cached layout metrics and a unified reading eye-line at 42% of the viewport.
  */
 function computeScrollMetrics() {
   if (typeof window === "undefined") return;
 
   const scrollY = window.scrollY;
-  const windowHeight = window.innerHeight;
-  const docHeight = document.documentElement.scrollHeight;
-  const maxScroll = Math.max(1, docHeight - windowHeight);
+  const windowHeight = cachedWindowHeight || window.innerHeight;
+  const maxScroll = cachedMaxScroll || Math.max(1, (cachedDocHeight || 1000) - windowHeight);
 
-  // 1. Normalized Continuous Page Progress (0 to 1)
+  // 1. Normalized Continuous Page Progress (0 to 1) - Pure Arithmetic
   const nextProgress = Math.min(1, Math.max(0, scrollY / maxScroll));
   if (Math.abs(nextProgress - scrollProgress) > 0.00008) {
     scrollProgress = nextProgress;
@@ -57,7 +104,7 @@ function computeScrollMetrics() {
     progressListeners.forEach((cb) => cb(scrollProgress));
   }
 
-  // 2. Active Section Detection (Unified 42% reading eye-line)
+  // 2. Active Section Detection (Unified 42% reading eye-line) using cached offsets
   let nextSection: SectionMeta = HOMEPAGE_SECTIONS[0];
 
   // Guaranteed HOME near top
@@ -65,24 +112,16 @@ function computeScrollMetrics() {
     nextSection = HOMEPAGE_SECTIONS[0];
   }
   // Guaranteed CONTACT near bottom
-  else if (windowHeight + scrollY >= docHeight - 70) {
+  else if (windowHeight + scrollY >= (cachedDocHeight || 1000) - 70) {
     nextSection = HOMEPAGE_SECTIONS[4];
   }
-  // In-between sections using 42% reading eye-line
+  // In-between sections using 42% reading eye-line with cached offsets (zero reflows!)
   else {
     const eyeLineY = scrollY + windowHeight * 0.42;
 
-    for (let i = 0; i < HOMEPAGE_SECTIONS.length; i++) {
-      const section = HOMEPAGE_SECTIONS[i];
-      let el = document.getElementById(section.id);
-      if (!el && section.id === "my-projects") {
-        el = document.getElementById("selected-work");
-      }
-      if (el) {
-        const top = el.offsetTop;
-        if (top <= eyeLineY) {
-          nextSection = section;
-        }
+    for (let i = 0; i < cachedSections.length; i++) {
+      if (cachedSections[i].top <= eyeLineY) {
+        nextSection = cachedSections[i].meta;
       }
     }
   }
@@ -103,6 +142,11 @@ function onScrollThrottled() {
   }
 }
 
+function handleResize() {
+  updateCachedLayout();
+  computeScrollMetrics();
+}
+
 function ensureListener() {
   if (isListening || typeof window === "undefined") return;
   isListening = true;
@@ -118,11 +162,12 @@ function ensureListener() {
     }
   }
 
-  // Initial computation pass
+  // Initial layout measurement and computation pass
+  updateCachedLayout();
   computeScrollMetrics();
 
   window.addEventListener("scroll", onScrollThrottled, { passive: true });
-  window.addEventListener("resize", computeScrollMetrics, { passive: true });
+  window.addEventListener("resize", handleResize, { passive: true });
 
   // Native IntersectionObserver for efficient boundary crossing updates
   if (typeof IntersectionObserver !== "undefined") {
@@ -133,6 +178,7 @@ function ensureListener() {
           if (entry.isIntersecting) hasRelevantChange = true;
         });
         if (hasRelevantChange) {
+          updateCachedLayout();
           computeScrollMetrics();
         }
       },
@@ -159,7 +205,7 @@ function cleanupListenerIfEmpty() {
   ) {
     if (typeof window !== "undefined") {
       window.removeEventListener("scroll", onScrollThrottled);
-      window.removeEventListener("resize", computeScrollMetrics);
+      window.removeEventListener("resize", handleResize);
       if (rafId !== null) {
         cancelAnimationFrame(rafId);
         rafId = null;

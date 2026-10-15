@@ -578,22 +578,6 @@ export default function HeroGenerativeBackground({
           { opacity: 1, y: 0, duration: 0.65, ease: "power2.out", delay: 0.05 }
         );
       }
-
-      // Smooth scroll sync for mobile hero signal (natural touch scrolling preserved)
-      if (!reducedMotion) {
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: trackEl,
-            start: "top top+=64",
-            end: "bottom top",
-            scrub: 0.3,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              onProgress?.(self.progress);
-            },
-          },
-        });
-      }
     });
 
     return () => {

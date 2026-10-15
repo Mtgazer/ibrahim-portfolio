@@ -9,14 +9,14 @@ import React, {
   forwardRef,
   useSyncExternalStore,
 } from "react";
-import { subscribeProgress } from "@/lib/scroll-progress";
+import { subscribeProgress, getHeroMobileProgress } from "@/lib/scroll-progress";
 
 export interface HeroSignalConnectorHandle {
   updateProgress: (progress: number) => void;
 }
 
 interface HeroSignalConnectorProps {
-  trackRef: React.RefObject<HTMLDivElement | null>;
+  trackRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 interface Point {
@@ -153,14 +153,19 @@ function buildHeroConnectorPath(
 }
 
 const HeroSignalConnector = forwardRef<HeroSignalConnectorHandle, HeroSignalConnectorProps>(
-  function HeroSignalConnector({ trackRef }, ref) {
+  function HeroSignalConnector(_props, ref) {
     const [geometry, setGeometry] = useState<HeroPathGeometry | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const progressPathRef = useRef<SVGPathElement>(null);
     const tipHighlightRef = useRef<SVGCircleElement>(null);
     const tipGlowRef = useRef<SVGCircleElement>(null);
 
+    const beaconRingRef = useRef<HTMLElement | null>(null);
+    const mobOrbitRef = useRef<HTMLElement | null>(null);
+
     const currentProgressRef = useRef<number>(0);
+    const lastAppliedProgressRef = useRef<number>(-1);
+    const isInitializedRef = useRef<boolean>(false);
 
     const reducedMotion = useSyncExternalStore(
       subscribeReducedMotion,
@@ -178,6 +183,10 @@ const HeroSignalConnector = forwardRef<HeroSignalConnectorHandle, HeroSignalConn
         const viewportEl = containerRef.current?.parentElement;
 
         if (!startEl || !endEl || !viewportEl) return;
+
+        // Cache DOM element targets
+        beaconRingRef.current = document.getElementById("journey-start-pulse-ring");
+        mobOrbitRef.current = document.getElementById("mobile-hero-orbit");
 
         const vpRect = viewportEl.getBoundingClientRect();
         const rStart = startEl.getBoundingClientRect();
@@ -214,10 +223,21 @@ const HeroSignalConnector = forwardRef<HeroSignalConnectorHandle, HeroSignalConn
         document.fonts.ready.then(measureAndBuild).catch(() => {});
       }
 
+      // Guarded ResizeObserver: Only recalculates when container width changes (orientation or window resize),
+      // preventing layout thrashing when dynamic mobile URL bars adjust viewport height during touch scroll
+      let lastWidth = typeof window !== "undefined" ? window.innerWidth : 0;
       let ro: ResizeObserver | null = null;
       const vpEl = containerRef.current?.parentElement;
       if (vpEl && typeof ResizeObserver !== "undefined") {
-        ro = new ResizeObserver(() => measureAndBuild());
+        ro = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const newWidth = entry.contentRect.width;
+            if (Math.abs(newWidth - lastWidth) > 2) {
+              lastWidth = newWidth;
+              measureAndBuild();
+            }
+          }
+        });
         ro.observe(vpEl);
       }
 
@@ -236,6 +256,14 @@ const HeroSignalConnector = forwardRef<HeroSignalConnectorHandle, HeroSignalConn
         if (!geometry || reducedMotion) return;
 
         const clampedP = Math.max(0, Math.min(1, p));
+
+        // Skip redundant SVG updates when progress delta is negligible
+        if (Math.abs(clampedP - lastAppliedProgressRef.current) < 0.0005 && isInitializedRef.current) {
+          return;
+        }
+        lastAppliedProgressRef.current = clampedP;
+        isInitializedRef.current = true;
+
         const drawnDistance = clampedP * geometry.totalLength;
 
         const pathEl = progressPathRef.current;
@@ -265,9 +293,17 @@ const HeroSignalConnector = forwardRef<HeroSignalConnectorHandle, HeroSignalConn
           }
         }
 
+        // Restrained mobile orbital ring rotation tied to scroll
+        const mobOrbit = mobOrbitRef.current || document.getElementById("mobile-hero-orbit");
+        if (mobOrbit) {
+          mobOrbitRef.current = mobOrbit;
+          mobOrbit.style.transform = `rotate(${(clampedP * 45).toFixed(1)}deg)`;
+        }
+
         // Visual handoff connection with SYS.START // 01 beacon when reaching destination
-        const beaconRing = document.getElementById("journey-start-pulse-ring");
+        const beaconRing = beaconRingRef.current || document.getElementById("journey-start-pulse-ring");
         if (beaconRing) {
+          beaconRingRef.current = beaconRing;
           if (clampedP > 0.95) {
             beaconRing.classList.add("opacity-100");
             beaconRing.classList.remove("opacity-0");
@@ -293,26 +329,22 @@ const HeroSignalConnector = forwardRef<HeroSignalConnectorHandle, HeroSignalConn
       }
     }, [geometry, applyProgress]);
 
-    // Secondary fallback sync with global scroll progress (ensures continuous response)
+    // High-efficiency mobile scroll sync: uses pure arithmetic from shared scroll progress
+    // with ZERO layout reads, forced reflows, or duplicate GSAP scroll listeners
     useEffect(() => {
       if (!geometry || reducedMotion) return;
 
       const unsubscribe = subscribeProgress(() => {
-        const trackEl = trackRef.current;
-        if (!trackEl) return;
-        const rect = trackEl.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const scrollDistance = -rect.top;
-        const maxScroll = Math.max(1, trackEl.offsetHeight - windowHeight);
-
-        const p = Math.max(0, Math.min(1, scrollDistance / maxScroll));
-        applyProgress(p);
+        if (typeof window !== "undefined" && window.innerWidth < 768) {
+          const p = getHeroMobileProgress();
+          applyProgress(p);
+        }
       });
 
       return () => {
         unsubscribe();
       };
-    }, [geometry, reducedMotion, trackRef, applyProgress]);
+    }, [geometry, reducedMotion, applyProgress]);
 
     if (!geometry) {
       return <div ref={containerRef} className="hidden" aria-hidden="true" />;

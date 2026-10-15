@@ -200,6 +200,9 @@ export default function SectionScrollTransitions() {
 
   const hasPulsedRef = useRef<boolean[]>([false, false, false, false]);
   const isInitialMountRef = useRef<boolean>(true);
+  const markerElsRef = useRef<(HTMLElement | null)[]>([]);
+  const ringElsRef = useRef<(HTMLElement | null)[]>([]);
+  const lastDrawnDistRef = useRef<number>(-1);
 
   const reducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -214,6 +217,9 @@ export default function SectionScrollTransitions() {
     const measureAndBuildPath = () => {
       const markers = MARKER_IDS.map((id) => document.getElementById(id));
       if (markers.some((m) => !m)) return;
+
+      markerElsRef.current = markers;
+      ringElsRef.current = PULSE_RING_IDS.map((id) => document.getElementById(id));
 
       const mainEl = containerRef.current?.parentElement;
       if (!mainEl) return;
@@ -295,14 +301,23 @@ export default function SectionScrollTransitions() {
       document.fonts.ready.then(measureAndBuildPath).catch(() => {});
     }
 
-    let resizeObserver: ResizeObserver | null = null;
-    const mainEl = containerRef.current?.parentElement;
-    if (mainEl && typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(() => {
-        measureAndBuildPath();
-      });
-      resizeObserver.observe(mainEl);
-    }
+      // Guarded ResizeObserver: Only recalculate when width changes (orientation or window resize),
+      // preventing layout thrashing when dynamic mobile URL bars adjust height during scroll
+      let lastWidth = typeof window !== "undefined" ? window.innerWidth : 0;
+      let resizeObserver: ResizeObserver | null = null;
+      const mainEl = containerRef.current?.parentElement;
+      if (mainEl && typeof ResizeObserver !== "undefined") {
+        resizeObserver = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const newWidth = entry.contentRect.width;
+            if (Math.abs(newWidth - lastWidth) > 2) {
+              lastWidth = newWidth;
+              measureAndBuildPath();
+            }
+          }
+        });
+        resizeObserver.observe(mainEl);
+      }
 
     return () => {
       window.removeEventListener("resize", measureAndBuildPath);
@@ -371,7 +386,9 @@ export default function SectionScrollTransitions() {
 
       // 1. Direct hardware-accelerated update on gold path stroke
       const pathEl = progressPathRef.current;
-      if (pathEl) {
+      const distDelta = Math.abs(drawnDistance - lastDrawnDistRef.current);
+
+      if (pathEl && distDelta >= 0.2) {
         const offset = Math.max(0, geometry.totalLength - drawnDistance);
         pathEl.style.strokeDashoffset = `${offset.toFixed(1)}px`;
       }
@@ -380,23 +397,28 @@ export default function SectionScrollTransitions() {
       const tipEl = tipHighlightRef.current;
       if (tipEl && pathEl) {
         if (!reducedMotion && drawnDistance > 4 && drawnDistance < geometry.totalLength - 2) {
-          try {
-            const pt = pathEl.getPointAtLength(drawnDistance);
-            tipEl.setAttribute("cx", pt.x.toFixed(1));
-            tipEl.setAttribute("cy", pt.y.toFixed(1));
-            tipEl.style.opacity = "1";
-          } catch {
-            tipEl.style.opacity = "0";
+          if (distDelta >= 0.2) {
+            try {
+              const pt = pathEl.getPointAtLength(drawnDistance);
+              tipEl.setAttribute("cx", pt.x.toFixed(1));
+              tipEl.setAttribute("cy", pt.y.toFixed(1));
+              tipEl.style.opacity = "1";
+            } catch {
+              tipEl.style.opacity = "0";
+            }
           }
         } else {
           tipEl.style.opacity = "0";
         }
       }
 
-      // 3. Update section markers (reached / upcoming states and pulse triggers)
-      MARKER_IDS.forEach((id, idx) => {
-        const markerEl = document.getElementById(id);
+      lastDrawnDistRef.current = drawnDistance;
+
+      // 3. Update section markers using cached references (zero per-frame document.getElementById)
+      MARKER_IDS.forEach((_, idx) => {
+        const markerEl = markerElsRef.current[idx] || document.getElementById(MARKER_IDS[idx]);
         if (!markerEl) return;
+        markerElsRef.current[idx] = markerEl;
 
         const targetDistance = geometry.cumLengths[idx];
         const isReached = drawnDistance >= targetDistance - 4;
@@ -411,7 +433,8 @@ export default function SectionScrollTransitions() {
 
         // Pulse trigger when entering reading threshold
         if (!reducedMotion) {
-          const ringEl = document.getElementById(PULSE_RING_IDS[idx]);
+          const ringEl = ringElsRef.current[idx] || document.getElementById(PULSE_RING_IDS[idx]);
+          if (ringEl) ringElsRef.current[idx] = ringEl;
           const distFromMarker = drawnDistance - targetDistance;
 
           if (isInitialMountRef.current) {
