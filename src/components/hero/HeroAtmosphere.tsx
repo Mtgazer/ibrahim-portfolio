@@ -14,9 +14,9 @@ export default function HeroAtmosphere() {
         }}
       />
 
-      {/* 2. Secondary soft horizontal diffusion */}
+      {/* 2. Secondary soft horizontal diffusion (Desktop only to prevent mobile GPU blur rasterization lag) */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] max-w-[780px] h-[48vh] max-h-[460px] transition-opacity duration-300"
+        className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] max-w-[780px] h-[48vh] max-h-[460px] transition-opacity duration-300"
         style={{
           opacity: "var(--theme-hero-atmosphere-opacity, 1)",
           background:

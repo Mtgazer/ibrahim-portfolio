@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { subscribeProgress } from "@/lib/scroll-progress";
 
 function subscribeReducedMotion(callback: () => void) {
   const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -16,12 +17,12 @@ function getReducedMotionServerSnapshot(): boolean {
   return false;
 }
 
-interface Point {
+export interface Point {
   x: number;
   y: number;
 }
 
-interface PathGeometry {
+export interface PathGeometry {
   pathD: string;
   ticksD: string;
   points: Point[];
@@ -30,33 +31,175 @@ interface PathGeometry {
   cumLengths: number[];
 }
 
-const MARKER_IDS = [
+export const MARKER_IDS = [
   "section-marker-field-notes",
   "section-marker-projects",
   "section-marker-about",
   "section-marker-contact",
 ] as const;
 
-const PULSE_RING_IDS = [
+export const PULSE_RING_IDS = [
   "section-pulse-ring-field-notes",
   "section-pulse-ring-projects",
   "section-pulse-ring-about",
   "section-pulse-ring-contact",
 ] as const;
 
+/**
+ * Builds an intentional geometric path segment between two section markers:
+ * - Drops straight down from marker dot
+ * - Curves smoothly with subtle fillet into a 45-degree chamfer
+ * - Travels down through the margin whitespace gutter corridor
+ * - Curves smoothly out of the corridor into a 45-degree approach chamfer
+ * - Enters straight down into the next marker dot
+ * - Generates architectural datum ticks at transition vertices
+ */
+function buildFilletedSegment(
+  pStart: Point,
+  pEnd: Point,
+  isMobile: boolean
+): { d: string; ticks: string[]; length: number } {
+  const r = isMobile ? 4 : 8;
+  const sin45 = 0.7071;
+  const cos45 = 0.7071;
+
+  // Dedicated Outer Gutter Corridor X:
+  // Desktop (>= 1024px): 42px left offset in margin whitespace, safely away from headings & cards
+  // Mobile (< 1024px): ~8px inside the 16px page padding, safely away from text & cards
+  const gutterOffset = isMobile ? 12 : 42;
+  const gutterX = isMobile
+    ? Math.max(7, Math.min(10, pStart.x - gutterOffset))
+    : Math.max(16, pStart.x - gutterOffset);
+  const gutterXEnd = isMobile
+    ? Math.max(7, Math.min(10, pEnd.x - gutterOffset))
+    : Math.max(16, pEnd.x - gutterOffset);
+
+  const yDrop = isMobile ? 10 : 14;
+  const pStartY_drop = pStart.y + yDrop;
+
+  const dxStart = Math.abs(pStart.x - gutterX);
+  const yGutterStart = pStartY_drop + dxStart;
+
+  const yApproach = isMobile ? 10 : 14;
+  const pEndY_approach = pEnd.y - yApproach;
+  const dxEnd = Math.abs(pEnd.x - gutterXEnd);
+  const yGutterEnd = pEndY_approach - dxEnd;
+
+  const parts: string[] = [];
+  const ticks: string[] = [];
+
+  // Defensive fallback if two markers are unusually compressed
+  if (yGutterEnd <= yGutterStart) {
+    parts.push(`L ${pEnd.x.toFixed(1)} ${pEnd.y.toFixed(1)}`);
+    return {
+      d: parts.join(" "),
+      ticks,
+      length: Math.hypot(pEnd.x - pStart.x, pEnd.y - pStart.y),
+    };
+  }
+
+  // 1. Straight vertical drop from pStart
+  parts.push(`L ${pStart.x.toFixed(1)} ${(pStartY_drop - r).toFixed(1)}`);
+
+  // Fillet 1: curve from vertical into 45-deg chamfer
+  parts.push(
+    `Q ${pStart.x.toFixed(1)} ${pStartY_drop.toFixed(1)}, ${(pStart.x - r * sin45).toFixed(1)} ${(pStartY_drop + r * cos45).toFixed(1)}`
+  );
+
+  // 2. 45-deg angled chamfer into gutter corridor
+  parts.push(
+    `L ${(gutterX + r * sin45).toFixed(1)} ${(yGutterStart - r * cos45).toFixed(1)}`
+  );
+
+  // Fillet 2: curve from chamfer into vertical gutter corridor
+  parts.push(
+    `Q ${gutterX.toFixed(1)} ${yGutterStart.toFixed(1)}, ${gutterX.toFixed(1)} ${(yGutterStart + r).toFixed(1)}`
+  );
+
+  // Architectural datum tick at gutter start
+  const tickW = isMobile ? 2.5 : 4;
+  ticks.push(
+    `M ${(gutterX - tickW).toFixed(1)} ${yGutterStart.toFixed(1)} L ${(gutterX + tickW).toFixed(1)} ${yGutterStart.toFixed(1)}`
+  );
+
+  // 3. Vertical corridor through dedicated outer whitespace
+  if (Math.abs(gutterX - gutterXEnd) < 1) {
+    parts.push(`L ${gutterX.toFixed(1)} ${(yGutterEnd - r).toFixed(1)}`);
+  } else {
+    const midY = (yGutterStart + yGutterEnd) / 2;
+    parts.push(`L ${gutterX.toFixed(1)} ${(midY - 12).toFixed(1)}`);
+    parts.push(`L ${gutterXEnd.toFixed(1)} ${(midY + 12).toFixed(1)}`);
+    parts.push(`L ${gutterXEnd.toFixed(1)} ${(yGutterEnd - r).toFixed(1)}`);
+  }
+
+  // Architectural datum tick at gutter end
+  ticks.push(
+    `M ${(gutterXEnd - tickW).toFixed(1)} ${yGutterEnd.toFixed(1)} L ${(gutterXEnd + tickW).toFixed(1)} ${yGutterEnd.toFixed(1)}`
+  );
+
+  // Fillet 3: curve from vertical into chamfer towards pEnd
+  parts.push(
+    `Q ${gutterXEnd.toFixed(1)} ${yGutterEnd.toFixed(1)}, ${(gutterXEnd + r * sin45).toFixed(1)} ${(yGutterEnd + r * cos45).toFixed(1)}`
+  );
+
+  // 4. Chamfer back in toward marker
+  parts.push(
+    `L ${(pEnd.x - r * sin45).toFixed(1)} ${(pEndY_approach - r * cos45).toFixed(1)}`
+  );
+
+  // Fillet 4: curve from chamfer into vertical entry
+  parts.push(
+    `Q ${pEnd.x.toFixed(1)} ${pEndY_approach.toFixed(1)}, ${pEnd.x.toFixed(1)} ${(pEndY_approach + r).toFixed(1)}`
+  );
+
+  // 5. Vertical entry into pEnd
+  parts.push(`L ${pEnd.x.toFixed(1)} ${pEnd.y.toFixed(1)}`);
+
+  // Architectural datum tick at marker
+  ticks.push(
+    `M ${(pEnd.x - tickW).toFixed(1)} ${pEnd.y.toFixed(1)} L ${(pEnd.x + tickW).toFixed(1)} ${pEnd.y.toFixed(1)}`
+  );
+
+  const lVertical1 = yDrop;
+  const lChamfer1 = Math.hypot(dxStart, dxStart);
+  const lCorridor = Math.max(0, yGutterEnd - yGutterStart);
+  const lChamfer2 = Math.hypot(dxEnd, dxEnd);
+  const lVertical2 = yApproach;
+  const segLen = lVertical1 + lChamfer1 + lCorridor + lChamfer2 + lVertical2;
+
+  return {
+    d: parts.join(" "),
+    ticks,
+    length: segLen,
+  };
+}
+
+function triggerSectionPulse(markerEl: HTMLElement, ringEl: HTMLElement | null) {
+  markerEl.classList.remove("section-pulse-active");
+  void markerEl.offsetWidth; // Force reflow
+  markerEl.classList.add("section-pulse-active");
+
+  if (ringEl) {
+    ringEl.classList.remove("section-pulse-ring-active");
+    void ringEl.offsetWidth; // Force reflow
+    ringEl.classList.add("section-pulse-ring-active");
+  }
+
+  setTimeout(() => {
+    markerEl.classList.remove("section-pulse-active");
+    ringEl?.classList.remove("section-pulse-ring-active");
+  }, 750);
+}
+
 export default function SectionScrollTransitions() {
   const [geometry, setGeometry] = useState<PathGeometry | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Direct DOM refs to avoid React re-render overhead during high-frequency scroll
-  const progressPathRef = useRef<SVGPathElement>(null);
   const ambientPathRef = useRef<SVGPathElement>(null);
+  const progressPathRef = useRef<SVGPathElement>(null);
   const tipHighlightRef = useRef<SVGCircleElement>(null);
 
-  // Pulse tracking to prevent repeated flashing
   const hasPulsedRef = useRef<boolean[]>([false, false, false, false]);
-  const isUpdatingRef = useRef(false);
-  const isInitialMountRef = useRef(true);
+  const isInitialMountRef = useRef<boolean>(true);
 
   const reducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -64,7 +207,7 @@ export default function SectionScrollTransitions() {
     getReducedMotionServerSnapshot
   );
 
-  // Measure section markers and generate the continuous geometric path
+  // Measure section markers and construct the continuous geometric path with clean hero handoff
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -85,85 +228,47 @@ export default function SectionScrollTransitions() {
         };
       });
 
-      // Construct continuous geometric path connecting:
-      // p0 (Field Notes) -> p1 (Selected Work) -> p2 (About) -> p3 (Contact)
-      //
-      // For each segment i from p[i] to p[i+1]:
-      // - Step straight down from p[i]
-      // - Chamfer 45-deg into whitespace gutter
-      // - Travel down through the clean gutter corridor (safe clearance from text/cards)
-      // - Chamfer 45-deg in toward next marker p[i+1]
-      // - Step straight down into center of p[i+1]
       const isMobile = window.innerWidth < 1024;
       const segLengths: number[] = [];
       const cumLengths: number[] = [0];
       const dParts: string[] = [];
       const tickParts: string[] = [];
 
-      dParts.push(`M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`);
-      const startTickHalf = isMobile ? 2.5 : 4;
+      // Clean visual handoff near the bottom of the hero into Field Notes:
+      // A vertical datum stem extends from the bottom of the hero (64px desktop / 36px mobile above Field Notes marker)
+      // directly into Marker 02 (Field Notes). This avoids any competing vertical rail over the hero's artwork.
+      const pFN = points[0];
+      const handoffStemLength = isMobile ? 36 : 64;
+      const yHandoff = pFN.y - handoffStemLength;
+      const tickHalf = isMobile ? 2.5 : 4;
+
+      // Handoff entrance datum tick at bottom of hero
       tickParts.push(
-        `M ${(points[0].x - startTickHalf).toFixed(1)} ${points[0].y.toFixed(1)} L ${(points[0].x + startTickHalf).toFixed(1)} ${points[0].y.toFixed(1)}`
+        `M ${(pFN.x - tickHalf).toFixed(1)} ${yHandoff.toFixed(1)} L ${(pFN.x + tickHalf).toFixed(1)} ${yHandoff.toFixed(1)}`
       );
 
+      // Start path at the clean hero handoff point and drop into Field Notes marker
+      dParts.push(`M ${pFN.x.toFixed(1)} ${yHandoff.toFixed(1)}`);
+      dParts.push(`L ${pFN.x.toFixed(1)} ${pFN.y.toFixed(1)}`);
+
+      // Datum tick at Field Notes marker
+      tickParts.push(
+        `M ${(pFN.x - tickHalf).toFixed(1)} ${pFN.y.toFixed(1)} L ${(pFN.x + tickHalf).toFixed(1)} ${pFN.y.toFixed(1)}`
+      );
+
+      cumLengths[0] = handoffStemLength;
+
+      // Connect sections through dedicated outer whitespace gutter:
+      // Field Notes (p0) -> Selected Work (p1) -> About & Capabilities (p2) -> Contact (p3)
       for (let i = 0; i < points.length - 1; i++) {
         const pStart = points[i];
         const pEnd = points[i + 1];
 
-        // Responsive gutter calculation:
-        // Desktop (>= 1024px): 40px left offset from marker (min 14px)
-        // Mobile / Tablet (< 1024px): Position safely inside the left page gutter margin (x = ~7.5px)
-        // Leaving 8.5px+ clearance from all headings, cards, project images, and buttons
-        const gutterX_start = isMobile
-          ? Math.max(6, Math.min(12, pStart.x - 12.5))
-          : Math.max(14, pStart.x - 40);
-        const gutterX_end = isMobile
-          ? Math.max(6, Math.min(12, pEnd.x - 12.5))
-          : Math.max(14, pEnd.x - 40);
-
-        const yDrop = pStart.y + (isMobile ? 8 : 10);
-        const yGutterStart = pStart.y + (isMobile ? 20 : 36);
-        const yGutterEnd = pEnd.y - (isMobile ? 20 : 36);
-        const yApproach = pEnd.y - (isMobile ? 8 : 10);
-
-        // Path coordinates for this segment
-        dParts.push(`L ${pStart.x.toFixed(1)} ${yDrop.toFixed(1)}`);
-        dParts.push(`L ${gutterX_start.toFixed(1)} ${yGutterStart.toFixed(1)}`);
-        dParts.push(`L ${gutterX_end.toFixed(1)} ${yGutterEnd.toFixed(1)}`);
-        dParts.push(`L ${pEnd.x.toFixed(1)} ${yApproach.toFixed(1)}`);
-        dParts.push(`L ${pEnd.x.toFixed(1)} ${pEnd.y.toFixed(1)}`);
-
-        // Architectural datum ticks at key transition junctures
-        if (!isMobile) {
-          tickParts.push(
-            `M ${(gutterX_start - 3).toFixed(1)} ${yGutterStart.toFixed(1)} L ${(gutterX_start + 3).toFixed(1)} ${yGutterStart.toFixed(1)}`
-          );
-          tickParts.push(
-            `M ${(gutterX_end - 3).toFixed(1)} ${yGutterEnd.toFixed(1)} L ${(gutterX_end + 3).toFixed(1)} ${yGutterEnd.toFixed(1)}`
-          );
-          tickParts.push(
-            `M ${(pEnd.x - 4).toFixed(1)} ${pEnd.y.toFixed(1)} L ${(pEnd.x + 4).toFixed(1)} ${pEnd.y.toFixed(1)}`
-          );
-        } else {
-          // Streamlined subtle ticks on mobile to preserve minimal clarity
-          tickParts.push(
-            `M ${(gutterX_start - 2).toFixed(1)} ${yGutterStart.toFixed(1)} L ${(gutterX_start + 2).toFixed(1)} ${yGutterStart.toFixed(1)}`
-          );
-          tickParts.push(
-            `M ${(pEnd.x - 3).toFixed(1)} ${pEnd.y.toFixed(1)} L ${(pEnd.x + 3).toFixed(1)} ${pEnd.y.toFixed(1)}`
-          );
-        }
-
-        // Calculate segment geometric length
-        const l1 = isMobile ? 8 : 10;
-        const l2 = Math.hypot(pStart.x - gutterX_start, yGutterStart - yDrop);
-        const l3 = Math.hypot(gutterX_end - gutterX_start, yGutterEnd - yGutterStart);
-        const l4 = Math.hypot(pEnd.x - gutterX_end, yApproach - yGutterEnd);
-        const l5 = isMobile ? 8 : 10;
-        const segLen = l1 + l2 + l3 + l4 + l5;
-
-        segLengths.push(segLen);
-        cumLengths.push(cumLengths[i] + segLen);
+        const seg = buildFilletedSegment(pStart, pEnd, isMobile);
+        dParts.push(seg.d);
+        tickParts.push(...seg.ticks);
+        segLengths.push(seg.length);
+        cumLengths.push(cumLengths[i] + seg.length);
       }
 
       const totalLength = cumLengths[cumLengths.length - 1];
@@ -207,152 +312,140 @@ export default function SectionScrollTransitions() {
     };
   }, []);
 
-  // Scroll Progress Engine: maps scroll smoothly to Signal Trace & Section Pulse
+  // Update animated signal trace based on shared scroll progress
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!geometry) return;
 
-    // Trigger subtle section pulse once per entry
-    const triggerSectionPulse = (idx: number) => {
-      if (reducedMotion) return;
-
-      const markerEl = document.getElementById(MARKER_IDS[idx]);
-      const ringEl = document.getElementById(PULSE_RING_IDS[idx]);
-
-      if (markerEl) {
-        markerEl.classList.remove("section-pulse-active");
-        void markerEl.offsetWidth; // Force reflow
-        markerEl.classList.add("section-pulse-active");
-      }
-
-      if (ringEl) {
-        ringEl.classList.remove("section-pulse-ring-active");
-        void ringEl.offsetWidth; // Force reflow
-        ringEl.classList.add("section-pulse-ring-active");
-      }
-
-      setTimeout(() => {
-        markerEl?.classList.remove("section-pulse-active");
-        ringEl?.classList.remove("section-pulse-ring-active");
-      }, 750);
-    };
-
-    const updateTransitions = () => {
-      isUpdatingRef.current = false;
+    const updateSignalTrace = () => {
       const mainEl = containerRef.current?.parentElement;
       if (!mainEl) return;
 
+      const mainRect = mainEl.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      const eyeLineY = windowHeight * 0.45; // Section reading reference line
+      const eyeLineY = windowHeight * 0.42; // Unified 42% reading eye line matching scroll-progress.ts
+      const scrollYInMain = -mainRect.top + eyeLineY;
 
-      // 1. Evaluate Section Pulse triggers across all viewports (Mobile & Desktop)
+      const pFN = geometry.points[0];
+      const pProjects = geometry.points[1];
+      const pAbout = geometry.points[2];
+      const pContact = geometry.points[3];
+
+      const handoffStemLength = geometry.cumLengths[0];
+      const yHandoff = pFN.y - handoffStemLength;
+
+      let drawnDistance = 0;
+
+      if (scrollYInMain <= yHandoff) {
+        drawnDistance = 0;
+      } else if (scrollYInMain < pFN.y) {
+        const ratio = (scrollYInMain - yHandoff) / (pFN.y - yHandoff);
+        drawnDistance = Math.max(0, Math.min(1, ratio)) * handoffStemLength;
+      } else if (scrollYInMain < pProjects.y) {
+        const ratio = (scrollYInMain - pFN.y) / (pProjects.y - pFN.y);
+        drawnDistance =
+          geometry.cumLengths[0] +
+          Math.max(0, Math.min(1, ratio)) * geometry.segLengths[0];
+      } else if (scrollYInMain < pAbout.y) {
+        const ratio = (scrollYInMain - pProjects.y) / (pAbout.y - pProjects.y);
+        drawnDistance =
+          geometry.cumLengths[1] +
+          Math.max(0, Math.min(1, ratio)) * geometry.segLengths[1];
+      } else if (scrollYInMain < pContact.y) {
+        const ratio = (scrollYInMain - pAbout.y) / (pContact.y - pAbout.y);
+        drawnDistance =
+          geometry.cumLengths[2] +
+          Math.max(0, Math.min(1, ratio)) * geometry.segLengths[2];
+      } else {
+        drawnDistance = geometry.totalLength;
+      }
+
+      // Handle bottom of page
+      if (typeof window !== "undefined") {
+        const docHeight = document.documentElement.scrollHeight;
+        if (window.innerHeight + window.scrollY >= docHeight - 70) {
+          drawnDistance = geometry.totalLength;
+        }
+      }
+
+      drawnDistance = Math.max(0, Math.min(geometry.totalLength, drawnDistance));
+
+      // 1. Direct hardware-accelerated update on gold path stroke
+      const pathEl = progressPathRef.current;
+      if (pathEl) {
+        const offset = Math.max(0, geometry.totalLength - drawnDistance);
+        pathEl.style.strokeDashoffset = `${offset.toFixed(1)}px`;
+      }
+
+      // 2. Direct update on traveling highlight node
+      const tipEl = tipHighlightRef.current;
+      if (tipEl && pathEl) {
+        if (!reducedMotion && drawnDistance > 4 && drawnDistance < geometry.totalLength - 2) {
+          try {
+            const pt = pathEl.getPointAtLength(drawnDistance);
+            tipEl.setAttribute("cx", pt.x.toFixed(1));
+            tipEl.setAttribute("cy", pt.y.toFixed(1));
+            tipEl.style.opacity = "1";
+          } catch {
+            tipEl.style.opacity = "0";
+          }
+        } else {
+          tipEl.style.opacity = "0";
+        }
+      }
+
+      // 3. Update section markers (reached / upcoming states and pulse triggers)
       MARKER_IDS.forEach((id, idx) => {
-        const marker = document.getElementById(id);
-        if (!marker) return;
+        const markerEl = document.getElementById(id);
+        if (!markerEl) return;
 
-        const mRect = marker.getBoundingClientRect();
-        const distFromEyeLine = mRect.top - eyeLineY;
+        const targetDistance = geometry.cumLengths[idx];
+        const isReached = drawnDistance >= targetDistance - 4;
 
-        // On initial direct load/refresh at lower anchor, mark visited without flashing
-        if (isInitialMountRef.current) {
-          if (distFromEyeLine < 0) {
-            hasPulsedRef.current[idx] = true;
-          }
-          return;
+        if (isReached) {
+          markerEl.classList.add("section-marker-reached");
+          markerEl.classList.remove("section-marker-upcoming");
+        } else {
+          markerEl.classList.add("section-marker-upcoming");
+          markerEl.classList.remove("section-marker-reached");
         }
 
-        // Section marker reaches eye line reading zone (within 35px)
-        if (Math.abs(distFromEyeLine) <= 35) {
-          if (!hasPulsedRef.current[idx]) {
-            hasPulsedRef.current[idx] = true;
-            triggerSectionPulse(idx);
+        // Pulse trigger when entering reading threshold
+        if (!reducedMotion) {
+          const ringEl = document.getElementById(PULSE_RING_IDS[idx]);
+          const distFromMarker = drawnDistance - targetDistance;
+
+          if (isInitialMountRef.current) {
+            if (isReached) {
+              hasPulsedRef.current[idx] = true;
+            }
+          } else {
+            if (distFromMarker >= -8 && distFromMarker <= 60) {
+              if (!hasPulsedRef.current[idx]) {
+                hasPulsedRef.current[idx] = true;
+                triggerSectionPulse(markerEl, ringEl);
+              }
+            } else if (distFromMarker < -50 || distFromMarker > 180) {
+              hasPulsedRef.current[idx] = false;
+            }
           }
-        }
-        // Hysteresis: re-arm pulse only when user has scrolled away (> 180px)
-        else if (Math.abs(distFromEyeLine) > 180) {
-          hasPulsedRef.current[idx] = false;
         }
       });
 
-      // End initial mount check after evaluating markers
       if (isInitialMountRef.current) {
         isInitialMountRef.current = false;
       }
-
-      // 2. Animate Continuous Signal Trace (Mobile, Tablet & Desktop)
-      if (geometry && !reducedMotion) {
-        const pathEl = progressPathRef.current;
-        const tipEl = tipHighlightRef.current;
-        if (!pathEl) return;
-
-        const mainRect = mainEl.getBoundingClientRect();
-        const scrollYInMain = -mainRect.top + eyeLineY;
-
-        // Calculate scroll-mapped drawn distance along the geometric path
-        let drawnDistance = 0;
-
-        const p0 = geometry.points[0];
-        const p1 = geometry.points[1];
-        const p2 = geometry.points[2];
-        const p3 = geometry.points[3];
-
-        if (scrollYInMain <= p0.y) {
-          // Above Field Notes (in Hero section)
-          drawnDistance = 0;
-        } else if (scrollYInMain < p1.y) {
-          // Segment 0: Field Notes -> Selected Work
-          const ratio = (scrollYInMain - p0.y) / (p1.y - p0.y);
-          drawnDistance = geometry.cumLengths[0] + Math.max(0, Math.min(1, ratio)) * geometry.segLengths[0];
-        } else if (scrollYInMain < p2.y) {
-          // Segment 1: Selected Work -> About & Capabilities
-          const ratio = (scrollYInMain - p1.y) / (p2.y - p1.y);
-          drawnDistance = geometry.cumLengths[1] + Math.max(0, Math.min(1, ratio)) * geometry.segLengths[1];
-        } else if (scrollYInMain < p3.y) {
-          // Segment 2: About & Capabilities -> Contact
-          const ratio = (scrollYInMain - p2.y) / (p3.y - p2.y);
-          drawnDistance = geometry.cumLengths[2] + Math.max(0, Math.min(1, ratio)) * geometry.segLengths[2];
-        } else {
-          // At or past Contact
-          drawnDistance = geometry.totalLength;
-        }
-
-        // Clamp distance to total path length
-        drawnDistance = Math.max(0, Math.min(geometry.totalLength, drawnDistance));
-
-        // Direct DOM update: strokeDashoffset controls gold illumination
-        const offset = Math.max(0, geometry.totalLength - drawnDistance);
-        pathEl.style.strokeDashoffset = `${offset.toFixed(1)}px`;
-
-        // Update active endpoint highlight dot
-        if (tipEl) {
-          if (drawnDistance > 4 && drawnDistance < geometry.totalLength - 4) {
-            try {
-              const tipPt = pathEl.getPointAtLength(drawnDistance);
-              tipEl.setAttribute("cx", tipPt.x.toFixed(1));
-              tipEl.setAttribute("cy", tipPt.y.toFixed(1));
-              tipEl.style.opacity = "1";
-            } catch {
-              tipEl.style.opacity = "0";
-            }
-          } else {
-            tipEl.style.opacity = "0";
-          }
-        }
-      }
     };
 
-    const onScroll = () => {
-      if (!isUpdatingRef.current) {
-        isUpdatingRef.current = true;
-        requestAnimationFrame(updateTransitions);
-      }
-    };
+    // Run initial pass to synchronize with initial scroll or hash anchor
+    updateSignalTrace();
 
-    // Initial pass
-    updateTransitions();
+    // Subscribe to shared scroll controller (zero duplicate window listeners)
+    const unsubscribeProgress = subscribeProgress(() => {
+      updateSignalTrace();
+    });
 
-    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      unsubscribeProgress();
     };
   }, [geometry, reducedMotion]);
 
@@ -360,24 +453,26 @@ export default function SectionScrollTransitions() {
     return <div ref={containerRef} className="hidden" aria-hidden="true" />;
   }
 
+  const isMobile = typeof window !== "undefined" ? window.innerWidth < 1024 : false;
+
   return (
     <div
       ref={containerRef}
       aria-hidden="true"
       className="absolute inset-0 pointer-events-none select-none z-20 overflow-visible"
     >
-      {/* Continuous Geometric Section Path (Responsive: Mobile, Tablet & Desktop) */}
+      {/* Continuous Geometric Section Path */}
       <svg
         className="w-full h-full pointer-events-none overflow-visible"
         style={{ position: "absolute", top: 0, left: 0 }}
       >
-        {/* Layer A — Ambient Path: Permanently visible subtle neutral/gold base track */}
+        {/* Layer A — Ambient Base Track: Subdued gold-neutral geometric route */}
         <path
           ref={ambientPathRef}
           d={geometry.pathD}
           fill="none"
           stroke="var(--theme-ambient-path, rgba(229, 184, 66, 0.16))"
-          strokeWidth="1.25"
+          strokeWidth={isMobile ? "1" : "1.25"}
           strokeLinecap="round"
           strokeLinejoin="round"
           className="transition-colors duration-300"
@@ -389,7 +484,7 @@ export default function SectionScrollTransitions() {
           fill="none"
           stroke="var(--theme-ambient-path, rgba(229, 184, 66, 0.16))"
           strokeWidth="1"
-          opacity="0.75"
+          opacity="0.85"
           className="transition-colors duration-300"
         />
 
@@ -399,7 +494,7 @@ export default function SectionScrollTransitions() {
           d={geometry.pathD}
           fill="none"
           stroke="var(--theme-gold-text, #E5B842)"
-          strokeWidth="1.75"
+          strokeWidth={isMobile ? "1.5" : "1.75"}
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeDasharray={`${geometry.totalLength.toFixed(1)} ${geometry.totalLength.toFixed(1)}`}
@@ -416,7 +511,7 @@ export default function SectionScrollTransitions() {
             ref={tipHighlightRef}
             cx="0"
             cy="0"
-            r="2.5"
+            r={isMobile ? "2" : "2.5"}
             fill="var(--theme-gold-text, #E5B842)"
             style={{
               opacity: 0,

@@ -67,15 +67,17 @@ export default function SplashScreen() {
         sessionStorage.removeItem("ik_portfolio_intro_done");
       }
       if (sessionStorage.getItem("ik_portfolio_intro_done")) {
-        setVisible(false);
-        return;
+        const timer = setTimeout(() => {
+          setVisible(false);
+        }, 0);
+        return () => clearTimeout(timer);
       }
     } catch {}
 
     // Immediate minimal reveal for reduced motion preference
     if (reducedMotion) {
-      setActiveStage(3);
       const rmTimer = setTimeout(() => {
+        setActiveStage(3);
         setIsExiting(true);
         setTimeout(() => {
           setVisible(false);
@@ -83,7 +85,7 @@ export default function SplashScreen() {
             sessionStorage.setItem("ik_portfolio_intro_done", "1");
           } catch {}
         }, 200);
-      }, 400);
+      }, 50);
       return () => clearTimeout(rmTimer);
     }
 

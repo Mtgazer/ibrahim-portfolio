@@ -59,7 +59,7 @@ export default function ContactSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
         {/* Section Label */}
         <div className="space-y-6">
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             <div className="relative flex items-center justify-center">
               <span
                 id="section-marker-contact"
@@ -72,6 +72,13 @@ export default function ContactSection() {
                 aria-hidden="true"
               />
             </div>
+            <span className="font-mono text-[11px] sm:text-xs lg:text-[13px] font-semibold tracking-wider text-[var(--theme-gold-text,#E5B842)]/75 select-none">
+              05
+            </span>
+            <span
+              className="w-1 h-1 rounded-full bg-[var(--theme-border-strong,#333333)] shrink-0"
+              aria-hidden="true"
+            />
             <span className="font-mono text-xs sm:text-sm lg:text-[16px] xl:text-[17px] font-semibold tracking-[0.14em] uppercase text-[var(--theme-gold-text,#E5B842)] select-none">
               CONTACT
             </span>

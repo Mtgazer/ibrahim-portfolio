@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { personalInfo } from "@/data/personal";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import { useActiveSection } from "@/lib/scroll-progress";
 
 const NAV_ITEMS = [
   { id: "home", label: "HOME" },
@@ -58,50 +59,14 @@ export default function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, [activeId, updateIndicator]);
 
-  // Scroll-spy observer
+  const activeSection = useActiveSection();
+
+  // Synchronize active nav item with shared scroll-progress controller (eliminates duplicate scroll listener)
   useEffect(() => {
-    const sectionIds = ["home", "field-notes", "my-projects", "about", "contact"];
-
-    const handleScroll = () => {
-      if (isClickScrollingRef.current) return;
-
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const docHeight = document.documentElement.scrollHeight;
-
-      // 1. Guaranteed HOME when near top
-      if (scrollY < 120) {
-        setActiveId("home");
-        return;
-      }
-
-      // 2. Guaranteed CONTACT when scrolled near bottom
-      if (windowHeight + scrollY >= docHeight - 80) {
-        setActiveId("contact");
-        return;
-      }
-
-      // 3. Determine current section based on scroll line (35% from top of viewport)
-      const referenceY = scrollY + windowHeight * 0.35;
-      let current = "home";
-
-      for (const id of sectionIds) {
-        const el = document.getElementById(id);
-        if (el) {
-          const top = el.offsetTop;
-          if (top <= referenceY) {
-            current = id;
-          }
-        }
-      }
-
-      setActiveId(current);
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (!isClickScrollingRef.current) {
+      setActiveId(activeSection.id);
+    }
+  }, [activeSection.id]);
 
   // Smooth scroll handler
   const scrollToSection = (id: string) => {
@@ -139,8 +104,8 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[var(--theme-header-bg)] backdrop-blur-md border-b border-[var(--theme-border)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full pt-2.5 sm:pt-3 px-3 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
+      <div className="pointer-events-auto max-w-7xl mx-auto h-14 sm:h-[58px] px-4 sm:px-6 rounded-2xl bg-[var(--theme-header-bg)] backdrop-blur-xl border border-[var(--theme-border-strong)] shadow-[0_8px_32px_rgba(0,0,0,0.36)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.55)] flex items-center justify-between transition-all duration-300">
         {/* Brand / Logo */}
         <Link
           href="#home"
@@ -150,12 +115,12 @@ export default function Header() {
           <Image
             src="/images/ik-logo.png"
             alt="IK Logo"
-            width={20}
-            height={20}
+            width={22}
+            height={22}
             priority
             className="h-5 w-auto object-contain transition-transform duration-200 group-hover:scale-105 flex-shrink-0"
           />
-          <span className="font-mono text-xs sm:text-sm font-semibold tracking-wider text-[var(--theme-text-primary)]">
+          <span className="font-mono text-xs sm:text-[13px] font-semibold tracking-wider text-[var(--theme-text-primary)]">
             {personalInfo.name.toUpperCase()}
           </span>
           <span className="font-mono text-xs text-[var(--theme-text-muted)] hidden md:inline-block">
@@ -163,11 +128,11 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Desktop Navigation with shared moving active indicator */}
+        {/* Desktop Navigation with refined circular gold-node active indicator */}
         <nav
           ref={navContainerRef}
           aria-label="Primary navigation"
-          className="relative hidden lg:flex items-center gap-8 text-xs font-mono tracking-wider py-2"
+          className="relative hidden lg:flex items-center gap-7 xl:gap-8 text-xs font-mono tracking-wider py-2"
         >
           {NAV_ITEMS.map((item) => {
             const isActive = activeId === item.id;
@@ -179,27 +144,41 @@ export default function Header() {
                 }}
                 href={`#${item.id}`}
                 onClick={(e) => handleNavClick(e, item.id)}
-                className={`relative py-1 transition-colors duration-200 focus:outline-none focus-visible:text-[var(--theme-gold-text)] ${
+                className={`relative px-1 py-1 transition-colors duration-200 focus:outline-none focus-visible:text-[var(--theme-gold-text)] flex items-center gap-1.5 ${
                   isActive
                     ? "text-[var(--theme-gold-text)] font-semibold"
-                    : "text-[var(--theme-text-secondary)] hover:text-[var(--theme-gold-text)]"
+                    : "text-[var(--theme-text-secondary)] hover:text-[var(--theme-text-primary)]"
                 }`}
               >
-                {item.label}
+                {isActive && (
+                  <span
+                    aria-hidden="true"
+                    className="w-1.5 h-1.5 rounded-full bg-[var(--theme-gold-text)] animate-pulse"
+                    style={{ boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.6))" }}
+                  />
+                )}
+                <span>{item.label}</span>
               </a>
             );
           })}
 
-          {/* Shared sliding gold underline indicator */}
-          <span
+          {/* Refined sliding circular gold-node indicator (replaces flat underline) */}
+          <div
             aria-hidden="true"
-            className="absolute bottom-0 h-[2px] bg-[var(--theme-gold-text)] transition-all duration-300 ease-out pointer-events-none"
+            className="absolute bottom-0 flex items-center justify-center transition-all duration-300 ease-out pointer-events-none"
             style={{
               left: `${indicatorStyle.left}px`,
               width: `${indicatorStyle.width}px`,
               opacity: indicatorStyle.opacity,
             }}
-          />
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-[var(--theme-gold-text)]"
+              style={{
+                boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.8)), 0 0 12px var(--theme-gold-glow, rgba(229,184,66,0.4))",
+              }}
+            />
+          </div>
         </nav>
 
         {/* Actions Cluster: Theme Toggle + CTA + Mobile menu button */}
@@ -211,7 +190,7 @@ export default function Header() {
             <Link
               href="#contact"
               onClick={(e) => handleNavClick(e, "contact")}
-              className="border border-[var(--theme-gold-text)] rounded-[8px] px-4 py-1.5 text-xs font-mono tracking-wider text-[var(--theme-gold-text)] hover:bg-[var(--theme-gold-text)] hover:text-white dark:hover:text-black transition-all duration-200"
+              className="border border-[var(--theme-gold-text)] rounded-[8px] px-3.5 py-1.5 text-xs font-mono tracking-wider text-[var(--theme-gold-text)] hover:bg-[var(--theme-gold-text)] hover:text-white dark:hover:text-black transition-all duration-200"
             >
               LET&apos;S CONNECT
             </Link>
@@ -251,9 +230,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (Floating rounded glass panel) */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[var(--theme-border)] bg-[var(--theme-bg-page)] px-6 py-6 space-y-4 font-mono text-xs tracking-wider">
+        <div className="pointer-events-auto mt-2 max-w-7xl mx-auto lg:hidden rounded-2xl border border-[var(--theme-border-strong)] bg-[var(--theme-header-bg)] backdrop-blur-xl px-6 py-5 space-y-3 font-mono text-xs tracking-wider shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
           {NAV_ITEMS.map((item) => {
             const isActive = activeId === item.id;
             return (
@@ -261,13 +240,16 @@ export default function Header() {
                 key={item.id}
                 href={`#${item.id}`}
                 onClick={(e) => handleMobileNavClick(e, item.id)}
-                className={`block py-2 border-b border-[var(--theme-border-subtle)] transition-colors ${
+                className={`flex items-center gap-2 py-2 border-b border-[var(--theme-border-subtle)] transition-colors ${
                   isActive
                     ? "text-[var(--theme-gold-text)] font-semibold"
                     : "text-[var(--theme-text-secondary)] hover:text-[var(--theme-text-primary)]"
                 }`}
               >
-                {isActive ? `→ ${item.label}` : item.label}
+                {isActive && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--theme-gold-text)] shrink-0" />
+                )}
+                <span>{item.label}</span>
               </a>
             );
           })}
