@@ -24,6 +24,10 @@
   --radius-card: 10px;
   --radius-media: 10px;
   --radius-feature: 12px;
+
+  /* Floating Navbar Elevation Design Tokens */
+  --shadow-header: var(--theme-header-shadow);
+  --shadow-header-menu: var(--theme-header-menu-shadow);
 }
 
 :root {
@@ -58,6 +62,8 @@
   --theme-focus-ring: #E5B842;
 
   --theme-header-bg: rgba(14, 14, 14, 0.78);
+  --theme-header-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  --theme-header-menu-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   --theme-scroll-track: #0C0C0C;
   --theme-scroll-thumb: #262626;
   --theme-scroll-thumb-hover: #E5B842;
@@ -114,6 +120,8 @@ html.light {
   --theme-focus-ring: #89620B;
 
   --theme-header-bg: rgba(245, 243, 237, 0.85);
+  --theme-header-shadow: 0 4px 16px -4px rgba(25, 25, 25, 0.06), 0 1px 3px rgba(25, 25, 25, 0.04);
+  --theme-header-menu-shadow: 0 8px 24px -4px rgba(25, 25, 25, 0.08), 0 2px 6px rgba(25, 25, 25, 0.04);
   --theme-scroll-track: #F5F3ED;
   --theme-scroll-thumb: #D5CFBF;
   --theme-scroll-thumb-hover: #89620B;
@@ -339,6 +347,15 @@ body {
 
 [data-theme="light"] .shadow-\[0_4px_24px_rgba\(0\,0\,0\,0\.6\)\] {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Floating navbar elevation utilities */
+.shadow-header {
+  box-shadow: var(--theme-header-shadow);
+}
+
+.shadow-header-menu {
+  box-shadow: var(--theme-header-menu-shadow);
 }
 
 /* Hover and active states in light mode */

@@ -105,7 +105,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full pt-2.5 sm:pt-3 px-3 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
-      <div className="pointer-events-auto max-w-7xl mx-auto h-14 sm:h-[58px] px-4 sm:px-6 rounded-2xl bg-[var(--theme-header-bg)] backdrop-blur-xl border border-[var(--theme-border-strong)] shadow-[0_8px_32px_rgba(0,0,0,0.36)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.55)] flex items-center justify-between transition-all duration-300">
+      <div className="pointer-events-auto max-w-7xl mx-auto h-14 sm:h-[58px] px-4 sm:px-6 rounded-2xl bg-[var(--theme-header-bg)] backdrop-blur-xl border border-[var(--theme-border-strong)] shadow-header flex items-center justify-between transition-all duration-300">
         {/* Brand / Logo */}
         <Link
           href="#home"
@@ -225,7 +225,7 @@ export default function Header() {
 
       {/* Mobile Drawer (Floating rounded glass panel) */}
       {mobileMenuOpen && (
-        <div className="pointer-events-auto mt-2 max-w-7xl mx-auto lg:hidden rounded-2xl border border-[var(--theme-border-strong)] bg-[var(--theme-header-bg)] backdrop-blur-xl px-6 py-5 space-y-3 font-mono text-xs tracking-wider shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
+        <div className="pointer-events-auto mt-2 max-w-7xl mx-auto lg:hidden rounded-2xl border border-[var(--theme-border-strong)] bg-[var(--theme-header-bg)] backdrop-blur-xl px-6 py-5 space-y-3 font-mono text-xs tracking-wider shadow-header-menu">
           {NAV_ITEMS.map((item) => {
             const isActive = activeId === item.id;
             return (
