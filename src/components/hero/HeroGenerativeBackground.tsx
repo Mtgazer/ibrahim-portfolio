@@ -12,6 +12,7 @@ if (typeof window !== "undefined") {
 interface HeroGenerativeBackgroundProps {
   trackRef: React.RefObject<HTMLDivElement | null>;
   contentRef?: React.RefObject<HTMLDivElement | null>;
+  onProgress?: (progress: number) => void;
 }
 
 // React 19 SSR-safe store subscriptions
@@ -32,6 +33,7 @@ function getReducedMotionServerSnapshot(): boolean {
 export default function HeroGenerativeBackground({
   trackRef,
   contentRef,
+  onProgress,
 }: HeroGenerativeBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -74,8 +76,8 @@ export default function HeroGenerativeBackground({
 
     const trackEl = trackRef.current;
 
-    // Use gsap.matchMedia for clean, responsive separation between Desktop and Mobile
-    const mm = gsap.matchMedia(containerRef);
+    // Use gsap.matchMedia scoped to trackRef for clean, responsive separation between Desktop and Mobile
+    const mm = gsap.matchMedia(trackRef);
 
     // =========================================================================
     // 1. DESKTOP VIEWPORT (min-width: 768px): APPROVED 4-STAGE TRACK TIMELINE
@@ -88,27 +90,60 @@ export default function HeroGenerativeBackground({
           end: "bottom bottom",
           scrub: 0.8,
           invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            onProgress?.(self.progress);
+          },
         },
       });
 
-      // Stage 1 -> Stage 2: 0% -> 30% [EXPANSION & ORBITAL SIGNATURE ROTATION]
+      // ORBITAL SIGNATURE ROTATION (Tied across the Hero scroll with counter-rotated readable text)
       tl.to(
         "[data-hero-orbit-1]",
         {
-          rotation: 35,
+          rotation: 40,
           transformOrigin: "210px 210px",
           ease: "power1.inOut",
-          duration: 0.65,
+          duration: 1,
+        },
+        0
+      );
+      tl.to(
+        "[data-hero-orbit-text-1]",
+        {
+          rotation: -40,
+          transformOrigin: "center center",
+          ease: "power1.inOut",
+          duration: 1,
         },
         0
       );
       tl.to(
         "[data-hero-orbit-2]",
         {
-          rotation: -30,
+          rotation: -35,
           transformOrigin: "210px 210px",
           ease: "power1.inOut",
-          duration: 0.65,
+          duration: 1,
+        },
+        0
+      );
+      tl.to(
+        "[data-hero-orbit-text-2]",
+        {
+          rotation: 35,
+          transformOrigin: "center center",
+          ease: "power1.inOut",
+          duration: 1,
+        },
+        0
+      );
+      tl.to(
+        "[data-hero-orbit-inner]",
+        {
+          rotation: -20,
+          transformOrigin: "210px 210px",
+          ease: "power1.inOut",
+          duration: 1,
         },
         0
       );
@@ -543,12 +578,28 @@ export default function HeroGenerativeBackground({
           { opacity: 1, y: 0, duration: 0.65, ease: "power2.out", delay: 0.05 }
         );
       }
+
+      // Smooth scroll sync for mobile hero signal (natural touch scrolling preserved)
+      if (!reducedMotion) {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: trackEl,
+            start: "top top+=64",
+            end: "bottom top",
+            scrub: 0.3,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              onProgress?.(self.progress);
+            },
+          },
+        });
+      }
     });
 
     return () => {
       mm.revert();
     };
-  }, [trackRef, contentRef, reducedMotion]);
+  }, [trackRef, contentRef, onProgress, reducedMotion]);
 
   return (
     <div

@@ -144,19 +144,12 @@ export default function Header() {
                 }}
                 href={`#${item.id}`}
                 onClick={(e) => handleNavClick(e, item.id)}
-                className={`relative px-1 py-1 transition-colors duration-200 focus:outline-none focus-visible:text-[var(--theme-gold-text)] flex items-center gap-1.5 ${
+                className={`relative px-1 py-1 transition-colors duration-200 focus:outline-none focus-visible:text-[var(--theme-gold-text)] inline-flex items-center justify-center ${
                   isActive
                     ? "text-[var(--theme-gold-text)] font-semibold"
                     : "text-[var(--theme-text-secondary)] hover:text-[var(--theme-text-primary)]"
                 }`}
               >
-                {isActive && (
-                  <span
-                    aria-hidden="true"
-                    className="w-1.5 h-1.5 rounded-full bg-[var(--theme-gold-text)] animate-pulse"
-                    style={{ boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.6))" }}
-                  />
-                )}
                 <span>{item.label}</span>
               </a>
             );

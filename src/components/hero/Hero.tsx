@@ -4,6 +4,7 @@ import { useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
 import HeroAtmosphere from "./HeroAtmosphere";
 import HeroGenerativeBackground from "./HeroGenerativeBackground";
+import HeroSignalConnector, { HeroSignalConnectorHandle } from "./HeroSignalConnector";
 
 function subscribeReducedMotion(callback: () => void) {
   const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -22,6 +23,7 @@ function getReducedMotionServerSnapshot(): boolean {
 export default function Hero() {
   const trackRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const signalConnectorRef = useRef<HeroSignalConnectorHandle>(null);
 
   const reducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -108,7 +110,14 @@ export default function Hero() {
         <HeroAtmosphere />
 
         {/* 2. Scroll-Driven Technical Generative Background */}
-        <HeroGenerativeBackground trackRef={trackRef} contentRef={contentRef} />
+        <HeroGenerativeBackground
+          trackRef={trackRef}
+          contentRef={contentRef}
+          onProgress={(p) => signalConnectorRef.current?.updateProgress(p)}
+        />
+
+        {/* 2.5 Scroll-Driven Hero Connecting Signal (01 · HOME -> SYS.START // 01) */}
+        <HeroSignalConnector ref={signalConnectorRef} trackRef={trackRef} />
 
         {/* 3. Main Foreground Content Flow (Asymmetric Desktop Layout) */}
         <div
@@ -252,20 +261,22 @@ export default function Hero() {
                   aria-hidden="true"
                 >
                   {/* 1. Inner Aperture Ring */}
-                  <circle
-                    cx="210"
-                    cy="210"
-                    r="82"
-                    fill="none"
-                    stroke="var(--hero-geom-line-mid)"
-                    strokeWidth="0.85"
-                    strokeDasharray="4 4"
-                  />
-                  {/* Cardinal Inner Ticks */}
-                  <line x1="210" y1="120" x2="210" y2="128" stroke="var(--theme-gold-accent)" strokeWidth="1" />
-                  <line x1="210" y1="292" x2="210" y2="300" stroke="var(--theme-gold-accent)" strokeWidth="1" />
-                  <line x1="120" y1="210" x2="128" y2="210" stroke="var(--theme-gold-accent)" strokeWidth="1" />
-                  <line x1="292" y1="210" x2="300" y2="210" stroke="var(--theme-gold-accent)" strokeWidth="1" />
+                  <g data-hero-orbit-inner>
+                    <circle
+                      cx="210"
+                      cy="210"
+                      r="82"
+                      fill="none"
+                      stroke="var(--hero-geom-line-mid)"
+                      strokeWidth="0.85"
+                      strokeDasharray="4 4"
+                    />
+                    {/* Cardinal Inner Ticks */}
+                    <line x1="210" y1="120" x2="210" y2="128" stroke="var(--theme-gold-accent)" strokeWidth="1" />
+                    <line x1="210" y1="292" x2="210" y2="300" stroke="var(--theme-gold-accent)" strokeWidth="1" />
+                    <line x1="120" y1="210" x2="128" y2="210" stroke="var(--theme-gold-accent)" strokeWidth="1" />
+                    <line x1="292" y1="210" x2="300" y2="210" stroke="var(--theme-gold-accent)" strokeWidth="1" />
+                  </g>
 
                   {/* 2. Middle Metric Orbit Arc (Gold accent) */}
                   <g data-hero-orbit-1>
@@ -296,6 +307,7 @@ export default function Hero() {
                       <circle cx="0" cy="0" r="5" fill="none" stroke="var(--hero-geom-node-gold)" strokeWidth="1" />
                       <circle cx="0" cy="0" r="2" fill="var(--hero-geom-node-gold)" />
                       <text
+                        data-hero-orbit-text-1
                         x="10"
                         y="3"
                         fontFamily="var(--font-mono, monospace)"
@@ -330,6 +342,7 @@ export default function Hero() {
                       <circle cx="0" cy="0" r="5" fill="none" stroke="var(--hero-geom-node-gold)" strokeWidth="1" />
                       <circle cx="0" cy="0" r="2" fill="var(--hero-geom-node-gold)" />
                       <text
+                        data-hero-orbit-text-2
                         x="-44"
                         y="3"
                         fontFamily="var(--font-mono, monospace)"
@@ -405,6 +418,11 @@ export default function Hero() {
                   id="journey-start-anchor"
                   className="w-2 h-2 rounded-full bg-[var(--theme-gold-text)] inline-block pointer-events-auto transition-transform duration-300 hover:scale-125"
                   style={{ boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.6))" }}
+                />
+                <span
+                  id="journey-start-pulse-ring"
+                  className="absolute w-3.5 h-3.5 rounded-full border border-[var(--theme-gold-text)]/60 pointer-events-none opacity-0 transition-opacity duration-300"
+                  aria-hidden="true"
                 />
                 <span
                   className="absolute w-3.5 h-3.5 rounded-full border border-[var(--theme-gold-text)]/40 animate-ping pointer-events-none"
