@@ -1,3 +1,5 @@
+import SectionMarker from "@/components/navigation/SectionMarker";
+
 interface SelectedWorkHeaderProps {
   projectCount?: number;
   indexRange?: string;
@@ -16,19 +18,8 @@ export default function SelectedWorkHeader({
       <span id="selected-work" className="absolute -top-20 pointer-events-none" aria-hidden="true" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Section Label */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          <div className="relative flex items-center justify-center">
-            <span
-              id="section-marker-projects"
-              className="w-2 h-2 rounded-full bg-[var(--theme-gold-text,#E5B842)] inline-block transition-all duration-300"
-              style={{ boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.5))" }}
-            />
-            <span
-              id="section-pulse-ring-projects"
-              className="section-pulse-ring absolute w-2 h-2 rounded-full pointer-events-none opacity-0"
-              aria-hidden="true"
-            />
-          </div>
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <SectionMarker sectionId="my-projects" />
           <span className="font-mono text-[11px] sm:text-xs lg:text-[13px] font-semibold tracking-wider text-[var(--theme-gold-text,#E5B842)]/75 select-none">
             02
           </span>

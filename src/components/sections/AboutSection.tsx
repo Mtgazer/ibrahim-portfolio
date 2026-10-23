@@ -1,4 +1,5 @@
 import { personalInfo } from "@/data/personal";
+import SectionMarker from "@/components/navigation/SectionMarker";
 
 interface Capability {
   code: string;
@@ -54,19 +55,8 @@ export default function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
         {/* Section Label */}
         <div className="space-y-6">
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            <div className="relative flex items-center justify-center">
-              <span
-                id="section-marker-about"
-                className="w-2 h-2 rounded-full bg-[var(--theme-gold-text,#E5B842)] inline-block transition-all duration-300"
-                style={{ boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.5))" }}
-              />
-              <span
-                id="section-pulse-ring-about"
-                className="section-pulse-ring absolute w-2 h-2 rounded-full pointer-events-none opacity-0"
-                aria-hidden="true"
-              />
-            </div>
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <SectionMarker sectionId="about" />
             <span className="font-mono text-[11px] sm:text-xs lg:text-[13px] font-semibold tracking-wider text-[var(--theme-gold-text,#E5B842)]/75 select-none">
               04
             </span>

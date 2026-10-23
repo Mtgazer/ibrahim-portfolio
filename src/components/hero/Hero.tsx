@@ -4,8 +4,6 @@ import { useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
 import HeroAtmosphere from "./HeroAtmosphere";
 import HeroGenerativeBackground from "./HeroGenerativeBackground";
-import HeroSignalConnector, { HeroSignalConnectorHandle } from "./HeroSignalConnector";
-
 function subscribeReducedMotion(callback: () => void) {
   const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
   mql.addEventListener("change", callback);
@@ -23,7 +21,6 @@ function getReducedMotionServerSnapshot(): boolean {
 export default function Hero() {
   const trackRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const signalConnectorRef = useRef<HeroSignalConnectorHandle>(null);
 
   const reducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -78,34 +75,6 @@ export default function Hero() {
           reducedMotion ? "relative" : "relative md:sticky md:top-16"
         }`}
       >
-        {/* Editorial Section 01 Marker: Dedicated outer gutter (zero collision with SYS.01 / NODE.α) */}
-        <div className="absolute top-3.5 sm:top-4 left-4 sm:left-6 lg:left-8 z-20 pointer-events-none">
-          <div className="inline-flex items-center gap-2 sm:gap-2.5">
-            <div className="relative flex items-center justify-center">
-              <span
-                id="section-marker-hero"
-                className="w-2 h-2 rounded-full bg-[var(--theme-gold-text,#E5B842)] inline-block transition-all duration-300 pointer-events-auto"
-                style={{ boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.5))" }}
-              />
-              <span
-                id="section-pulse-ring-hero"
-                className="section-pulse-ring absolute w-2 h-2 rounded-full pointer-events-none opacity-0"
-                aria-hidden="true"
-              />
-            </div>
-            <span className="font-mono text-[11px] sm:text-xs lg:text-[13px] font-semibold tracking-wider text-[var(--theme-gold-text,#E5B842)]/75 select-none">
-              01
-            </span>
-            <span
-              className="w-1 h-1 rounded-full bg-[var(--theme-border-strong,#333333)] shrink-0"
-              aria-hidden="true"
-            />
-            <span className="font-mono text-xs sm:text-sm lg:text-[16px] xl:text-[17px] font-semibold tracking-[0.14em] uppercase text-[var(--theme-gold-text,#E5B842)] select-none">
-              HOME
-            </span>
-          </div>
-        </div>
-
         {/* 1. Atmospheric Glow & Grain Texture */}
         <HeroAtmosphere />
 
@@ -113,11 +82,7 @@ export default function Hero() {
         <HeroGenerativeBackground
           trackRef={trackRef}
           contentRef={contentRef}
-          onProgress={(p) => signalConnectorRef.current?.updateProgress(p)}
         />
-
-        {/* 2.5 Scroll-Driven Hero Connecting Signal (01 · HOME -> SYS.START // 01) */}
-        <HeroSignalConnector ref={signalConnectorRef} trackRef={trackRef} />
 
         {/* 3. Main Foreground Content Flow (Asymmetric Desktop Layout) */}
         <div
@@ -439,46 +404,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* 4. Hero Bottom Architectural Baseline & Journey Start Anchor */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3 sm:pb-4 pointer-events-none">
-          <div className="w-full flex items-center justify-between pt-2.5 border-t border-[var(--hero-geom-line-mid)]">
-            {/* Left: Journey Start Intersection Anchor (ready for Phase 3 Golden Journey connection) */}
-            <div className="flex items-center gap-2.5">
-              <div className="relative flex items-center justify-center">
-                <span
-                  id="journey-start-anchor"
-                  className="w-2 h-2 rounded-full bg-[var(--theme-gold-text)] inline-block pointer-events-auto transition-transform duration-300 hover:scale-125"
-                  style={{ boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.6))" }}
-                />
-                <span
-                  id="journey-start-pulse-ring"
-                  className="absolute w-3.5 h-3.5 rounded-full border border-[var(--theme-gold-text)]/60 pointer-events-none opacity-0 transition-opacity duration-300"
-                  aria-hidden="true"
-                />
-                <span
-                  className="absolute w-3.5 h-3.5 rounded-full border border-[var(--theme-gold-text)]/40 animate-ping pointer-events-none"
-                  aria-hidden="true"
-                />
-              </div>
-              <span className="font-mono text-[10px] sm:text-[11px] font-medium tracking-[0.14em] uppercase text-[var(--theme-gold-text)]/80">
-                SYS.START // 01
-              </span>
-            </div>
 
-            {/* Center: Geographic Datum Coordinates */}
-            <div className="hidden md:flex items-center gap-3 text-[var(--hero-geom-text)] font-mono text-[9px] tracking-[0.16em]">
-              <span>[ LAT: 30.0444° N ]</span>
-              <span className="w-1 h-1 rounded-full bg-[var(--hero-geom-node-neutral)]" />
-              <span>[ LON: 31.2357° E ]</span>
-            </div>
-
-            {/* Right: Technical Handoff Indicator */}
-            <div className="flex items-center gap-2 text-[var(--hero-geom-text)] font-mono text-[9px] sm:text-[10px] tracking-[0.14em]">
-              <span>V.02_ARCH</span>
-              <span className="text-[var(--theme-gold-text)]">↓</span>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

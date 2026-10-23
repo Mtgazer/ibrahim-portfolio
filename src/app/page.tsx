@@ -3,7 +3,7 @@ import Footer from "@/components/layout/Footer";
 import SplashScreen from "@/components/layout/SplashScreen";
 import Hero from "@/components/hero/Hero";
 import SelectedWorkHeader from "@/components/sections/SelectedWorkHeader";
-import ProjectCard from "@/components/portfolio/ProjectCard";
+import ProjectCarousel from "@/components/portfolio/ProjectCarousel";
 import FieldNotesSection from "@/components/sections/FieldNotesSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
@@ -45,14 +45,10 @@ export default async function HomePage() {
         {/* Section 2: Selected Work Header */}
         <SelectedWorkHeader projectCount={projects.length} />
 
-        {/* Section 2: Selected Work Compact Cards Grid */}
-        <section aria-label="Selected Work Projects" className="w-full bg-[var(--theme-bg-page)] py-12 sm:py-16 border-b border-[#1A1A1A]">
+        {/* Section 2: Selected Work Layered Horizontal Carousel */}
+        <section aria-label="Selected Work Projects" className="w-full bg-[var(--theme-bg-page)] py-10 sm:py-14 border-b border-[#1A1A1A] overflow-x-clip">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-              {displayProjects.map((project, idx) => (
-                <ProjectCard key={project.id} project={project} index={idx} />
-              ))}
-            </div>
+            <ProjectCarousel projects={displayProjects} />
           </div>
         </section>
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { FieldNote } from "@/types";
 import { fieldNotes as defaultFieldNotes } from "@/data/fieldNotes";
 import FieldNoteEntry from "@/components/portfolio/FieldNoteEntry";
+import SectionMarker from "@/components/navigation/SectionMarker";
 
 interface FieldNotesSectionProps {
   initialNotes?: FieldNote[];
@@ -25,30 +26,27 @@ export default function FieldNotesSection({ initialNotes }: FieldNotesSectionPro
   // Display top 3 latest published entries on the homepage
   const homepageNotes = sortedNotes.slice(0, 3);
   const totalNotes = sortedNotes.length;
+  const renderedCount = homepageNotes.length;
+
+  const countLabel =
+    totalNotes === 1
+      ? "SHOWING 1 OF 1 RECENT ENTRY"
+      : `SHOWING ${renderedCount} OF ${totalNotes} RECENT ENTRIES`;
 
   return (
     <section
       id="field-notes"
       aria-label="Field Notes"
-      className="scroll-mt-20 w-full py-16 sm:py-20 border-b border-[var(--theme-border-strong,#1A1A1A)] bg-[var(--theme-bg-page,#0C0C0C)]"
+      className={`scroll-mt-20 w-full border-b border-[var(--theme-border-strong,#1A1A1A)] bg-[var(--theme-bg-page,#0C0C0C)] ${
+        totalNotes <= 1 ? "py-10 sm:py-14" : "py-16 sm:py-20"
+      }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${totalNotes <= 1 ? "space-y-6 sm:space-y-8" : "space-y-8 sm:space-y-10"}`}>
         {/* Section Header */}
         <div className="space-y-6">
           {/* Section Marker & Label (Synchronized with SectionScrollTransitions and Progress Indicator) */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            <div className="relative flex items-center justify-center">
-              <span
-                id="section-marker-field-notes"
-                className="w-2 h-2 rounded-full bg-[var(--theme-gold-text,#E5B842)] inline-block transition-all duration-300"
-                style={{ boxShadow: "0 0 6px var(--theme-gold-glow, rgba(229,184,66,0.5))" }}
-              />
-              <span
-                id="section-pulse-ring-field-notes"
-                className="section-pulse-ring absolute w-2 h-2 rounded-full pointer-events-none opacity-0"
-                aria-hidden="true"
-              />
-            </div>
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <SectionMarker sectionId="field-notes" />
             <span className="font-mono text-[11px] sm:text-xs lg:text-[13px] font-semibold tracking-wider text-[var(--theme-gold-text,#E5B842)]/75 select-none">
               03
             </span>
@@ -68,7 +66,8 @@ export default function FieldNotesSection({ initialNotes }: FieldNotesSectionPro
                 Experiments &amp; Ongoing Work
               </h2>
               <div className="font-mono text-xs text-[#707074] tracking-wider uppercase flex-shrink-0">
-                <span className="text-[var(--theme-gold-text,#E5B842)] font-semibold">{totalNotes}</span> ENTRIES IN ARCHIVE
+                <span className="text-[var(--theme-gold-text,#E5B842)] font-semibold">{totalNotes}</span>{" "}
+                {totalNotes === 1 ? "ENTRY" : "ENTRIES"} IN ARCHIVE
               </div>
             </div>
             <p className="text-sm sm:text-base text-[var(--theme-text-secondary,#9E9E9E)] leading-relaxed max-w-2xl font-normal">
@@ -87,7 +86,7 @@ export default function FieldNotesSection({ initialNotes }: FieldNotesSectionPro
         {/* View All Field Notes Action */}
         <div className="pt-6 border-t border-[var(--theme-border-subtle,#1A1A1E)] flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="font-mono text-xs text-[#707074] tracking-wider uppercase">
-            SHOWING 3 OF {totalNotes} RECENT ENTRIES
+            {countLabel}
           </span>
 
           <Link
