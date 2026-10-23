@@ -137,6 +137,11 @@ function mapDbProjectToEditorialProject(
 
   const visuals = resolveVisuals(images, pd, mediaLayout);
 
+  const caseStudy =
+    (dbProject as { case_study_data?: DbProject["case_study_data"] }).case_study_data ??
+    (pd as { caseStudy?: DbProject["case_study_data"] })?.caseStudy ??
+    null;
+
   return {
     id: dbProject.id,
     slug: dbProject.slug,
@@ -172,6 +177,7 @@ function mapDbProjectToEditorialProject(
     layoutVariant: pd?.layoutVariant ?? "standard",
     mediaLayout,
     visuals,
+    caseStudy,
   };
 }
 
@@ -215,10 +221,33 @@ export async function getFeaturedProjects(): Promise<EditorialProject[]> {
 
 /**
  * Retrieves a single project by its unique slug.
+ * Only returns published projects to prevent leaking draft content.
  */
 export async function getProjectBySlug(
   slug: string
 ): Promise<EditorialProject | undefined> {
+  if (!isSupabaseConfigured()) {
+    return undefined;
+  }
+
+  try {
+    const supabase = await createClient();
+    if (!supabase) return undefined;
+
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*, project_images(*), project_links(*)")
+      .eq("slug", slug)
+      .eq("is_published", true)
+      .maybeSingle();
+
+    if (!error && data) {
+      return mapDbProjectToEditorialProject(data as DbProjectWithRelations);
+    }
+  } catch {
+    // Graceful fallback to getPublishedProjects below
+  }
+
   const published = await getPublishedProjects();
   return published.find((project) => project.slug === slug);
 }

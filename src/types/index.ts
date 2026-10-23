@@ -16,9 +16,10 @@ import type {
   PresentationDataGrowthNote,
   MediaLayout,
   LayoutVariant,
+  CaseStudyData,
 } from "@/types/database";
 
-// Re-export the PresentationData type family so consumers can import from
+// Re-export the PresentationData and CaseStudyData type family so consumers can import from
 // either @/types or @/types/database without caring about which file owns them.
 export type {
   PresentationData,
@@ -30,6 +31,7 @@ export type {
   PresentationDataGrowthNote,
   MediaLayout,
   LayoutVariant,
+  CaseStudyData,
 } from "@/types/database";
 
 // ---------------------------------------------------------------------------
@@ -58,6 +60,8 @@ export interface Project {
   images?: ProjectImage[];
   /** Populated when fetched with a joined query */
   links?: ProjectLink[];
+  /** Structured case study content for project details page */
+  caseStudy?: CaseStudyData | null;
 }
 
 // ---------------------------------------------------------------------------

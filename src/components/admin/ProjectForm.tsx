@@ -37,6 +37,42 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
   const [isFeatured, setIsFeatured] = useState(initialProject?.is_featured ?? false);
   const [sortOrder, setSortOrder] = useState<number>(initialProject?.sort_order ?? 0);
 
+  // Optional Case Study / Project Detail Content
+  const initialCs =
+    (initialProject as { case_study_data?: {
+      overview?: string | null;
+      problem?: string | null;
+      solution?: string | null;
+      features?: string[] | null;
+      architecture?: string | null;
+      challenges?: string | null;
+      outcomes?: string | null;
+    } | null })?.case_study_data ||
+    (initialProject?.presentation_data as { caseStudy?: {
+      overview?: string | null;
+      problem?: string | null;
+      solution?: string | null;
+      features?: string[] | null;
+      architecture?: string | null;
+      challenges?: string | null;
+      outcomes?: string | null;
+    } | null })?.caseStudy ||
+    null;
+
+  const [csOverview, setCsOverview] = useState(initialCs?.overview || "");
+  const [csProblem, setCsProblem] = useState(initialCs?.problem || "");
+  const [csSolution, setCsSolution] = useState(initialCs?.solution || "");
+  const [csFeaturesInput, setCsFeaturesInput] = useState(
+    (initialCs?.features || []).join("\n")
+  );
+  const [csArchitecture, setCsArchitecture] = useState(
+    initialCs?.architecture || ""
+  );
+  const [csChallenges, setCsChallenges] = useState(
+    initialCs?.challenges || ""
+  );
+  const [csOutcomes, setCsOutcomes] = useState(initialCs?.outcomes || "");
+
   // UI States
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(mode === "edit");
   const [loading, setLoading] = useState(false);
@@ -80,6 +116,20 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
       .map((t) => t.trim())
       .filter(Boolean);
 
+    const caseStudyFeatures = csFeaturesInput
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const hasCaseStudy =
+      Boolean(csOverview.trim()) ||
+      Boolean(csProblem.trim()) ||
+      Boolean(csSolution.trim()) ||
+      caseStudyFeatures.length > 0 ||
+      Boolean(csArchitecture.trim()) ||
+      Boolean(csChallenges.trim()) ||
+      Boolean(csOutcomes.trim());
+
     const projectData: ProjectInput = {
       title: title.trim(),
       slug: cleanSlug,
@@ -93,6 +143,17 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
       isPublished,
       isFeatured,
       sortOrder: typeof sortOrder === "number" ? sortOrder : 0,
+      caseStudy: hasCaseStudy
+        ? {
+            overview: csOverview.trim() || null,
+            problem: csProblem.trim() || null,
+            solution: csSolution.trim() || null,
+            features: caseStudyFeatures.length > 0 ? caseStudyFeatures : null,
+            architecture: csArchitecture.trim() || null,
+            challenges: csChallenges.trim() || null,
+            outcomes: csOutcomes.trim() || null,
+          }
+        : null,
     };
 
     try {
@@ -463,6 +524,158 @@ export default function ProjectForm({ initialProject, mode }: ProjectFormProps) 
             <p className="font-mono text-[10px] text-[#707070] leading-relaxed">
               Lower numbers appear first on the public homepage (1, 2, 3...).
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: Project Details / Case Study Content (Optional) */}
+      <section className="border border-[#1F1F1F] bg-[#141414] rounded-[10px] p-6 sm:p-8 space-y-6">
+        <div className="border-b border-[#1F1F1F] pb-4 flex items-center justify-between">
+          <div>
+            <span className="font-mono text-[10px] text-[#E5B842] uppercase tracking-widest block mb-1">
+              [SECTION 04 // EDITORIAL CASE STUDY CONTENT]
+            </span>
+            <h2 className="text-lg font-bold tracking-tight text-[#F3F3F3]">
+              Project Details Page Sections (Optional)
+            </h2>
+          </div>
+          <span className="font-mono text-[10px] text-[#707070] uppercase">OPTIONAL</span>
+        </div>
+
+        <p className="font-mono text-xs text-[#8E8E94] leading-relaxed">
+          These structured sections appear on the dedicated project details page at{" "}
+          <span className="text-[#E5B842]">/projects/{slug || "[slug]"}</span>. Leave any field blank to omit that section.
+        </p>
+
+        <div className="space-y-6">
+          {/* Detailed Overview */}
+          <div>
+            <label
+              htmlFor="cs-overview"
+              className="block font-mono text-xs text-[#9E9E9E] uppercase tracking-wider mb-2"
+            >
+              Detailed Overview / Context (defaults to Homepage Description if blank)
+            </label>
+            <textarea
+              id="cs-overview"
+              rows={3}
+              value={csOverview}
+              onChange={(e) => setCsOverview(e.target.value)}
+              placeholder="Deep-dive introduction into the problem space and motivation..."
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] text-sm px-4 py-2.5 outline-hidden transition-colors leading-relaxed rounded-[8px]"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Problem / Motivation */}
+            <div>
+              <label
+                htmlFor="cs-problem"
+                className="block font-mono text-xs text-[#9E9E9E] uppercase tracking-wider mb-2"
+              >
+                Problem / Motivation
+              </label>
+              <textarea
+                id="cs-problem"
+                rows={3}
+                value={csProblem}
+                onChange={(e) => setCsProblem(e.target.value)}
+                placeholder="What challenges or inefficiencies needed solving?"
+                className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] text-sm px-4 py-2.5 outline-hidden transition-colors leading-relaxed rounded-[8px]"
+              />
+            </div>
+
+            {/* Solution */}
+            <div>
+              <label
+                htmlFor="cs-solution"
+                className="block font-mono text-xs text-[#9E9E9E] uppercase tracking-wider mb-2"
+              >
+                Engineered Solution
+              </label>
+              <textarea
+                id="cs-solution"
+                rows={3}
+                value={csSolution}
+                onChange={(e) => setCsSolution(e.target.value)}
+                placeholder="How was the problem solved through architecture and code?"
+                className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] text-sm px-4 py-2.5 outline-hidden transition-colors leading-relaxed rounded-[8px]"
+              />
+            </div>
+          </div>
+
+          {/* Key Features */}
+          <div>
+            <label
+              htmlFor="cs-features"
+              className="block font-mono text-xs text-[#9E9E9E] uppercase tracking-wider mb-2"
+            >
+              Key Features &amp; Capabilities (one per line)
+            </label>
+            <textarea
+              id="cs-features"
+              rows={4}
+              value={csFeaturesInput}
+              onChange={(e) => setCsFeaturesInput(e.target.value)}
+              placeholder={"Multi-layered architecture separating domain logic from persistence\nCustomTkinter responsive dark dashboard\nSQLite relational membership tracking and state machine"}
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] font-mono text-xs px-4 py-2.5 outline-hidden transition-colors leading-relaxed rounded-[8px]"
+            />
+          </div>
+
+          {/* Architecture & Engineering Decisions */}
+          <div>
+            <label
+              htmlFor="cs-architecture"
+              className="block font-mono text-xs text-[#9E9E9E] uppercase tracking-wider mb-2"
+            >
+              Architecture &amp; Engineering Decisions
+            </label>
+            <textarea
+              id="cs-architecture"
+              rows={4}
+              value={csArchitecture}
+              onChange={(e) => setCsArchitecture(e.target.value)}
+              placeholder="Describe layered architecture, component responsibilities, design patterns (e.g. Repository, Observer, Factory), or data models actually implemented..."
+              className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] text-sm px-4 py-2.5 outline-hidden transition-colors leading-relaxed rounded-[8px]"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Challenges */}
+            <div>
+              <label
+                htmlFor="cs-challenges"
+                className="block font-mono text-xs text-[#9E9E9E] uppercase tracking-wider mb-2"
+              >
+                Implementation Challenges
+              </label>
+              <textarea
+                id="cs-challenges"
+                rows={3}
+                value={csChallenges}
+                onChange={(e) => setCsChallenges(e.target.value)}
+                placeholder="Key technical hurdles encountered and how they were resolved..."
+                className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] text-sm px-4 py-2.5 outline-hidden transition-colors leading-relaxed rounded-[8px]"
+              />
+            </div>
+
+            {/* Outcomes */}
+            <div>
+              <label
+                htmlFor="cs-outcomes"
+                className="block font-mono text-xs text-[#9E9E9E] uppercase tracking-wider mb-2"
+              >
+                Outcomes &amp; Lessons Learned
+              </label>
+              <textarea
+                id="cs-outcomes"
+                rows={3}
+                value={csOutcomes}
+                onChange={(e) => setCsOutcomes(e.target.value)}
+                placeholder="Measurable results, architecture validation, and growth takeaways..."
+                className="w-full bg-[#0C0C0C] border border-[#262626] focus:border-[#E5B842] text-[#F3F3F3] text-sm px-4 py-2.5 outline-hidden transition-colors leading-relaxed rounded-[8px]"
+              />
+            </div>
           </div>
         </div>
       </section>

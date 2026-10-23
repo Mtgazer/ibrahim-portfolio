@@ -53,11 +53,11 @@ export default async function AdminProjectEditPage({
           <div className="flex items-center gap-3 flex-wrap">
             {project.is_published && (
               <Link
-                href="/"
+                href={`/projects/${project.slug}`}
                 target="_blank"
                 className="font-mono text-xs text-[#E5B842] hover:underline border border-[#E5B842]/40 bg-[#1A1A1A] rounded-[8px] px-3.5 py-2 uppercase tracking-wider"
               >
-                View Public Showcase ↗
+                View Project Page ↗
               </Link>
             )}
             <ProjectDeleteButton

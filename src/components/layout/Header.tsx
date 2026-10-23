@@ -9,8 +9,8 @@ import { useActiveSection } from "@/lib/scroll-progress";
 
 const NAV_ITEMS = [
   { id: "home", label: "HOME" },
-  { id: "field-notes", label: "FIELD NOTES" },
   { id: "my-projects", label: "MY PROJECTS" },
+  { id: "field-notes", label: "FIELD NOTES" },
   { id: "about", label: "ABOUT & CAPABILITIES" },
   { id: "contact", label: "CONTACT" },
 ] as const;

@@ -30,7 +30,7 @@ export default function SelectedWorkHeader({
             />
           </div>
           <span className="font-mono text-[11px] sm:text-xs lg:text-[13px] font-semibold tracking-wider text-[var(--theme-gold-text,#E5B842)]/75 select-none">
-            03
+            02
           </span>
           <span
             className="w-1 h-1 rounded-full bg-[var(--theme-border-strong,#333333)] shrink-0"

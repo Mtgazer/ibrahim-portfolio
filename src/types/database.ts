@@ -94,6 +94,21 @@ export interface PresentationData {
   visuals?: PresentationDataVisuals;
 }
 
+// ---------------------------------------------------------------------------
+// CaseStudyData — strongly-typed shape of the optional case_study_data JSONB
+// column on the projects table for rich editorial project details.
+// ---------------------------------------------------------------------------
+
+export interface CaseStudyData {
+  overview?: string | null;
+  problem?: string | null;
+  solution?: string | null;
+  features?: string[] | null;
+  architecture?: string | null;
+  challenges?: string | null;
+  outcomes?: string | null;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -113,6 +128,7 @@ export interface Database {
           is_featured: boolean;
           sort_order: number;
           presentation_data: PresentationData | null;
+          case_study_data: CaseStudyData | null;
           created_at: string;
           updated_at: string;
         };
@@ -131,6 +147,7 @@ export interface Database {
           is_featured?: boolean;
           sort_order?: number;
           presentation_data?: PresentationData | null;
+          case_study_data?: CaseStudyData | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -149,6 +166,7 @@ export interface Database {
           is_featured?: boolean;
           sort_order?: number;
           presentation_data?: PresentationData | null;
+          case_study_data?: CaseStudyData | null;
           created_at?: string;
           updated_at?: string;
         };

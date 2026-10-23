@@ -13,8 +13,8 @@ export interface SectionMeta {
 
 export const HOMEPAGE_SECTIONS: readonly SectionMeta[] = [
   { id: "home", number: "01", index: 0, total: 5, name: "HOME", shortName: "HOME" },
-  { id: "field-notes", number: "02", index: 1, total: 5, name: "FIELD NOTES", shortName: "FIELD NOTES" },
-  { id: "my-projects", number: "03", index: 2, total: 5, name: "SELECTED WORK", shortName: "WORK" },
+  { id: "my-projects", number: "02", index: 1, total: 5, name: "SELECTED WORK", shortName: "WORK" },
+  { id: "field-notes", number: "03", index: 2, total: 5, name: "FIELD NOTES", shortName: "FIELD NOTES" },
   { id: "about", number: "04", index: 3, total: 5, name: "ABOUT & CAPABILITIES", shortName: "ABOUT" },
   { id: "contact", number: "05", index: 4, total: 5, name: "CONTACT", shortName: "CONTACT" },
 ] as const;
@@ -67,15 +67,15 @@ export function updateCachedLayout() {
 
 /**
  * Fast normalized scroll progress of the hero section on mobile (0 to 1).
- * Reaches 1.0 as the hero approaches the handoff to Field Notes.
+ * Reaches 1.0 as the hero approaches the handoff to Selected Work.
  * 100% arithmetic-only with zero DOM layout queries on scroll frames.
  */
 export function getHeroMobileProgress(): number {
   if (typeof window === "undefined") return 0;
-  const fieldNotesTop = cachedSections[1]?.top || (cachedWindowHeight || 700);
+  const workTop = cachedSections[1]?.top || (cachedWindowHeight || 700);
   const scrollY = window.scrollY;
-  // Progresses from 0 at top to 1.0 when scrolling 65% of the distance to Field Notes
-  const heroHandoffThreshold = Math.max(100, fieldNotesTop * 0.65);
+  // Progresses from 0 at top to 1.0 when scrolling 65% of the distance to Selected Work
+  const heroHandoffThreshold = Math.max(100, workTop * 0.65);
   return Math.min(1, Math.max(0, scrollY / heroHandoffThreshold));
 }
 

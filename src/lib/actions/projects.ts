@@ -8,6 +8,8 @@ import { createClient } from "@/lib/supabase/server";
 // Type Definitions
 // ---------------------------------------------------------------------------
 
+import type { CaseStudyData } from "@/types";
+
 export interface ActionResponse<T = unknown> {
   success: boolean;
   data?: T;
@@ -27,6 +29,7 @@ export interface ProjectInput {
   isPublished?: boolean;
   isFeatured?: boolean;
   sortOrder?: number;
+  caseStudy?: CaseStudyData | null;
 }
 
 export interface ProjectLinkInput {
@@ -99,27 +102,48 @@ export async function createProjectAction(
         ? input.sortOrder
         : 0;
 
-    const { data, error } = await supabase
+    const insertPayload: Record<string, unknown> = {
+      title,
+      slug,
+      subtitle: input.subtitle?.trim() || null,
+      description: input.description?.trim() || null,
+      category: input.category?.trim() || null,
+      year:
+        typeof input.year === "number" && !isNaN(input.year)
+          ? input.year
+          : null,
+      role: input.role?.trim() || null,
+      tools: input.tools || [],
+      tags: input.tags || [],
+      is_published: Boolean(input.isPublished),
+      is_featured: Boolean(input.isFeatured),
+      sort_order: sortOrder,
+    };
+
+    if (input.caseStudy !== undefined) {
+      insertPayload.case_study_data = input.caseStudy;
+    }
+
+    let { data, error } = await supabase
       .from("projects")
-      .insert({
-        title,
-        slug,
-        subtitle: input.subtitle?.trim() || null,
-        description: input.description?.trim() || null,
-        category: input.category?.trim() || null,
-        year:
-          typeof input.year === "number" && !isNaN(input.year)
-            ? input.year
-            : null,
-        role: input.role?.trim() || null,
-        tools: input.tools || [],
-        tags: input.tags || [],
-        is_published: Boolean(input.isPublished),
-        is_featured: Boolean(input.isFeatured),
-        sort_order: sortOrder,
-      })
+      .insert(insertPayload as never)
       .select("id")
       .single();
+
+    // Fallback if case_study_data column has not been migrated yet in database
+    if (error && (error.code === "42703" || error.message.includes("case_study_data"))) {
+      delete insertPayload.case_study_data;
+      if (input.caseStudy) {
+        insertPayload.presentation_data = { caseStudy: input.caseStudy };
+      }
+      const retry = await supabase
+        .from("projects")
+        .insert(insertPayload as never)
+        .select("id")
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
 
     if (error || !data) {
       return {
@@ -131,6 +155,7 @@ export async function createProjectAction(
     revalidatePath("/");
     revalidatePath("/admin");
     revalidatePath("/admin/projects");
+    revalidatePath(`/projects/${slug}`);
 
     return { success: true, data: { id: data.id } };
   } catch (err: unknown) {
@@ -187,26 +212,56 @@ export async function updateProjectAction(
         ? input.sortOrder
         : 0;
 
-    const { error } = await supabase
+    const updatePayload: Record<string, unknown> = {
+      title,
+      slug,
+      subtitle: input.subtitle?.trim() || null,
+      description: input.description?.trim() || null,
+      category: input.category?.trim() || null,
+      year:
+        typeof input.year === "number" && !isNaN(input.year)
+          ? input.year
+          : null,
+      role: input.role?.trim() || null,
+      tools: input.tools || [],
+      tags: input.tags || [],
+      is_published: Boolean(input.isPublished),
+      is_featured: Boolean(input.isFeatured),
+      sort_order: sortOrder,
+    };
+
+    if (input.caseStudy !== undefined) {
+      updatePayload.case_study_data = input.caseStudy;
+    }
+
+    let { error } = await supabase
       .from("projects")
-      .update({
-        title,
-        slug,
-        subtitle: input.subtitle?.trim() || null,
-        description: input.description?.trim() || null,
-        category: input.category?.trim() || null,
-        year:
-          typeof input.year === "number" && !isNaN(input.year)
-            ? input.year
-            : null,
-        role: input.role?.trim() || null,
-        tools: input.tools || [],
-        tags: input.tags || [],
-        is_published: Boolean(input.isPublished),
-        is_featured: Boolean(input.isFeatured),
-        sort_order: sortOrder,
-      })
+      .update(updatePayload as never)
       .eq("id", id);
+
+    // Fallback if case_study_data column has not been migrated yet in database
+    if (error && (error.code === "42703" || error.message.includes("case_study_data"))) {
+      delete updatePayload.case_study_data;
+      if (input.caseStudy !== undefined) {
+        // Fetch current presentation_data to avoid overwriting existing layout
+        const { data: curr } = await supabase
+          .from("projects")
+          .select("presentation_data")
+          .eq("id", id)
+          .maybeSingle();
+        const existingPd =
+          (curr?.presentation_data as unknown as Record<string, unknown>) || {};
+        updatePayload.presentation_data = {
+          ...existingPd,
+          caseStudy: input.caseStudy,
+        };
+      }
+      const retry = await supabase
+        .from("projects")
+        .update(updatePayload as never)
+        .eq("id", id);
+      error = retry.error;
+    }
 
     if (error) {
       return { success: false, error: error.message };
@@ -216,6 +271,7 @@ export async function updateProjectAction(
     revalidatePath("/admin");
     revalidatePath("/admin/projects");
     revalidatePath(`/admin/projects/${id}`);
+    revalidatePath(`/projects/${slug}`);
 
     return { success: true };
   } catch (err: unknown) {

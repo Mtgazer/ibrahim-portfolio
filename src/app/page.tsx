@@ -2,9 +2,9 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SplashScreen from "@/components/layout/SplashScreen";
 import Hero from "@/components/hero/Hero";
-import FieldNotesSection from "@/components/sections/FieldNotesSection";
 import SelectedWorkHeader from "@/components/sections/SelectedWorkHeader";
-import ProjectArticle from "@/components/sections/ProjectArticle";
+import ProjectCard from "@/components/portfolio/ProjectCard";
+import FieldNotesSection from "@/components/sections/FieldNotesSection";
 import AboutSection from "@/components/sections/AboutSection";
 import ContactSection from "@/components/sections/ContactSection";
 import SectionScrollTransitions from "@/components/navigation/SectionScrollTransitions";
@@ -18,6 +18,11 @@ export default async function HomePage() {
     getPublishedFieldNotes(),
   ]);
 
+  // Curate 3-4 published projects on homepage, prioritizing featured flags with fallback to sort_order
+  const featured = projects.filter((p) => p.isFeatured);
+  const displayProjects =
+    featured.length >= 3 ? featured.slice(0, 4) : projects.slice(0, 4);
+
   return (
     <div className="min-h-screen flex flex-col bg-[var(--theme-bg-page)] text-[var(--theme-text-primary)]">
       {/* Editorial Intro Splash Screen (Fresh entry only) */}
@@ -28,7 +33,7 @@ export default async function HomePage() {
 
       {/* Main Content Flow */}
       <main className="flex-1 w-full relative">
-        {/* Phase 3: Editorial Signal Trace + Section Pulse Transitions */}
+        {/* Editorial Signal Trace + Section Pulse Transitions */}
         <SectionScrollTransitions />
 
         {/* Viewport Entry Scroll Reveal Engine */}
@@ -37,27 +42,31 @@ export default async function HomePage() {
         {/* Section 1: Hero Section */}
         <Hero />
 
-        {/* 2. Field Notes & Practice Area */}
-        <FieldNotesSection initialNotes={fieldNotes} />
-
-        {/* 3. Selected Work Header */}
+        {/* Section 2: Selected Work Header */}
         <SelectedWorkHeader projectCount={projects.length} />
 
-        {/* 6. Project Case Study Presentations */}
-        <section className="w-full bg-[var(--theme-bg-page)]">
-          {projects.map((project) => (
-            <ProjectArticle key={project.id} project={project} />
-          ))}
+        {/* Section 2: Selected Work Compact Cards Grid */}
+        <section aria-label="Selected Work Projects" className="w-full bg-[var(--theme-bg-page)] py-12 sm:py-16 border-b border-[#1A1A1A]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+              {displayProjects.map((project, idx) => (
+                <ProjectCard key={project.id} project={project} index={idx} />
+              ))}
+            </div>
+          </div>
         </section>
 
-        {/* 7. About & Capabilities Matrix */}
+        {/* Section 3: Field Notes & Ongoing Work */}
+        <FieldNotesSection initialNotes={fieldNotes} />
+
+        {/* Section 4: About & Capabilities Matrix */}
         <AboutSection />
 
-        {/* 8. Contact / Let's Connect */}
+        {/* Section 5: Contact / Let's Connect */}
         <ContactSection />
       </main>
 
-      {/* 9. Editorial Footer */}
+      {/* Editorial Footer */}
       <Footer />
     </div>
   );

@@ -32,15 +32,15 @@ export interface PathGeometry {
 }
 
 export const MARKER_IDS = [
-  "section-marker-field-notes",
   "section-marker-projects",
+  "section-marker-field-notes",
   "section-marker-about",
   "section-marker-contact",
 ] as const;
 
 export const PULSE_RING_IDS = [
-  "section-pulse-ring-field-notes",
   "section-pulse-ring-projects",
+  "section-pulse-ring-field-notes",
   "section-pulse-ring-about",
   "section-pulse-ring-contact",
 ] as const;
@@ -240,32 +240,32 @@ export default function SectionScrollTransitions() {
       const dParts: string[] = [];
       const tickParts: string[] = [];
 
-      // Clean visual handoff near the bottom of the hero into Field Notes:
-      // A vertical datum stem extends from the bottom of the hero (64px desktop / 36px mobile above Field Notes marker)
-      // directly into Marker 02 (Field Notes). This avoids any competing vertical rail over the hero's artwork.
-      const pFN = points[0];
+      // Clean visual handoff near the bottom of the hero into Selected Work:
+      // A vertical datum stem extends from the bottom of the hero (64px desktop / 36px mobile above Selected Work marker)
+      // directly into Marker 02 (Selected Work). This avoids any competing vertical rail over the hero's artwork.
+      const pProjects = points[0];
       const handoffStemLength = isMobile ? 36 : 64;
-      const yHandoff = pFN.y - handoffStemLength;
+      const yHandoff = pProjects.y - handoffStemLength;
       const tickHalf = isMobile ? 2.5 : 4;
 
       // Handoff entrance datum tick at bottom of hero
       tickParts.push(
-        `M ${(pFN.x - tickHalf).toFixed(1)} ${yHandoff.toFixed(1)} L ${(pFN.x + tickHalf).toFixed(1)} ${yHandoff.toFixed(1)}`
+        `M ${(pProjects.x - tickHalf).toFixed(1)} ${yHandoff.toFixed(1)} L ${(pProjects.x + tickHalf).toFixed(1)} ${yHandoff.toFixed(1)}`
       );
 
-      // Start path at the clean hero handoff point and drop into Field Notes marker
-      dParts.push(`M ${pFN.x.toFixed(1)} ${yHandoff.toFixed(1)}`);
-      dParts.push(`L ${pFN.x.toFixed(1)} ${pFN.y.toFixed(1)}`);
+      // Start path at the clean hero handoff point and drop into Selected Work marker
+      dParts.push(`M ${pProjects.x.toFixed(1)} ${yHandoff.toFixed(1)}`);
+      dParts.push(`L ${pProjects.x.toFixed(1)} ${pProjects.y.toFixed(1)}`);
 
-      // Datum tick at Field Notes marker
+      // Datum tick at Selected Work marker
       tickParts.push(
-        `M ${(pFN.x - tickHalf).toFixed(1)} ${pFN.y.toFixed(1)} L ${(pFN.x + tickHalf).toFixed(1)} ${pFN.y.toFixed(1)}`
+        `M ${(pProjects.x - tickHalf).toFixed(1)} ${pProjects.y.toFixed(1)} L ${(pProjects.x + tickHalf).toFixed(1)} ${pProjects.y.toFixed(1)}`
       );
 
       cumLengths[0] = handoffStemLength;
 
       // Connect sections through dedicated outer whitespace gutter:
-      // Field Notes (p0) -> Selected Work (p1) -> About & Capabilities (p2) -> Contact (p3)
+      // Selected Work (p0) -> Field Notes (p1) -> About & Capabilities (p2) -> Contact (p3)
       for (let i = 0; i < points.length - 1; i++) {
         const pStart = points[i];
         const pEnd = points[i + 1];
@@ -340,28 +340,28 @@ export default function SectionScrollTransitions() {
       const eyeLineY = windowHeight * 0.42; // Unified 42% reading eye line matching scroll-progress.ts
       const scrollYInMain = -mainRect.top + eyeLineY;
 
-      const pFN = geometry.points[0];
-      const pProjects = geometry.points[1];
+      const pProjects = geometry.points[0];
+      const pFN = geometry.points[1];
       const pAbout = geometry.points[2];
       const pContact = geometry.points[3];
 
       const handoffStemLength = geometry.cumLengths[0];
-      const yHandoff = pFN.y - handoffStemLength;
+      const yHandoff = pProjects.y - handoffStemLength;
 
       let drawnDistance = 0;
 
       if (scrollYInMain <= yHandoff) {
         drawnDistance = 0;
-      } else if (scrollYInMain < pFN.y) {
-        const ratio = (scrollYInMain - yHandoff) / (pFN.y - yHandoff);
-        drawnDistance = Math.max(0, Math.min(1, ratio)) * handoffStemLength;
       } else if (scrollYInMain < pProjects.y) {
-        const ratio = (scrollYInMain - pFN.y) / (pProjects.y - pFN.y);
+        const ratio = (scrollYInMain - yHandoff) / (pProjects.y - yHandoff);
+        drawnDistance = Math.max(0, Math.min(1, ratio)) * handoffStemLength;
+      } else if (scrollYInMain < pFN.y) {
+        const ratio = (scrollYInMain - pProjects.y) / (pFN.y - pProjects.y);
         drawnDistance =
           geometry.cumLengths[0] +
           Math.max(0, Math.min(1, ratio)) * geometry.segLengths[0];
       } else if (scrollYInMain < pAbout.y) {
-        const ratio = (scrollYInMain - pProjects.y) / (pAbout.y - pProjects.y);
+        const ratio = (scrollYInMain - pFN.y) / (pAbout.y - pFN.y);
         drawnDistance =
           geometry.cumLengths[1] +
           Math.max(0, Math.min(1, ratio)) * geometry.segLengths[1];
