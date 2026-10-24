@@ -172,7 +172,7 @@ export default function ProjectCarousel({ projects }: ProjectCarouselProps) {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full min-h-[580px] sm:min-h-[620px] md:min-h-[660px] lg:min-h-[700px] pt-8 sm:pt-10 pb-10 sm:pb-12 flex items-center justify-center select-none overflow-x-clip overflow-y-visible"
+        className="relative w-full min-h-[600px] sm:min-h-[640px] md:min-h-[680px] lg:min-h-[720px] py-6 sm:py-8 flex items-center justify-center select-none overflow-visible"
       >
         {projects.map((project, index) => {
           // Circular offset relative to active card
