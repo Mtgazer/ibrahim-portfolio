@@ -120,6 +120,58 @@ export async function getFieldNoteById(id: string): Promise<FieldNote | null> {
 }
 
 /**
+ * Retrieves a published field note by its slug (or fallback id).
+ *
+ * Security: Subject to PostgreSQL RLS "Public can view published field notes".
+ * Anonymous and public requests can only access records where `is_published = true`.
+ */
+export async function getFieldNoteBySlug(slug: string): Promise<FieldNote | null> {
+  const getFallback = () => {
+    const fallback = localFallbackNotes.find(
+      (n) => (n.slug === slug || n.id === slug) && n.isPublished !== false
+    );
+    return fallback ? (fallback as FieldNote) : null;
+  };
+
+  if (!isSupabaseConfigured()) {
+    return getFallback();
+  }
+
+  try {
+    const supabase = await createClient();
+    if (!supabase) return getFallback();
+
+    // Query by slug first
+    const { data, error } = await supabase
+      .from("field_notes")
+      .select("*")
+      .eq("slug", slug)
+      .eq("is_published", true)
+      .maybeSingle();
+
+    if (!error && data) {
+      return mapDbFieldNoteToDomain(data);
+    }
+
+    // Secondary fallback: query by id if slug didn't match
+    const { data: idData, error: idError } = await supabase
+      .from("field_notes")
+      .select("*")
+      .eq("id", slug)
+      .eq("is_published", true)
+      .maybeSingle();
+
+    if (!idError && idData) {
+      return mapDbFieldNoteToDomain(idData);
+    }
+
+    return getFallback();
+  } catch {
+    return getFallback();
+  }
+}
+
+/**
  * Retrieves all field notes for the Admin dashboard (published + drafts).
  * Admin-only: relies on server authorization guard (requireAdmin) and
  * PostgreSQL RLS "Admins have full access to field notes".

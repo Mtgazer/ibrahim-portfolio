@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProjectGallery from "@/components/portfolio/ProjectGallery";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import { getProjectBySlug } from "@/lib/projects";
 
 interface ProjectDetailsPageProps {
@@ -97,22 +97,23 @@ export default async function ProjectDetailsPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--theme-bg-page,#0A0A0C)] text-[var(--theme-text-primary,#F3F3F3)]">
-      <Header />
-
       <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-12 sm:space-y-16">
-        {/* Navigation Breadcrumb */}
+        {/* Navigation Breadcrumb & Contextual Controls */}
         <div className="flex items-center justify-between border-b border-[var(--theme-border-strong,#1E1E22)] pb-4">
           <Link
             href="/#my-projects"
-            className="inline-flex items-center gap-2 font-mono text-xs text-[var(--theme-gold-text,#E5B842)] hover:underline uppercase tracking-wider transition-colors"
+            className="inline-flex items-center gap-2 font-mono text-xs text-[var(--theme-gold-text,#E5B842)] hover:underline uppercase tracking-wider transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--theme-gold-text,#E5B842)] rounded"
           >
             <span aria-hidden="true">←</span>
             <span>BACK TO SELECTED WORK</span>
           </Link>
 
-          <span className="font-mono text-xs text-[#707074] tracking-widest uppercase">
-            PROJECT // {project.projectNumber || "01"}
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="font-mono text-xs text-[#707074] tracking-widest uppercase">
+              PROJECT // {project.projectNumber || "01"}
+            </span>
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Section A: Project Header */}

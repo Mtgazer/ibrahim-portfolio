@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import FieldNoteEntry from "@/components/portfolio/FieldNoteEntry";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import { getPublishedFieldNotes } from "@/lib/field-notes";
 
 export const metadata: Metadata = {
@@ -32,22 +32,23 @@ export default async function FieldNotesArchivePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--theme-bg-page,#0A0A0C)] text-[var(--theme-text-primary,#F3F3F3)]">
-      <Header />
-
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-10 sm:space-y-12">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between border-b border-[var(--theme-border-strong,#1E1E22)] pb-4">
           <Link
             href="/#field-notes"
-            className="inline-flex items-center gap-2 font-mono text-xs text-[var(--theme-gold-text,#E5B842)] hover:underline uppercase tracking-wider transition-colors"
+            className="inline-flex items-center gap-2 font-mono text-xs text-[var(--theme-gold-text,#E5B842)] hover:underline uppercase tracking-wider transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--theme-gold-text,#E5B842)] rounded"
           >
             <span aria-hidden="true">←</span>
             <span>BACK TO PORTFOLIO</span>
           </Link>
 
-          <span className="font-mono text-xs text-[#707074] tracking-widest uppercase">
-            ARCHIVE // {sortedNotes.length} ENTRIES
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="font-mono text-xs text-[#707074] tracking-widest uppercase">
+              ARCHIVE // {sortedNotes.length} ENTRIES
+            </span>
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Page Heading & Introduction */}
@@ -71,7 +72,7 @@ export default async function FieldNotesArchivePage() {
 
         {/* Chronological Editorial List */}
         {sortedNotes.length > 0 ? (
-          <div className="divide-y divide-[var(--theme-border-subtle,#1A1A1E)]">
+          <div className="space-y-4 sm:space-y-5">
             {sortedNotes.map((note, idx) => (
               <FieldNoteEntry key={note.id} note={note} index={idx} />
             ))}

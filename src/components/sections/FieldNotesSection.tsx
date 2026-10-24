@@ -76,8 +76,8 @@ export default function FieldNotesSection({ initialNotes }: FieldNotesSectionPro
           </div>
         </div>
 
-        {/* Vertically Stacked Editorial List */}
-        <div className="divide-y divide-[var(--theme-border-subtle,#1A1A1E)]">
+        {/* Vertically Stacked Editorial Cards */}
+        <div className="space-y-4 sm:space-y-5">
           {homepageNotes.map((note, index) => (
             <FieldNoteEntry key={note.id} note={note} index={index} />
           ))}

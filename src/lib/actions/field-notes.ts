@@ -66,6 +66,9 @@ function isValidUrl(rawUrl: string): boolean {
 function safeRevalidatePath(path: string): void {
   try {
     revalidatePath(path);
+    if (path === "/") {
+      revalidatePath("/field-notes");
+    }
   } catch {
     // Gracefully handle execution outside Next.js request context (e.g. CLI testing)
   }

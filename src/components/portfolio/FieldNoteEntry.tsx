@@ -7,120 +7,99 @@ interface FieldNoteEntryProps {
   index: number;
 }
 
-export default function FieldNoteEntry({ note }: FieldNoteEntryProps) {
-  const targetHref = note.href || note.externalLink || "#contact";
-  const isExternal = Boolean(note.externalLink && !note.externalLink.startsWith("#") && !note.externalLink.startsWith("/"));
+export default function FieldNoteEntry({ note, index }: FieldNoteEntryProps) {
+  const targetHref = `/field-notes/${note.slug || note.id}`;
+  const imageSrc = note.coverImage || note.image;
 
   return (
-    <article className="group relative border-b border-[var(--theme-border-subtle,#1A1A1E)] py-6 sm:py-8 last:border-b-0 transition-colors">
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-        {/* Left Column: Metadata (Date, Note Number, Category) */}
-        <div className="w-full md:w-56 shrink-0 space-y-1.5 font-mono text-xs">
-          <div className="flex items-center gap-2 flex-wrap">
-            {note.noteNumber && (
-              <span className="text-[10px] text-[#707074] tracking-widest uppercase">
-                NOTE // {note.noteNumber}
+    <article>
+      <Link
+        href={targetHref}
+        aria-label={`Read field note: ${note.title}`}
+        className="group relative flex flex-col sm:flex-row items-stretch rounded-xl border border-[var(--theme-border-strong,#1E1E22)] bg-[var(--theme-bg-surface,#0E0E10)] hover:border-[var(--theme-gold-text,#E5B842)]/50 hover:bg-[#121216] transition-all duration-300 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-gold-text,#E5B842)] shadow-sm"
+      >
+        {/* Left Side: Controlled Image Area / Thumbnail */}
+        <div className="relative w-full sm:w-52 md:w-64 lg:w-72 shrink-0 aspect-[16/10] sm:aspect-auto min-h-[160px] sm:min-h-full bg-[#08080A] border-b sm:border-b-0 sm:border-r border-[var(--theme-border-strong,#1E1E22)] overflow-hidden">
+          {imageSrc ? (
+            <Image
+              src={imageSrc}
+              alt={note.coverAltText || `${note.title} exploration preview`}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 256px, 288px"
+              className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full min-h-[160px] flex flex-col items-center justify-center p-6 bg-[#0B0B0D] text-center select-none">
+              <span className="font-mono text-[10px] tracking-widest uppercase text-[#606066]">
+                FIELD NOTE
               </span>
-            )}
-            {note.date && (
-              <span className="text-[var(--theme-gold-text,#E5B842)] font-semibold tracking-wider uppercase">
-                {note.date}
+              <span className="font-mono text-xs text-[var(--theme-gold-text,#E5B842)] font-semibold mt-1">
+                {"//"} {note.noteNumber || String(index + 1).padStart(2, "0")}
               </span>
-            )}
-          </div>
-
-          {note.category && (
-            <div className="text-[11px] text-[#A0A0A5] tracking-wider uppercase font-medium">
-              [ {note.category} ]
             </div>
           )}
         </div>
 
-        {/* Center Column: Title, Excerpt, Tags */}
-        <div className="flex-1 space-y-2.5 max-w-2xl">
-          <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[var(--theme-text-primary,#F3F3F3)] group-hover:text-[var(--theme-gold-text,#E5B842)] transition-colors leading-snug">
-            {isExternal ? (
-              <a
-                href={targetHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="focus:outline-none"
+        {/* Right Side: Unified Content & Metadata Area */}
+        <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between gap-3 sm:gap-4 min-w-0">
+          {/* Top Line: Category & Date Metadata */}
+          <div className="flex items-center justify-between gap-2 flex-wrap font-mono text-xs">
+            <div className="flex items-center gap-2">
+              {note.category && (
+                <span className="text-[11px] font-semibold tracking-wider text-[var(--theme-gold-text,#E5B842)] uppercase">
+                  [ {note.category} ]
+                </span>
+              )}
+              {note.noteNumber && (
+                <span className="text-[10px] text-[#707074] tracking-widest uppercase">
+                  {"//"} {note.noteNumber}
+                </span>
+              )}
+            </div>
+
+            {note.date && (
+              <time
+                dateTime={note.noteDate || undefined}
+                className="text-[11px] text-[#88888C] tracking-wider uppercase"
               >
-                {note.title}
-              </a>
-            ) : (
-              <Link href={targetHref} className="focus:outline-none">
-                {note.title}
-              </Link>
+                {note.date}
+              </time>
             )}
-          </h3>
+          </div>
 
-          {note.description && (
-            <p className="text-xs sm:text-sm text-[var(--theme-text-secondary,#9E9E9E)] leading-relaxed font-normal">
-              {note.description}
-            </p>
-          )}
+          {/* Core Content: Title & Excerpt grouped together */}
+          <div className="space-y-2">
+            <h3 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-[var(--theme-text-primary,#F3F3F3)] group-hover:text-[var(--theme-gold-text,#E5B842)] transition-colors line-clamp-2 leading-snug">
+              {note.title}
+            </h3>
 
-          {/* Tags */}
-          {note.tags && note.tags.length > 0 && (
-            <div className="pt-1 flex items-center flex-wrap gap-1.5 font-mono text-[10px]">
-              {note.tags.map((tag) => (
+            {note.description && (
+              <p className="text-xs sm:text-sm text-[var(--theme-text-secondary,#9E9E9E)] line-clamp-2 sm:line-clamp-3 leading-relaxed font-normal">
+                {note.description}
+              </p>
+            )}
+          </div>
+
+          {/* Bottom Row: Tags & Reading Affordance */}
+          <div className="flex items-center justify-between gap-3 pt-2 border-t border-[var(--theme-border-subtle,#1A1A1E)]/60">
+            <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+              {note.tags && note.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-0.5 bg-[#141416] border border-[#222226] rounded text-[#8E8E94]"
+                  className="px-2 py-0.5 bg-[#141416] border border-[#222226] rounded text-[10px] font-mono text-[#8E8E94] truncate max-w-[130px]"
                 >
                   {tag}
                 </span>
               ))}
             </div>
-          )}
-        </div>
 
-        {/* Right Column: Optional Compact Thumbnail + Reading Affordance */}
-        <div className="flex items-center md:flex-col md:items-end justify-between md:justify-start gap-4 shrink-0">
-          {/* Subtle Compact Image Thumbnail if available (does NOT dominate the layout) */}
-          {(note.coverImage || note.image) && (
-            <div className="relative w-24 h-16 sm:w-28 sm:h-18 rounded-[8px] overflow-hidden border border-[#222226] bg-[#0E0E10] shrink-0">
-              <Image
-                src={note.coverImage || note.image || ""}
-                alt={note.coverAltText || `${note.title} exploration preview`}
-                fill
-                sizes="120px"
-                className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-              />
-            </div>
-          )}
-
-          {/* Subtle Reading Affordance Arrow */}
-          <div className="font-mono text-xs">
-            {isExternal ? (
-              <a
-                href={targetHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Explore external note: ${note.title}`}
-                className="inline-flex items-center gap-1.5 text-[var(--theme-gold-text,#E5B842)] group-hover:text-[#F0C44E] transition-colors uppercase tracking-wider font-semibold"
-              >
-                <span className="hidden sm:inline">EXPLORE</span>
-                <span className="text-sm transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">
-                  ↗
-                </span>
-              </a>
-            ) : (
-              <Link
-                href={targetHref}
-                aria-label={`Read note: ${note.title}`}
-                className="inline-flex items-center gap-1.5 text-[var(--theme-gold-text,#E5B842)] group-hover:text-[#F0C44E] transition-colors uppercase tracking-wider font-semibold"
-              >
-                <span className="hidden sm:inline">READ NOTE</span>
-                <span className="text-sm transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">
-                  →
-                </span>
-              </Link>
-            )}
+            <span className="inline-flex items-center gap-1.5 font-mono text-xs text-[var(--theme-gold-text,#E5B842)] group-hover:text-[#F0C44E] transition-colors shrink-0">
+              <span className="text-[11px] font-semibold tracking-wider uppercase">READ NOTE</span>
+              <span aria-hidden="true" className="text-sm transition-transform duration-200 group-hover:translate-x-1">→</span>
+            </span>
           </div>
         </div>
-      </div>
+      </Link>
     </article>
   );
 }
